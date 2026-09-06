@@ -1,0 +1,10 @@
+import layout from '../components/layout.js';
+import featuredWork from '../components/featured-work.js';
+import personalNotes from '../components/personal-notes.js';
+import { workGroups } from '../data/work.js';
+import { escape as e } from '../components/utils.js';
+export default function () {
+  return layout({content: "<section class=\"hero\" aria-labelledby=\"hero-title\">\n    <div class=\"hero-meta\"><span class=\"eyebrow\">Aryan Ajay Basantani / India</span><span class=\"availability\"><i></i> Open to what’s next</span></div>\n    <h1 id=\"hero-title\">Close to the problem.<br /> <em>All the way to the product.</em></h1>\n    <div class=\"hero-bottom\"><p>I work across <strong>product, technology, and finance.</strong> I like talking to users, digging into the data, and staying with a problem long enough to ship something useful.</p><aside><span class=\"eyebrow\">The next chapter</span><p>Product management & technical PM.<br /> A particular curiosity for financial systems.</p><a class=\"text-link\" href=\"/about/\">A little more about me →</a></aside></div>\n    <div class=\"hero-colophon\"><span>Previously / MoveInSync · JPMorgan Chase · Kearney</span><span>Computer science + finance / BITS Pilani</span></div>\n  </section>\n" + featuredWork() + `
+    <section class="section index-teaser" aria-labelledby="index-title"><div><p class="eyebrow">02 / The wider collection</p><h2 id="index-title">There’s more<br><em>in the index.</em></h2><p>Shipped work, research, experiments, and the communities I’ve helped build.</p><a class="text-link" href="/work/">Browse all ${workGroups.reduce((n, group) => n + group.entries.length, 0)} entries →</a></div><div class="index-chapters">${workGroups.map((group, index) => `<a href="/work/#${e(group.id)}"><span class="chapter-number">0${index + 1}</span><span>${e(group.title)}</span><span class="chapter-count">${group.entries.length} <span aria-hidden="true">↗</span></span></a>`).join('')}</div></section>
+  ` + personalNotes()});
+}
