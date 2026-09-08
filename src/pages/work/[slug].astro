@@ -1,0 +1,19 @@
+---
+import Base from '../../layouts/Base.astro';
+import Icon from '../../components/Icon.astro';
+import WorkVisual from '../../components/WorkVisual.astro';
+import { stories } from '../../data/portfolio';
+export function getStaticPaths() { return stories.map(story => ({params:{slug:story.slug},props:{story}})); }
+const { story } = Astro.props;
+---
+<Base title={story.title} description={story.deck}><article class="case">
+  <header class="page-head case-head"><a class="back" href="/work/">← Work index</a><p class="eyebrow">{story.organisation} · {story.year}</p><h1>{story.title}</h1><p>{story.deck}</p><div class="case-labels"><span>{story.kind}</span><span>60-second overview</span></div><p class="role"><strong>My role</strong> {story.role}</p></header>
+  <div class="overview"><section><h2>Context</h2><p>{story.summary}</p></section><section><h2>{story.slug === 'semiconductor-research' ? 'Approach' : 'Decision'}</h2><p>{story.decision}</p></section><section><h2>Outcome</h2><p>{story.outcome}</p></section></div>
+  {story.link && <a class="project-link" href={story.link}>Visit Shubh Bazaar <Icon name="external" /></a>}
+  <WorkVisual kind={story.visual} />
+  <section class="evidence"><h2>Evidence & scope</h2><p>{story.evidence}</p>
+    {story.slug === 'semiconductor-research' && <figure class="report-excerpt"><figcaption>From the group’s index report · 25 December 2022<br /><span>Three of 15 constituents. Historical reported weights, not current holdings.</span></figcaption><table><thead><tr><th scope="col">Company</th><th scope="col">Reported index weight</th></tr></thead><tbody><tr><th scope="row">NVIDIA</th><td>25.9%</td></tr><tr><th scope="row">Intel</th><td>7.4%</td></tr><tr><th scope="row">AMD</th><td>7.1%</td></tr></tbody></table></figure>}
+    {story.slug === 'shubh-bazaar' && <figure class="report-excerpt"><figcaption>Payment reconciliation · excerpt from project code</figcaption><pre><code>{`if (order.payment_status === "paid") {\n  return {\n    paymentStatus: "paid",\n    state: "COMPLETED",\n    changed: false\n  };\n}`}</code></pre><p>A recorded payment success is preserved when checked again.</p></figure>}
+  </section>
+  <section class="deeper"><h2>A closer look</h2><p class="section-note">Open the parts you want to explore.</p>{story.details.map(detail => <details><summary>{detail.title}<span aria-hidden="true">+</span></summary><p>{detail.text}</p></details>)}<details class="source"><summary>Source notes<span aria-hidden="true">+</span></summary><p>{story.source}</p></details></section>
+</article></Base>

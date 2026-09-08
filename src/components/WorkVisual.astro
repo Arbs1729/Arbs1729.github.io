@@ -1,0 +1,10 @@
+---
+const { kind, compact = false } = Astro.props;
+---
+<div class:list={['work-visual', `visual-${kind}`, {compact}]}>
+  {kind === 'analytics' && <div class="analytics-figure"><div class="transport-labels"><span>ETS Cab</span><span>Shuttle</span><span>Rentlz</span></div><div class="merge-lines" aria-hidden="true"></div><div class="metric-box">One view. Consistent metrics.<span>Dashboard → report → individual record</span></div>{!compact && <p class="caption">Explanatory diagram based on my project account.</p>}</div>}
+  {kind === 'commerce' && <figure class="commerce-figure"><img src="/media/shubh-storefront.jpg" width="1920" height="1088" alt="Festive clothing artwork from the Shubh Bazaar storefront" loading="lazy" decoding="async" /><figcaption>Shubh Bazaar · project artwork</figcaption></figure>}
+  {kind === 'research' && <div class="research-figure"><div class="research-names"><span>NVIDIA</span><span>Intel</span><span>AMD</span></div><div class="research-steps"><span>Industry</span><span>Index</span><span>Valuation</span></div>{!compact && <p class="caption">Academic group work · 2022</p>}</div>}
+  {kind === 'credit' && <div class="simple-figure"><span>Portfolio reporting</span><span aria-hidden="true">→</span><span>VBA automation</span><span aria-hidden="true">→</span><span>Required output</span></div>}
+  {kind === 'planning' && <div class="simple-figure"><span>Goal Calculator</span><span aria-hidden="true">+</span><span>Risk Profiler</span></div>}
+</div>

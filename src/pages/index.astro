@@ -1,0 +1,13 @@
+---
+import Base from '../layouts/Base.astro';
+import Icon from '../components/Icon.astro';
+import WorkVisual from '../components/WorkVisual.astro';
+import { experience, stories } from '../data/portfolio';
+---
+<Base>
+  <section class="intro"><p class="eyebrow">Aryan Basantani</p><h1>Product, technology,<br /> and a financial lens.</h1><p class="intro-copy">I work across product, technology, and finance, with experience in enterprise transport and credit-risk systems. I like understanding the workflow, working with users and engineers, and following through to delivery.</p><div class="intro-links"><span class="availability"><i></i>Looking for my next product role</span><a href="/resume.pdf">Résumé <Icon name="download" /></a></div></section>
+  <aside class="personal-strip" aria-label="A little outside work"><span class="eyebrow">Off the clock</span><p>Dragon Ball Z stays my favourite. Sundays often mean F1. I also follow how geopolitics shows up in oil, chips, and everyday prices.</p><a href="/about/#outside">A little more <Icon /></a></aside>
+  <section class="section experience-section" aria-labelledby="experience-title"><div class="section-head"><h2 id="experience-title">Experience</h2><a href="/about/#experience">More context <Icon /></a></div><p class="section-note">Selected roles, with product work first.</p><div class="experience-rows">{experience.map(job => <article><div class="job-company"><h3>{job.company}</h3><span>{job.dates}</span></div><div><p class="job-role">{job.role}</p><p>{job.summary}</p></div></article>)}</div><p class="education-line">BITS Pilani, Hyderabad · Computer Science, Finance minor <span>· CFA Level II cleared · FRM Parts I & II cleared</span></p></section>
+  <section class="section" id="selected" aria-labelledby="selected-title"><div class="section-head"><h2 id="selected-title">Selected work</h2><a href="/work/">Complete index <Icon /></a></div><div class="selected-grid">{stories.filter(s => s.selected).map(work => <article class="story-card"><a class="card-image" href={`/work/${work.slug}/`} aria-label={`Read ${work.title}`}><WorkVisual kind={work.visual} compact /></a><p class="work-type">{work.kind}</p><h3><a href={`/work/${work.slug}/`}>{work.title}</a></h3><p>{work.deck}</p><a class="read-link" href={`/work/${work.slug}/`}>Read overview <Icon /></a></article>)}</div></section>
+  <p class="closing-note">This is a home for work I’ve done and things I’m learning. There’s room for more writing and experiments as they take shape.</p>
+</Base>

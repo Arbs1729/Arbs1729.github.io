@@ -1,0 +1,6 @@
+---
+import Base from '../../layouts/Base.astro';
+import Icon from '../../components/Icon.astro';
+import { groups } from '../../data/portfolio';
+---
+<Base title="Work index" description="Employer work, independent builds, client engagements, academic projects, community initiatives and teaching by Aryan Basantani."><header class="page-head"><p class="eyebrow">A working record</p><h1>Work & projects</h1><p>Products, research, and things built with other people. Grouped by the setting of the work, with skills alongside.</p></header><nav class="index-nav" aria-label="Work categories">{groups.map(group => <a href={`#${group.id}`}>{group.title}</a>)}</nav><div class="index-groups">{groups.map(group => <section class="index-group" id={group.id} aria-labelledby={`${group.id}-title`}><div class="group-head"><h2 id={`${group.id}-title`}>{group.title}</h2><p>{group.note}</p></div><div>{group.entries.map(entry => <article class="index-entry"><div><p class="work-type">{entry.setting}</p><h3>{entry.href ? <a href={entry.href}>{entry.title} <Icon /></a> : entry.title}</h3><p>{entry.text}</p></div><ul class="tags" aria-label="Skills">{entry.tags.map(tag => <li>{tag}</li>)}</ul></article>)}</div></section>)}</div></Base>
