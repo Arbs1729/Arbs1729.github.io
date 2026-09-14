@@ -4,7 +4,7 @@
   if (!button || !label) return;
   const modes = ['system', 'light', 'dark'];
   const names = { system: 'Auto', light: 'Light', dark: 'Dark' };
-  let preference = 'system';
+  let preference = 'dark';
   try {
     const stored = localStorage.getItem('aryan-theme');
     if (modes.includes(stored)) preference = stored;
@@ -16,6 +16,7 @@
     const next = modes[(modes.indexOf(preference) + 1) % modes.length];
     button.setAttribute('aria-label', `Colour theme: ${preference}. Switch to ${next}.`);
     button.title = `Colour theme: ${preference}. Switch to ${next}.`;
+    document.dispatchEvent(new CustomEvent('aryan:themechange', { detail: { preference } }));
   }
   apply();
   button.hidden = false;

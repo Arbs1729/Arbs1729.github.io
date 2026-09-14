@@ -2,6 +2,7 @@ export const person = {
   name: 'Aryan Basantani',
   email: 'aryanbasantani1729@gmail.com',
   linkedin: 'https://www.linkedin.com/in/aryanbasantani',
+  x: 'https://x.com/arbs_42',
   description: 'Product, technology and finance. Enterprise software, financial workflows, independent builds and analytical work by Aryan Basantani.',
 };
 
@@ -10,8 +11,8 @@ export const person = {
 export const experience = [
   { company: 'MoveInSync', role: 'Associate Product Consultant', dates: 'May 2024 – Sep 2025', summary: 'Product and analytics for a new manufacturing transport vertical.', detail: 'Worked with customers and engineers on transport workflows, safety and attendance logic, reporting, and operational tools. A flagship client deployment established the analytics suite. Rapid prototypes—including a custom vendor-billing workflow—helped move implementation forward.', href: '/work/moveinsync-analytics/' },
   { company: 'JPMorgan Chase', role: 'Product Intern · Wholesale credit risk', dates: 'Jul – Dec 2023', summary: 'Reporting automation and product work on an internal credit-risk platform.', detail: 'Worked with credit officers on financial-statement models, portfolio migration, onboarding and support. Contributed testing for monthly releases alongside the reporting automation.', href: '/work/credit-risk-workflows/' },
-  { company: 'Kearney', role: 'Associated Consultant', dates: 'Sep 2025 – Mar 2026', summary: 'Enterprise technology strategy for an Indian oil and gas organisation.', detail: 'Supported information-systems diagnostics, application-modernisation and cyber-risk analysis, benchmarking, and stakeholder recommendations.' },
-  { company: 'Americana Foods', role: 'Junior Analyst · Business intelligence', dates: 'May – Jul 2022', summary: 'Digital analytics using Python, Power BI, and Google Analytics.', detail: 'Performed exploratory analysis of key datasets following discussions with management on business intelligence.' },
+  { company: 'Kearney', role: 'Associated Consultant', dates: 'Sep 2025 – Mar 2026', summary: 'Enterprise technology strategy for an Indian oil and gas organisation.', detail: 'Supported information-systems diagnostics, application-modernisation and cyber-risk analysis for an Indian oil and gas organisation. The work combined benchmarking with stakeholder recommendations for enterprise technology decisions.' },
+  { company: 'Americana Foods', role: 'Junior Analyst · Business intelligence', dates: 'May – Jul 2022', summary: 'Digital analytics using Python, Power BI, and Google Analytics.', detail: 'Performed exploratory analysis of key datasets after discussions with management about its business-intelligence needs. The work used Python, Power BI, and Google Analytics to turn those questions into usable views of the available data.' },
 ];
 
 export type Story = {
@@ -32,8 +33,9 @@ export const stories: Story[] = [
     details: [
       { title: 'Why a dedicated suite?', text: 'ETS Cab handled dynamically routed home-to-office and office-to-home travel. Shuttle used fixed routes; Rentlz covered ad-hoc pickup and drop. Customers needed a shared operational view across these offerings, without finding their way through a general-purpose report catalogue.' },
       { title: 'The trade-off: consistency takes maintenance', text: 'Keeping the dashboard, reports and drilldowns aligned was extra work. I chose that investment because customers needed to trust the numbers before using them to change their operations. Low figures became useful once a team could trace them to specific records.' },
+      { title: 'From a mismatch to something operations could use', text: 'The first customer problem was that dashboard metrics did not always match the reports, while low performance figures offered no route back to the underlying cause. In the dedicated suite, teams could follow a metric down to individual records, then improve data and operating practices with a clearer view of resource use.' },
       { title: 'The broader product work', text: 'The same manufacturing role included safety, attendance and distance logic, customer investigations, and Python/JavaScript utilities. A custom vendor-billing prototype was an example of shipping quickly around a platform gap. These were parts of the employer work, rather than separate portfolio projects.' },
-      { title: 'The internal investigation tool', text: 'For the manufacturing vertical, I connected Jira, Amazon Redshift tables, and policy documentation via MCP. An LLM could query this context to help debug client feature flags and track engineering tickets. The tool is listed separately as an internal tool; no accuracy or time-saving metric is claimed.' },
+      { title: 'The internal investigation tool', text: 'For the manufacturing vertical, I connected Jira, Amazon Redshift tables, and policy documentation via MCP. An LLM could query this context to help debug client feature flags and track engineering tickets.' },
     ],
     source: 'My project account and product/finance résumés. The diagram explains the information journey; it is not a product screenshot. Customer names and internal records are omitted.',
   },
@@ -74,11 +76,12 @@ export const stories: Story[] = [
     role: 'Product intern · portfolio reporting analysis and VBA automation',
     summary: 'Credit officers used an internal platform for financial spreading and credit-risk analysis. Portfolio reports and summaries still involved repeated manual processing.',
     decision: 'I analysed the reporting issues and built a VBA automation around the required output format.',
-    outcome: 'The workflow reduced manual reporting effort by approximately 90%, using the conservative figure confirmed for this portfolio.',
-    evidence: 'My résumés document the automation. Portfolio migration, financial-statement models, support and release testing are described as surrounding role responsibilities, not additional standalone projects.',
+    outcome: 'The workflow reduced manual reporting effort by approximately 90%.',
+    evidence: 'The wider role included portfolio migration, financial-statement models, support and release testing.',
     details: [
       { title: 'Understand the people using the output', text: 'Working with credit officers on product questions and onboarding helped me understand how the reporting fit their day-to-day analysis.' },
-      { title: 'Keep the project boundary clear', text: 'The case centres on reporting automation. My internship also included specialised portfolio migrations, model work, monthly feature testing, and KPI/regulatory reporting support.' },
+      { title: 'Automate the repeatable work, preserve the output', text: 'I analysed the reporting issues around the existing portfolio reports and kept the required output format intact. The VBA workflow automated the repeatable processing and reduced the manual reporting effort by approximately 90%.' },
+      { title: 'Work around the workflow', text: 'The internship also included specialised portfolio migrations, work on financial-statement models, product onboarding and support, and monthly feature testing. KPI and regulatory-reporting support remained part of the role rather than separate portfolio projects.' },
     ],
     source: 'Product and finance résumés, career narrative, and my corrected ~90% figure. No bank records, screenshots, or customer information are published.',
   },
@@ -97,32 +100,31 @@ export const stories: Story[] = [
   },
 ];
 
-export type Entry = { title: string; setting: string; text: string; tags: string[]; href?: string };
+export type ProjectLibraryCategory = 'Product & Engineering' | 'Finance & Markets' | 'Research & Data';
+export type Entry = { title: string; setting: string; text: string; tags: string[]; href?: string; libraryCategory?: ProjectLibraryCategory };
 export const groups: { id: string; title: string; note: string; entries: Entry[] }[] = [
   { id: 'employer', title: 'Employer work', note: 'Defined pieces of work within my roles. Broader responsibilities live in Experience.', entries: [
     { title: 'Manufacturing transport analytics', setting: 'MoveInSync', text: 'A dedicated analytics suite for ETS Cab, Shuttle and Rentlz, established through a flagship client deployment.', tags: ['Product', 'SQL', 'Metabase'], href: '/work/moveinsync-analytics/' },
     { title: 'Credit-reporting automation', setting: 'JPMorgan Chase · Internship', text: 'VBA automation of a portfolio reporting workflow, reducing manual effort by approximately 90%.', tags: ['Financial systems', 'VBA'], href: '/work/credit-risk-workflows/' },
     { title: 'Manufacturing investigation assistant', setting: 'MoveInSync · Internal tool', text: 'Connected Jira, Amazon Redshift tables and policy documentation via MCP for LLM-assisted investigation of client feature flags and engineering tickets.', tags: ['MCP', 'Internal tools', 'Data'] },
   ]},
-  { id: 'independent', title: 'Freelance & side projects', note: 'Independent building, with the scope of my ownership stated explicitly.', entries: [
-    { title: 'Shubh Bazaar', setting: 'Live · Side / freelance', text: 'Commerce platform built end to end with AI assistance: catalogue, inventory, payments and fulfilment.', tags: ['Full-stack', 'APIs', 'Caching'], href: '/work/shubh-bazaar/' },
+  { id: 'library', title: 'Project library', note: 'Side, freelance and academic projects, organised by the kind of problem rather than where I did the work.', entries: [
+    { title: 'Shubh Bazaar', setting: 'Live · Side / freelance', text: 'Commerce platform built end to end with AI assistance: catalogue, inventory, payments and fulfilment.', tags: ['Full-stack', 'APIs', 'Caching'], href: '/work/shubh-bazaar/', libraryCategory: 'Product & Engineering' },
+    { title: 'Semiconductor industry analysis & valuation', setting: 'Academic group project · 2022', text: 'NVIDIA, Intel and AMD analysis, a 15-company industry index, and staged valuation models.', tags: ['Equity research', 'Valuation'], href: '/work/semiconductor-research/', libraryCategory: 'Finance & Markets' },
+    { title: 'Quantitative portfolio optimisation', setting: 'Academic project', text: '20 assets and 15,000+ simulated allocations; historical versus market-model covariance and constrained portfolio optimisation.', tags: ['Python', 'Portfolio theory'], libraryCategory: 'Finance & Markets' },
+    { title: 'Time-series modelling & value at risk', setting: 'Academic project · 2023', text: 'CAPM, ARIMA, GARCH/EGARCH and VaR for Dabur and Jubilant FoodWorks. Report dated May 2023, using April 2021–March 2023 data.', tags: ['Risk', 'R', 'Python'], libraryCategory: 'Finance & Markets' },
+    { title: 'Britannia derivatives strategies', setting: 'Academic group project · 2022', text: 'Options strategies examined through breakevens, margins and theoretical payoffs under different market expectations.', tags: ['Derivatives', 'Scenario analysis'], libraryCategory: 'Finance & Markets' },
+    { title: 'Coal India dividend-policy analysis', setting: 'Corporate finance coursework', text: 'ROE, dividends, buybacks and FCFE examined using a dividend-policy matrix.', tags: ['Corporate finance', 'Analysis'], libraryCategory: 'Finance & Markets' },
+    { title: 'Kitabazaar', setting: 'Academic team build', text: 'A campus book marketplace using Django and MySQL, with work on application design, the data model and frontend/backend collaboration.', tags: ['Django', 'MySQL'], libraryCategory: 'Product & Engineering' },
+    { title: 'Vehicle Parking Management System', setting: 'Academic team build', text: 'Contribution to a Java/Spring Boot application with user, admin and driver workflows, booking and verification.', tags: ['Java', 'Spring Boot', 'MySQL'], libraryCategory: 'Product & Engineering' },
+    { title: 'Polygon decomposition', setting: 'Academic implementation', text: 'C++ implementation of a polygon-decomposition paper, documented with Doxygen and analysed visually with Matplotlib.', tags: ['C++', 'Algorithms'], libraryCategory: 'Product & Engineering' },
+    { title: 'Maze Path-Finder', setting: 'Academic build · 2022', text: 'A maze-generation game and solver using graph and data-structure concepts, displaying an algorithm-generated solution.', tags: ['Data structures', 'Algorithms'], libraryCategory: 'Product & Engineering' },
+    { title: 'Targeted malaria intervention', setting: 'Academic research · Co-authored', text: 'Survey-data preparation and data mining to investigate household malaria risk and intervention needs.', tags: ['Data mining', 'Public health'], libraryCategory: 'Research & Data' },
+    { title: 'Predictive wellness & blockchain healthcare', setting: 'Academic research', text: 'Literature review and initial methodology, evaluating K-means, Random Forest and MLP for wellness-score prediction.', tags: ['Machine learning', 'Research'], libraryCategory: 'Research & Data' },
   ]},
   { id: 'client', title: 'Client engagements', note: 'Student consulting through BHCG. Clients described by their product and sector.', entries: [
     { title: 'Financial-planning product & GTM', setting: 'B2C fintech startup · BHCG', text: 'Co-led seven people; owned meeting coordination, technical design and delivery for Goal Calculator and Risk Profiler work.', tags: ['Fintech', 'Product design', 'Delivery'], href: '/work/fintech-planning/' },
     { title: 'Edtech product & pricing', setting: 'Edtech startup · BHCG', text: 'Product and pricing redesign that informed the startup’s go-to-market and digital marketing efforts.', tags: ['Pricing', 'Product strategy', 'GTM'] },
-  ]},
-  { id: 'academic', title: 'Academic projects & research', note: 'Coursework, team builds and research. Historical analysis is presented in its original context.', entries: [
-    { title: 'Semiconductor industry analysis & valuation', setting: 'Academic group project · 2022', text: 'NVIDIA, Intel and AMD analysis, a 15-company industry index, and staged valuation models.', tags: ['Equity research', 'Valuation'], href: '/work/semiconductor-research/' },
-    { title: 'Quantitative portfolio optimisation', setting: 'Academic project', text: '20 assets and 15,000+ simulated allocations; historical versus market-model covariance and constrained portfolio optimisation.', tags: ['Python', 'Portfolio theory'] },
-    { title: 'Time-series modelling & value at risk', setting: 'Academic project · 2023', text: 'CAPM, ARIMA, GARCH/EGARCH and VaR for Dabur and Jubilant FoodWorks. Report dated May 2023, using April 2021–March 2023 data.', tags: ['Risk', 'R', 'Python'] },
-    { title: 'Britannia derivatives strategies', setting: 'Academic group project · 2022', text: 'Options strategies examined through breakevens, margins and theoretical payoffs under different market expectations.', tags: ['Derivatives', 'Scenario analysis'] },
-    { title: 'Coal India dividend-policy analysis', setting: 'Corporate finance coursework', text: 'ROE, dividends, buybacks and FCFE examined using a dividend-policy matrix.', tags: ['Corporate finance', 'Analysis'] },
-    { title: 'Kitabazaar', setting: 'Academic team build', text: 'A campus book marketplace using Django and MySQL, with work on application design, the data model and frontend/backend collaboration.', tags: ['Django', 'MySQL'] },
-    { title: 'Vehicle Parking Management System', setting: 'Academic team build', text: 'Contribution to a Java/Spring Boot application with user, admin and driver workflows, booking and verification.', tags: ['Java', 'Spring Boot', 'MySQL'] },
-    { title: 'Polygon decomposition', setting: 'Academic implementation', text: 'C++ implementation of a polygon-decomposition paper, documented with Doxygen and analysed visually with Matplotlib.', tags: ['C++', 'Algorithms'] },
-    { title: 'Maze Path-Finder', setting: 'Academic build · 2022', text: 'A maze-generation game and solver using graph and data-structure concepts, displaying an algorithm-generated solution.', tags: ['Data structures', 'Algorithms'] },
-    { title: 'Targeted malaria intervention', setting: 'Academic research · Co-authored', text: 'Survey-data preparation and data mining to investigate household malaria risk and intervention needs.', tags: ['Data mining', 'Public health'] },
-    { title: 'Predictive wellness & blockchain healthcare', setting: 'Academic research', text: 'Literature review and initial methodology, evaluating K-means, Random Forest and MLP for wellness-score prediction.', tags: ['Machine learning', 'Research'] },
   ]},
   { id: 'community', title: 'Community initiatives & publication', note: 'Building spaces and resources for other people to learn.', entries: [
     { title: 'ProdEezy', setting: 'Community initiative · BHCG', text: 'Launched on one campus and scaled to three, connecting 300+ students with 20+ product mentors.', tags: ['Mentorship', 'Community'] },

@@ -1,0 +1,45 @@
+---
+import Base from '../layouts/Base.astro';
+import MusicPlayer from '../components/MusicPlayer.astro';
+import { screenPicks } from '../data/culture';
+---
+<Base title="Interests" description="Music, anime, Formula 1, technology, markets and other interests that shape how Aryan Basantani sees the world.">
+  <header class="page-head interests-head">
+    <p class="eyebrow">Away from the work log</p>
+    <h1>The things I keep returning to.</h1>
+    <p>Soundtracks, strange futures, fast cars, chips, markets, and questions with more than one good answer.</p>
+  </header>
+
+  <nav class="section-nav" aria-label="Interest sections">
+    <a href="#music">Music</a><a href="#screen">Anime & film</a><a href="#formula-one">Formula 1</a><a href="#technology">Technology</a><a href="#markets">Markets & geopolitics</a>
+  </nav>
+
+  <section id="music" class="interest-chapter" aria-labelledby="music-title">
+    <div class="chapter-intro"><p class="mono">01</p><h2 id="music-title">Music</h2><p>Joe Hisaishi for wonder. Hans Zimmer for scale. Anime openings when subtlety can wait.</p></div>
+    <MusicPlayer />
+  </section>
+
+  <section id="screen" class="interest-chapter" aria-labelledby="screen-title">
+    <div class="chapter-intro"><p class="mono">02</p><h2 id="screen-title">Anime, films and series</h2><p>Dragon Ball Z is still the favourite. The wider list leans psychological, speculative and quietly adventurous.</p></div>
+    <div class="screen-filters" hidden><button type="button" data-screen-filter="all" aria-pressed="true">All</button><button type="button" data-screen-filter="Film" aria-pressed="false">Films</button><button type="button" data-screen-filter="Series" aria-pressed="false">Series</button></div>
+    <div class="screen-strip">{screenPicks.map(item => <a href={item.url} class="screen-card" data-format={item.format} target="_blank" rel="noreferrer"><div class="screen-cover"><img src={item.cover} alt="" width="150" height="220" loading="lazy" referrerpolicy="no-referrer"/><span>{item.score}<small>/10</small></span></div><small>{item.format}</small><h3>{item.title}</h3></a>)}</div>
+    <p class="tiny">Personal AniList ratings from September 2026.</p>
+  </section>
+
+  <section class="interest-duo" aria-label="Formula 1 and technology">
+    <article id="formula-one" class="interest-chapter">
+      <div class="chapter-intro"><p class="mono">03</p><h2>Formula 1</h2></div>
+      <p>Max Verstappen and Red Bull pulled me in. I stay for the engineering: how regulation, upgrade opportunities, packaging and driver decisions change what happens on track.</p>
+    </article>
+    <article id="technology" class="interest-chapter">
+      <div class="chapter-intro"><p class="mono">04</p><h2>Technology and building</h2></div>
+      <p>I like systems after the first demo: caching, failure states, data definitions, and the small choices that make a tool easier to trust. Linux and more hands-on experiments will join this section later.</p>
+    </article>
+  </section>
+
+  <section id="markets" class="interest-chapter interest-wide" aria-labelledby="markets-title">
+    <div class="chapter-intro"><p class="mono">05</p><h2 id="markets-title">Finance, markets and geopolitics</h2></div>
+    <p>I follow the path from a large shift to an everyday consequence: oil prices, geopolitics, chip shortages, DRAM and SSD supply, and why the long trend toward cheaper technology sometimes breaks.</p>
+    <a href="/work/semiconductor-research/">See the semiconductor research ↗</a>
+  </section>
+</Base>

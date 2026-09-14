@@ -1,6 +1,56 @@
 ---
 import Base from '../../layouts/Base.astro';
 import Icon from '../../components/Icon.astro';
-import { groups } from '../../data/portfolio';
+import { experience, groups, stories } from '../../data/portfolio';
+
+const employerWork = groups.find(group => group.id === 'employer');
+const projectGroups = groups.filter(group => group.id !== 'employer');
 ---
-<Base title="Work index" description="Employer work, independent builds, client engagements, academic projects, community initiatives and teaching by Aryan Basantani."><header class="page-head"><p class="eyebrow">A working record</p><h1>Work & projects</h1><p>Products, research, and things built with other people. Grouped by the setting of the work, with skills alongside.</p></header><nav class="index-nav" aria-label="Work categories">{groups.map(group => <a href={`#${group.id}`}>{group.title}</a>)}</nav><div class="index-groups">{groups.map(group => <section class="index-group" id={group.id} aria-labelledby={`${group.id}-title`}><div class="group-head"><h2 id={`${group.id}-title`}>{group.title}</h2><p>{group.note}</p></div><div>{group.entries.map(entry => <article class="index-entry"><div><p class="work-type">{entry.setting}</p><h3>{entry.href ? <a href={entry.href}>{entry.title} <Icon /></a> : entry.title}</h3><p>{entry.text}</p></div><ul class="tags" aria-label="Skills">{entry.tags.map(tag => <li>{tag}</li>)}</ul></article>)}</div></section>)}</div></Base>
+<Base title="Work" description="Professional experience, selected case studies, a project library, client work and community initiatives by Aryan Basantani.">
+  <header class="page-head work-page-head">
+    <p class="eyebrow">Work, projects and evidence</p>
+    <h1>What I worked on, and where it happened.</h1>
+  </header>
+
+  <nav class="section-nav" aria-label="Work page sections">
+    <a href="#experience">Experience</a><a href="#case-studies">Case studies</a><a href="#library">Project library</a><a href="#client">Client</a><a href="#community">Community</a>
+  </nav>
+
+  <section id="experience" class="work-chapter" aria-labelledby="experience-title">
+    <div class="chapter-intro"><p class="mono">01</p><h2 id="experience-title">Professional experience</h2><p>Roles first; the work inside them stays attached.</p></div>
+    <div class="experience-ledger">
+      {experience.map(job => <article>
+        <div><h3>{job.company}</h3><small>{job.dates}</small></div>
+        <div><p class="job-role">{job.role}</p><p>{job.detail}</p>{job.href && <a href={job.href}>Read the related case <Icon /></a>}</div>
+      </article>)}
+      {employerWork && <details class="role-work"><summary>Specific work within these roles <span>+</span></summary><div>{employerWork.entries.map(entry => <article><div><h3>{entry.title}</h3><small>{entry.setting}</small></div><div><p>{entry.text}</p>{entry.href && <a href={entry.href}>Open case <Icon /></a>}</div></article>)}</div></details>}
+    </div>
+  </section>
+
+  <section id="case-studies" class="work-chapter" aria-labelledby="cases-title">
+    <div class="chapter-intro"><p class="mono">02</p><h2 id="cases-title">Selected case studies</h2><p>A short overview first, with evidence and decisions one level deeper.</p></div>
+    <div class="case-ledger">{stories.map((story, index) => <a href={`/work/${story.slug}/`}>
+      <span>{String(index + 1).padStart(2, '0')}</span><span><small>{story.kind} · {story.year}</small><strong>{story.title}</strong><p>{story.deck}</p></span><Icon />
+    </a>)}</div>
+  </section>
+
+  <section id="projects" class="work-chapter" aria-labelledby="projects-title">
+    <div class="chapter-intro"><p class="mono">03</p><h2 id="projects-title">Projects, engagements and community</h2><p>Every project in one place, with its original context kept visible.</p></div>
+    <div class="project-index">
+      {projectGroups.map(group => <section id={group.id} aria-labelledby={`${group.id}-title`}>
+        <div class="project-group-head"><h3 id={`${group.id}-title`}>{group.title}</h3><p>{group.note}</p></div>
+        <div>
+          {group.id === 'library' && <div class="library-filters" data-library-filters hidden aria-label="Filter project library">
+            <button type="button" data-library-filter="all" aria-pressed="true">All</button>
+            <button type="button" data-library-filter="Product & Engineering" aria-pressed="false">Product & Engineering</button>
+            <button type="button" data-library-filter="Finance & Markets" aria-pressed="false">Finance & Markets</button>
+            <button type="button" data-library-filter="Research & Data" aria-pressed="false">Research & Data</button>
+          </div>}
+          {group.entries.map(entry => <article data-library-category={entry.libraryCategory}>
+          <div><small>{entry.setting}</small><h4>{entry.href ? <a href={entry.href}>{entry.title} <Icon /></a> : entry.title}</h4><p>{entry.text}</p></div>
+          <ul class="tags" aria-label="Skills">{entry.tags.map(tag => <li>{tag}</li>)}</ul>
+        </article>)}</div>
+      </section>)}
+    </div>
+  </section>
+</Base>

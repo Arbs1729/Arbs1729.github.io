@@ -2,3 +2,14 @@ node_modules/
 dist/
 .astro/
 .env
+.env.local
+worker/.dev.vars
+.wrangler/
+.npm-cache/
+worker/.wrangler-dry-run/
+review/
+public/identity-lab/
+public/dashboard-worker.txt
+public/deploy-helper.html
+public/deploy-vars.html
+worker/dashboard-worker.js
