@@ -1,0 +1,57 @@
+---
+import Icon from './Icon.astro';
+import MusicPlayer from './MusicPlayer.astro';
+import { stories } from '../data/portfolio';
+const selected = stories.filter(story => story.selected);
+---
+<section id="home-base" class="home-intro" aria-labelledby="home-title">
+  <div class="intro-primary">
+    <h1 id="home-title">Hi, I’m Aryan.</h1>
+    <div class="intro-copy">
+      <p>I’m a tech enthusiast with a background in computer science and finance. I’ve worked across product, strategy, analytics and financial systems, and I enjoy understanding how technology and business decisions fit together.</p>
+      <p>Outside work, I follow macroeconomics and geopolitics, and unwind with Formula 1, anime, films and music. Lately, I’ve been exploring AI and revisiting my computer science foundations.</p>
+      <p>I’m looking for my next chapter: a product role where I can combine technical and business understanding to build useful products.</p>
+    </div>
+  </div>
+  <div class="intro-navigation">
+    <p class="intro-prompt">EXPLORE</p>
+    <nav class="home-paths" aria-label="Explore Aryan’s portfolio">
+      <a href="/work/">Work <Icon /></a>
+      <a href="/interests/">Interests <Icon /></a>
+      <a href="/about/">About <Icon /></a>
+    </nav>
+  </div>
+  <div class="intro-shortcuts">
+    <p class="intro-prompt">ON THIS PAGE</p>
+    <nav class="home-jumps" aria-label="Jump within the homepage">
+      <a class="intro-play" href="#listening" data-start-music aria-label="Play A Town with an Ocean View and open the music section" title="Play the soundtrack">
+        <span aria-hidden="true">▶</span>
+      </a>
+      <a href="#selected-work">Selected work <span aria-hidden="true">↓</span></a>
+    </nav>
+  </div>
+</section>
+
+<section id="listening" class="home-section home-music" aria-labelledby="home-music-heading">
+  <div class="editorial-head">
+    <p class="mono">ON ROTATION</p>
+    <h2 id="home-music-heading">Music that changes the temperature of a room.</h2>
+  </div>
+  <MusicPlayer compact />
+  <a class="quiet-link" href="/interests/#music">More music, anime, racing and open tabs <Icon /></a>
+</section>
+
+<section id="selected-work" class="home-section home-work" aria-labelledby="work-title">
+  <div class="editorial-head">
+    <p class="mono">SELECTED WORK</p>
+    <h2 id="work-title">A few things worth opening.</h2>
+  </div>
+  <div class="work-lines">
+    {selected.map((story, index) => <a href={`/work/${story.slug}/`}>
+      <span class="work-number">0{index + 1}</span>
+      <span><small>{story.kind}</small><strong>{story.title}</strong><p>{story.deck}</p></span>
+      <Icon />
+    </a>)}
+  </div>
+  <a class="quiet-link" href="/work/">See the complete work and project index <Icon /></a>
+</section>

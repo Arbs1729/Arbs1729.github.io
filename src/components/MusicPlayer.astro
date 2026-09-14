@@ -1,0 +1,61 @@
+---
+import { musicPicks } from '../data/culture';
+const { compact = false } = Astro.props;
+const first = musicPicks[0];
+---
+<section class:list={['music-player', { compact }]} data-music-player aria-labelledby={compact ? 'home-music-title' : 'interests-music-title'}>
+  <div class="music-now">
+    <p class="mono">NOW PLAYING</p>
+    <h3 id={compact ? 'home-music-title' : 'interests-music-title'} data-track-title>{first.title}</h3>
+    <p data-track-meta>{first.artist} · {first.album}</p>
+    <p class="player-state" data-player-state role="status">Preparing playback…</p>
+
+    <div class="youtube-stage" data-youtube-stage hidden>
+      <div data-youtube-player></div>
+    </div>
+
+    <audio data-local-audio controls preload="metadata" src={first.audio}>
+      Your browser cannot play this audio. Use the YouTube Music link below.
+    </audio>
+
+    <div class="player-actions">
+      <button class="player-key" type="button" data-play-toggle hidden>Play</button>
+      <a class="player-key current-youtube" data-current-youtube href={`https://music.youtube.com/watch?v=${first.youtubeId}`} target="_blank" rel="noreferrer">
+        <span class="yt-mark" aria-hidden="true">▶</span><span>Listen on YouTube Music</span>
+      </a>
+    </div>
+  </div>
+
+  <ol class="track-queue" aria-label="Music selection">
+    {musicPicks.map((track, index) => <li>
+      <button
+        class="track-select"
+        type="button"
+        data-track
+        data-title={track.title}
+        data-artist={track.artist}
+        data-album={track.album}
+        data-youtube={track.youtubeId}
+        data-audio={track.audio}
+        aria-pressed={index === 0 ? 'true' : 'false'}
+      >
+        <span>{String(index + 1).padStart(2, '0')}</span>
+        <span><strong>{track.title}</strong><small>{track.artist}</small></span>
+        <span aria-hidden="true">▶</span>
+      </button>
+      <a class="track-youtube" href={`https://music.youtube.com/watch?v=${track.youtubeId}`} target="_blank" rel="noreferrer" aria-label={`Open ${track.title} on YouTube Music`} title="Open on YouTube Music">
+        <span class="yt-mark" aria-hidden="true">▶</span>
+      </a>
+    </li>)}
+  </ol>
+</section>
+
+<aside class="music-float" data-music-float hidden aria-label="Music controls">
+  <span class="music-float-disc" aria-hidden="true"><i></i></span>
+  <span class="music-float-copy">
+    <small>NOW PLAYING</small>
+    <strong data-float-title>{first.title}</strong>
+  </span>
+  <button type="button" data-float-toggle aria-label={`Play ${first.title}`} title="Play or pause">▶</button>
+  <a href={compact ? '#listening' : '#music'} aria-label="Open the music selection" title="Open the music selection">↑</a>
+</aside>
