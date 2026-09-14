@@ -19,6 +19,10 @@
       const root = document.currentScript?.parentElement;
       const video = root?.querySelector('#arrival-video');
       if (!root || !video) return;
+      const force = new URLSearchParams(location.search).get('intro') === '1';
+      let seen = false;
+      try { seen = sessionStorage.getItem('aryan-arrival-seen') === '1'; } catch {}
+      if (location.hash || (seen && !force) || matchMedia('(prefers-reduced-motion: reduce)').matches) return;
       const ratios = { landscape: 16 / 9, portrait: 9 / 16 };
       const sources = { landscape: root.dataset.landscapeSrc, portrait: root.dataset.portraitSrc };
       const retained = (viewport, source) => Math.min(viewport / source, source / viewport);
