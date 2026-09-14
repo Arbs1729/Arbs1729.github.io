@@ -1,1 +1,11 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64"><rect width="64" height="64" rx="12" fill="#f4ecd8"/><text x="12" y="45" font-family="Georgia,serif" font-style="italic" font-size="48" fill="#9d422b">a</text><circle cx="48" cy="44" r="4" fill="#9d422b"/></svg>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
+  <rect width="64" height="64" rx="14" fill="#101c22"/>
+  <circle cx="27" cy="37" r="11" fill="#df6841"/>
+  <path d="M8 46c12 11 37 7 45-8" fill="none" stroke="#f1ead8" stroke-width="4" stroke-linecap="round"/>
+  <g transform="translate(43 14) rotate(-22 9 6)">
+    <rect x="1" y="1" width="18" height="11" rx="5.5" fill="#f1ead8" stroke="#df6841" stroke-width="2"/>
+    <circle cx="12" cy="6.5" r="2.8" fill="#7dbdc1"/>
+    <path d="M2 4 0 3m2 6-2 1" stroke="#f1ead8" stroke-width="2" stroke-linecap="round"/>
+  </g>
+  <path d="m18 11 2 5 5 2-5 2-2 5-2-5-5-2 5-2z" fill="#7dbdc1"/>
+</svg>
