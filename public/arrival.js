@@ -166,6 +166,10 @@
   document.documentElement.classList.add('arrival-active');
   setAudioState(true);
   selectVideo();
+  if (video.readyState >= 3) {
+    arrival.classList.add('is-ready');
+    play();
+  }
 
   addEventListener('resize', () => {
     clearTimeout(resizeTimer);
