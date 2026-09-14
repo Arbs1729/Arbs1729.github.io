@@ -5,25 +5,33 @@
     try { sessionStorage.setItem('aryan-arrival-seen', '1'); } catch {}
   }
 
-  const motion = $('#motion-toggle');
-  if (motion) {
-    motion.hidden = false;
-    const reduced = matchMedia('(prefers-reduced-motion: reduce)');
+  const introReplay = $('#intro-replay');
+  if (introReplay) {
+    introReplay.hidden = false;
+    const label = $('#intro-replay-label', introReplay);
+    const onHome = document.body.classList.contains('immersive-home');
+    let hasPlayed = false;
+
     const reflect = () => {
-      const off = document.documentElement.dataset.motion === 'off' || reduced.matches;
-      motion.setAttribute('aria-pressed', String(!off));
-      $('span', motion).textContent = reduced.matches ? 'reduced' : off ? 'off' : 'on';
-      motion.disabled = reduced.matches;
-      motion.title = reduced.matches ? 'Your system preference reduces decorative motion' : 'Toggle decorative motion';
-      document.dispatchEvent(new CustomEvent('aryan:motionchange', { detail: { off } }));
+      if (label) label.textContent = hasPlayed ? 'Replay intro' : 'Play intro';
+      introReplay.setAttribute('aria-label', hasPlayed ? 'Replay intro animation' : 'Play intro animation');
     };
-    reduced.addEventListener('change', reflect);
-    motion.addEventListener('click', () => {
-      const off = document.documentElement.dataset.motion !== 'off';
-      document.documentElement.dataset.motion = off ? 'off' : 'on';
-      try { localStorage.setItem('deck-motion', off ? 'off' : 'on'); } catch {}
+
+    document.addEventListener('aryan:arrivalcomplete', () => {
+      hasPlayed = true;
       reflect();
     });
+
+    introReplay.addEventListener('click', () => {
+      if (!onHome) {
+        location.href = '/?intro=1';
+        return;
+      }
+      hasPlayed = true;
+      reflect();
+      document.dispatchEvent(new CustomEvent('aryan:introreplay'));
+    });
+
     reflect();
   }
 

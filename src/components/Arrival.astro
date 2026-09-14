@@ -5,11 +5,45 @@
   data-portrait-src="/media/intro-portrait.mp4"
   aria-label="Animated journey into Aryan’s portfolio"
 >
-  <video class="arrival-video" id="arrival-video" muted playsinline preload="metadata" aria-hidden="true"></video>
+  <video class="arrival-video" id="arrival-video" muted playsinline preload="auto" aria-hidden="true"></video>
   <div class="arrival-loader" aria-hidden="true"><i></i><i></i><i></i></div>
   <div class="arrival-vignette" aria-hidden="true"></div>
+  <button class="arrival-audio" id="arrival-audio" type="button" aria-label="Unmute intro" aria-pressed="false">
+    <span aria-hidden="true">🔇</span>
+  </button>
   <a class="arrival-skip" id="skip-arrival" href="#home-base" aria-label="Skip introduction and enter the homepage">
     <span aria-hidden="true">↓</span>
   </a>
+  <script is:inline>
+    (() => {
+      const root = document.currentScript?.parentElement;
+      const video = root?.querySelector('#arrival-video');
+      if (!root || !video) return;
+      const force = new URLSearchParams(location.search).get('intro') === '1';
+      let seen = false;
+      try { seen = sessionStorage.getItem('aryan-arrival-seen') === '1'; } catch {}
+      if (location.hash || (seen && !force) || matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+      const ratios = { landscape: 16 / 9, portrait: 9 / 16 };
+      const sources = { landscape: root.dataset.landscapeSrc, portrait: root.dataset.portraitSrc };
+      const retained = (viewport, source) => Math.min(viewport / source, source / viewport);
+      const ratio = Math.max(innerWidth, 1) / Math.max(innerHeight, 1);
+      const best = retained(ratio, ratios.landscape) >= retained(ratio, ratios.portrait) ? 'landscape' : 'portrait';
+      const key = 'aryan-intro-source-v1';
+      const ttl = 45 * 60 * 1000;
+      let selected = best;
+      try {
+        const cached = JSON.parse(localStorage.getItem(key) || 'null');
+        if (cached?.variant === best && Date.now() - cached.ts < ttl) selected = cached.variant;
+        else localStorage.setItem(key, JSON.stringify({ variant: best, ts: Date.now() }));
+      } catch {}
+      root.dataset.format = selected;
+      video.src = sources[selected];
+      video.defaultMuted = true;
+      video.muted = true;
+      video.playbackRate = 1.45;
+      video.load();
+      video.play().catch(() => {});
+    })();
+  </script>
   <noscript><style>.arrival{display:none!important}</style></noscript>
 </section>
