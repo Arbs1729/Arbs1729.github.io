@@ -448,3 +448,159 @@ html[data-motion='off'] *,html[data-motion='off'] *::before,html[data-motion='of
   .footer-bottom > span:nth-child(2) { text-align: center; }
   .footer-bottom > span:last-child { text-align: right; }
 }
+
+
+/* Responsive navigation and footer hierarchy. */
+.deck-header {
+  display: grid;
+  grid-template-columns: minmax(0,1fr) auto;
+  grid-template-rows: auto auto;
+  align-items: center;
+  gap: .55rem 1rem;
+  min-height: 0;
+  padding: .85rem 0 .7rem;
+}
+.deck-brand { grid-column: 1; grid-row: 1; justify-self: start; }
+.deck-settings { grid-column: 2; grid-row: 1; justify-self: end; margin: 0; }
+.deck-header .deck-nav {
+  grid-column: 1 / -1;
+  grid-row: 2;
+  width: 100%;
+  margin: 0;
+  display: flex;
+  align-items: center;
+  gap: clamp(.35rem,1.6vw,1rem);
+  overflow-x: auto;
+  padding: .15rem .1rem .35rem;
+  scroll-padding-inline: .25rem;
+  scrollbar-width: none;
+  -webkit-overflow-scrolling: touch;
+}
+.deck-header .deck-nav::-webkit-scrollbar { display: none; }
+.deck-header .deck-nav a {
+  flex: none;
+  padding: .48rem clamp(.44rem,1vw,.72rem);
+  font-size: clamp(.72rem,1.2vw,.88rem);
+  white-space: nowrap;
+}
+.deck-header .deck-nav .deck-resume-link {
+  color: var(--accent);
+  border-color: color-mix(in srgb,var(--accent) 38%,transparent);
+  background: color-mix(in srgb,var(--panel) 68%,transparent);
+}
+.deck-header .deck-nav .deck-resume-link:hover {
+  border-color: var(--glow);
+  background: color-mix(in srgb,var(--panel) 88%,var(--accent) 12%);
+}
+
+/* Page subsection controls scale with the viewport before falling back to scrolling. */
+.section-nav {
+  gap: clamp(.28rem,1.35vw,.65rem);
+  padding: clamp(.65rem,1.8vw,.85rem) clamp(.18rem,.8vw,.42rem);
+  scroll-padding-inline: clamp(.2rem,1vw,.5rem);
+  -webkit-overflow-scrolling: touch;
+}
+.section-nav a {
+  min-width: 0;
+  padding: clamp(.46rem,1.25vw,.55rem) clamp(.5rem,1.75vw,.85rem);
+  font-size: clamp(.7rem,1.9vw,.82rem);
+  white-space: nowrap;
+}
+
+/* Email stays primary; LinkedIn, X and Resume form one secondary row. */
+.footer-primary { grid-template-columns: 1fr; }
+.footer-secondary {
+  width: min(100%,610px);
+  align-self: end;
+  justify-content: flex-start;
+  margin-top: .8rem;
+}
+.footer-secondary .footer-resume-compact {
+  width: auto;
+  height: 46px;
+  display: inline-flex;
+  grid-template-columns: none;
+  align-items: center;
+  justify-content: center;
+  gap: .45rem;
+  padding: 0 .9rem;
+  font: .72rem var(--mono);
+  letter-spacing: .04em;
+  white-space: nowrap;
+}
+.footer-secondary .footer-resume-compact > span:last-child {
+  color: var(--accent);
+  font-size: 1rem;
+}
+.footer-heart {
+  color: #e53935;
+  font: inherit;
+}
+
+/* Keep the signature line horizontal, including on phones. */
+.footer-bottom {
+  flex-wrap: nowrap;
+  gap: clamp(.35rem,1.8vw,.85rem);
+}
+.footer-bottom > span {
+  flex: 0 1 auto;
+  white-space: nowrap;
+}
+.footer-bottom > span:nth-child(2) { text-align: center; }
+.footer-bottom > span:last-child { text-align: right; }
+
+@media (max-width: 800px) {
+  .deck-header { padding: .8rem 0 .65rem; }
+  .deck-header .deck-nav { gap: clamp(.16rem,1vw,.4rem); }
+  .deck-header .deck-nav a {
+    padding: .43rem clamp(.36rem,1.45vw,.56rem);
+    font-size: clamp(.68rem,2.15vw,.78rem);
+  }
+  .section-nav {
+    gap: clamp(.22rem,1.1vw,.42rem);
+    padding-inline: .15rem;
+  }
+  .section-nav a {
+    padding-inline: clamp(.42rem,1.8vw,.68rem);
+    font-size: clamp(.68rem,2.25vw,.78rem);
+  }
+  .footer-primary,.footer-secondary {
+    width: 100%;
+    align-self: stretch;
+  }
+  .footer-secondary { justify-content: flex-start; }
+  .footer-bottom {
+    font-size: clamp(.45rem,1.9vw,.56rem);
+    letter-spacing: clamp(.035rem,.25vw,.0625rem);
+  }
+}
+
+@media (max-width: 560px) {
+  .deck-header {
+    grid-template-columns: minmax(100px,1fr) auto;
+    gap: .5rem .65rem;
+  }
+  .deck-header .deck-nav {
+    gap: .1rem;
+    padding-right: .35rem;
+  }
+  .deck-header .deck-nav a {
+    padding: .4rem clamp(.3rem,1.45vw,.48rem);
+    font-size: clamp(.64rem,2.55vw,.74rem);
+  }
+  .section-nav {
+    gap: clamp(.18rem,.9vw,.32rem);
+    padding-block: .68rem;
+    padding-right: .45rem;
+  }
+  .section-nav a {
+    padding: .46rem clamp(.38rem,1.7vw,.58rem);
+    font-size: clamp(.66rem,2.55vw,.76rem);
+    border-radius: 9px;
+  }
+  .footer-bottom {
+    flex-wrap: nowrap;
+    gap: clamp(.22rem,1.4vw,.55rem);
+  }
+  .footer-bottom > span { flex: 0 1 auto; }
+}
