@@ -50,6 +50,7 @@
     let playerReady = false;
     let pending = null;
     let youtubeReady = null;
+    let requestedAutoplay = false;
     let saveTimer = 0;
 
     const formatTime = seconds => {
@@ -206,6 +207,7 @@
 
     const ensureYouTube = async (autoplay = false, startSeconds = state.currentTime) => {
       state.mode = 'youtube';
+      requestedAutoplay = Boolean(autoplay);
       root.classList.remove('is-local');
       fallback.hidden = true;
       showShelf();
@@ -253,7 +255,7 @@
               }
             },
             onAutoplayBlocked: () => setPlaying(false),
-            onError: () => useLocal(state.playing || Boolean(pending?.autoplay), getTime()),
+            onError: () => useLocal(requestedAutoplay, getTime()),
           },
         });
       } catch {
@@ -322,7 +324,7 @@
       }
       state.engaged = false;
       state.minimized = false;
-      state.playing = false;
+      setPlaying(false);
       root.hidden = true;
       save();
       emit();
