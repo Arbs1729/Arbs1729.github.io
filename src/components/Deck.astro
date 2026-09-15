@@ -85,6 +85,6 @@ const canonical = new URL(path, Astro.site || 'https://aryanbasantani.me');
   <script is:inline src="/theme.js" defer></script>
   <script is:inline src="/atmosphere.js" defer></script>
   <script is:inline src="/deck.js" defer></script>
-  {immersive && <script is:inline src="/arrival.js" defer></script>}
+  {immersive && <script is:inline src="/arrival.js" defer data-astro-rerun></script>}
 </body>
 </html>
