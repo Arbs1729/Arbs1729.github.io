@@ -407,8 +407,7 @@ html[data-motion='off'] *,html[data-motion='off'] *::before,html[data-motion='of
 
 /* Minimal footer: one action above the retained three-part signature line. */
 .deck-footer {
-  grid-template-columns: 1fr;
-  gap: 1.1rem;
+  gap: 1.1rem 2rem;
   padding-top: 2.6rem;
 }
 .footer-back-to-top {
