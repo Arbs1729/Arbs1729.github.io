@@ -46,7 +46,7 @@ const canonical = new URL(path, Astro.site || 'https://aryanbasantani.me');
         <a href="/work/" aria-current={path.startsWith('/work') ? 'page' : undefined}>Work</a>
         <a href="/interests/" aria-current={path.startsWith('/interests') ? 'page' : undefined}>Interests</a>
         <a href="/about/" aria-current={path.startsWith('/about') ? 'page' : undefined}>About</a>
-        <a class="deck-resume-link" href="/resume.pdf" target="_blank" rel="noreferrer">Resume <span aria-hidden="true">↗</span></a>
+        <a href="/resume.pdf" target="_blank" rel="noreferrer">Resume <span aria-hidden="true">↗</span></a>
         <a href="#contact">Get in touch</a>
       </nav>
     </header>
@@ -64,7 +64,7 @@ const canonical = new URL(path, Astro.site || 'https://aryanbasantani.me');
             <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="5" cy="5" r="2"/><path d="M3 9h4v12H3zm7 0h4v2c1.2-1.7 2.8-2.5 4.5-2.5 2.6 0 3.5 1.8 3.5 5V21h-4v-6.6c0-1.7-.6-2.6-1.9-2.6-1.4 0-2.1 1-2.1 3.1V21h-4z"/></svg>
             <span class="sr-only">LinkedIn</span>
           </a>
-          <a href={person.x} target="_blank" rel="noreferrer" aria-label="X profile: arbs_42" title="X · @arbs_42">
+          <a class="footer-x" href={person.x} target="_blank" rel="noreferrer" aria-label="X profile: arbs_42" title="X · @arbs_42">
             <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m4 3 12.6 18H20L7.4 3ZM4 21 19.5 3"/></svg>
             <span class="sr-only">X · @arbs_42</span>
           </a>
