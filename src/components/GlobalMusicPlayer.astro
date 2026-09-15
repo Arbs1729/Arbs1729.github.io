@@ -1,0 +1,32 @@
+---
+import { musicPicks } from '../data/culture';
+
+const tracks = musicPicks.map(({ title, artist, album, youtubeId, audio }) => ({
+  title,
+  artist,
+  album,
+  youtubeId,
+  audio,
+}));
+const first = tracks[0];
+---
+
+<div
+  class="persistent-music"
+  data-global-music
+  data-catalog={JSON.stringify(tracks)}
+  data-active-index="0"
+  transition:persist="global-music"
+>
+  <audio data-global-audio preload="metadata" src={first.audio} hidden></audio>
+
+  <aside class="music-float" data-music-float hidden aria-label="Music controls">
+    <span class="music-float-disc" aria-hidden="true"><i></i></span>
+    <span class="music-float-copy">
+      <small>NOW PLAYING</small>
+      <strong data-float-title>{first.title}</strong>
+    </span>
+    <button type="button" data-float-toggle aria-label={`Play ${first.title}`} title="Play or pause">▶</button>
+    <a href="/interests/#music" aria-label="Open the music selection" title="Open the music selection">↑</a>
+  </aside>
+</div>
