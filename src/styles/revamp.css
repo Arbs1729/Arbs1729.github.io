@@ -223,7 +223,7 @@ body::after {
 .footer-socials a:hover { transform: translateY(-2px); color: var(--accent); border-color: var(--glow); box-shadow: 0 5px 0 var(--control-side),0 10px 20px var(--control-glow); }
 .footer-socials a:active { transform: translateY(2px); box-shadow: 0 1px 0 var(--control-side); }
 .footer-socials svg { width: 21px; height: 21px; fill: currentColor; stroke: none; }
-.footer-socials a:last-child svg { fill: none; stroke: currentColor; stroke-width: 2.2; stroke-linecap: round; stroke-linejoin: round; }
+.footer-socials .footer-x svg { fill: none; stroke: currentColor; stroke-width: 2.2; stroke-linecap: round; stroke-linejoin: round; }
 .footer-bottom>span:nth-child(3) { color: var(--muted); }
 
 .chat-widget { position: fixed; right: 18px; bottom: 18px; z-index: 40; }
@@ -469,7 +469,8 @@ html[data-motion='off'] *,html[data-motion='off'] *::before,html[data-motion='of
   margin: 0;
   display: flex;
   align-items: center;
-  gap: clamp(.35rem,1.6vw,1rem);
+  justify-content: space-between;
+  gap: clamp(.2rem,1vw,.65rem);
   overflow-x: auto;
   padding: .15rem .1rem .35rem;
   scroll-padding-inline: .25rem;
@@ -482,15 +483,6 @@ html[data-motion='off'] *,html[data-motion='off'] *::before,html[data-motion='of
   padding: .48rem clamp(.44rem,1vw,.72rem);
   font-size: clamp(.72rem,1.2vw,.88rem);
   white-space: nowrap;
-}
-.deck-header .deck-nav .deck-resume-link {
-  color: var(--accent);
-  border-color: color-mix(in srgb,var(--accent) 38%,transparent);
-  background: color-mix(in srgb,var(--panel) 68%,transparent);
-}
-.deck-header .deck-nav .deck-resume-link:hover {
-  border-color: var(--glow);
-  background: color-mix(in srgb,var(--panel) 88%,var(--accent) 12%);
 }
 
 /* Page subsection controls scale with the viewport before falling back to scrolling. */
@@ -551,7 +543,7 @@ html[data-motion='off'] *,html[data-motion='off'] *::before,html[data-motion='of
 
 @media (max-width: 800px) {
   .deck-header { padding: .8rem 0 .65rem; }
-  .deck-header .deck-nav { gap: clamp(.16rem,1vw,.4rem); }
+  .deck-header .deck-nav { justify-content: space-between; gap: clamp(.12rem,.8vw,.3rem); }
   .deck-header .deck-nav a {
     padding: .43rem clamp(.36rem,1.45vw,.56rem);
     font-size: clamp(.68rem,2.15vw,.78rem);
@@ -581,7 +573,8 @@ html[data-motion='off'] *,html[data-motion='off'] *::before,html[data-motion='of
     gap: .5rem .65rem;
   }
   .deck-header .deck-nav {
-    gap: .1rem;
+    justify-content: space-between;
+    gap: .08rem;
     padding-right: .35rem;
   }
   .deck-header .deck-nav a {
