@@ -1,4 +1,4 @@
-<div class="chat-widget">
+<div class="chat-widget" transition:persist="chat-widget">
   <button id="chat-launcher" class="chat-launcher" type="button" hidden aria-expanded="false" aria-controls="chat-panel">
     <span aria-hidden="true">✦</span><span>Ask about Aryan</span>
   </button>
@@ -23,7 +23,7 @@
         <button class="key key-orange" id="send-chat" type="submit">Send</button>
         <button class="key" id="cancel-chat" type="button" hidden>Cancel</button>
       </form>
-      <div class="chat-meta"><p id="chat-status" class="tiny" role="status">The AI guide is not connected in this preview yet.</p><button id="clear-chat" type="button" hidden>Clear conversation</button></div>
+      <div class="chat-meta"><p id="chat-status" class="tiny" role="status"></p><button id="clear-chat" type="button" hidden>Clear conversation</button></div>
       <noscript><p class="tiny">Chat needs JavaScript. The rest of the portfolio remains available.</p></noscript>
     </div>
   </section>

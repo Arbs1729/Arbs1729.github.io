@@ -1,0 +1,65 @@
+---
+import { musicPicks } from '../data/culture';
+
+const tracks = musicPicks.map(({ title, artist, album, youtubeId, audio }) => ({
+  title,
+  artist,
+  album,
+  youtubeId,
+  audio,
+}));
+const first = tracks[0];
+---
+
+<section
+  class="video-shelf"
+  data-global-music
+  data-catalog={JSON.stringify(tracks)}
+  data-active-index="0"
+  aria-label="Persistent music player"
+  hidden
+  transition:persist="global-music"
+>
+  <div class="video-shelf-head">
+    <span class="video-shelf-source"><span aria-hidden="true">▶</span> YouTube</span>
+    <div class="video-shelf-window-controls">
+      <button type="button" data-shelf-minimize aria-label="Minimize music player" title="Minimize">−</button>
+      <button type="button" data-shelf-close aria-label="Close music player" title="Close">×</button>
+    </div>
+  </div>
+
+  <div class="video-shelf-body">
+    <div class="video-shelf-frame" data-video-frame>
+      <div id="global-youtube-player" data-youtube-mount></div>
+      <div class="video-fallback" data-video-fallback hidden>
+        <span class="yt-mark" aria-hidden="true">▶</span>
+        <strong>Local preview</strong>
+        <small>YouTube playback is unavailable for this track.</small>
+      </div>
+    </div>
+
+    <div class="video-shelf-info">
+      <div class="video-shelf-copy">
+        <p class="mono">NOW PLAYING</p>
+        <strong data-shelf-title>{first.title}</strong>
+        <small data-shelf-meta>{first.artist} · {first.album}</small>
+      </div>
+
+      <div class="video-shelf-progress">
+        <input data-shelf-progress type="range" min="0" max="1000" value="0" aria-label="Track progress" />
+        <div><span data-shelf-current>0:00</span><span data-shelf-duration>0:00</span></div>
+      </div>
+
+      <div class="video-shelf-controls" aria-label="Playback controls">
+        <button type="button" data-shelf-prev aria-label="Previous track" title="Previous track">‹</button>
+        <button class="video-shelf-play" type="button" data-shelf-toggle aria-label={`Play ${first.title}`} title="Play or pause">▶</button>
+        <button type="button" data-shelf-next aria-label="Next track" title="Next track">›</button>
+        <a data-shelf-youtube href={`https://music.youtube.com/watch?v=${first.youtubeId}`} target="_blank" rel="noreferrer" aria-label="Open current track in YouTube Music" title="Open in YouTube Music">
+          <span class="yt-mark" aria-hidden="true">▶</span>
+        </a>
+      </div>
+    </div>
+  </div>
+
+  <audio data-global-audio preload="metadata" src={first.audio} hidden></audio>
+</section>

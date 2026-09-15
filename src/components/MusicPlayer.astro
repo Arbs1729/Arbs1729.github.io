@@ -10,14 +10,6 @@ const first = musicPicks[0];
     <p data-track-meta>{first.artist} · {first.album}</p>
     <p class="player-state" data-player-state role="status">Preparing playback…</p>
 
-    <div class="youtube-stage" data-youtube-stage hidden>
-      <div data-youtube-player></div>
-    </div>
-
-    <audio data-local-audio controls preload="metadata" src={first.audio}>
-      Your browser cannot play this audio. Use the YouTube Music link below.
-    </audio>
-
     <div class="player-actions">
       <button class="player-key" type="button" data-play-toggle hidden>Play</button>
       <a class="player-key current-youtube" data-current-youtube href={`https://music.youtube.com/watch?v=${first.youtubeId}`} target="_blank" rel="noreferrer">
@@ -50,12 +42,4 @@ const first = musicPicks[0];
   </ol>
 </section>
 
-<aside class="music-float" data-music-float hidden aria-label="Music controls">
-  <span class="music-float-disc" aria-hidden="true"><i></i></span>
-  <span class="music-float-copy">
-    <small>NOW PLAYING</small>
-    <strong data-float-title>{first.title}</strong>
-  </span>
-  <button type="button" data-float-toggle aria-label={`Play ${first.title}`} title="Play or pause">▶</button>
-  <a href={compact ? '#listening' : '#music'} aria-label="Open the music selection" title="Open the music selection">↑</a>
-</aside>
+
