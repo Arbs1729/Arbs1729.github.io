@@ -1,5 +1,5 @@
-// Playback sources were supplied by Aryan. The local files keep preview playback
-// dependable when a publisher disables embedding or a network request fails.
+// YouTube is the primary playback source. Local files are a persistent fallback
+// when embedding or network playback is unavailable.
 export const musicPicks = [
   {
     title: 'A Town with an Ocean View', artist: 'Joe Hisaishi',
