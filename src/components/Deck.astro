@@ -6,6 +6,8 @@ import {person} from '../data/portfolio';
 import ChatWidget from './ChatWidget.astro';
 import Atmosphere from './Atmosphere.astro';
 import BrandMark from './BrandMark.astro';
+import GlobalMusicPlayer from './GlobalMusicPlayer.astro';
+import { ClientRouter } from 'astro:transitions';
 const {title='Product, technology & finance',description=person.description,immersive=false}=Astro.props;
 const path = Astro.url.pathname;
 const canonical = new URL(path, Astro.site || 'https://aryanbasantani.me');
@@ -25,6 +27,7 @@ const canonical = new URL(path, Astro.site || 'https://aryanbasantani.me');
   <meta property="og:type" content="website"/>
   <meta property="og:url" content={canonical}/>
   <link rel="icon" href="/favicon.svg"/>
+  <ClientRouter />
   <script is:inline>try{const saved=localStorage.getItem('aryan-theme');const theme=saved==='system'||saved==='light'||saved==='dark'?saved:'dark';if(theme==='system')delete document.documentElement.dataset.theme;else document.documentElement.dataset.theme=theme;}catch{document.documentElement.dataset.theme='dark';}</script>
 </head>
 <body class:list={{"immersive-home":immersive}}>
@@ -39,7 +42,7 @@ const canonical = new URL(path, Astro.site || 'https://aryanbasantani.me');
           <span class="intro-replay-glyph" aria-hidden="true">▶</span>
           <span id="intro-replay-label">Play intro</span>
         </button>
-        <button id="theme-toggle" type="button" hidden><span aria-hidden="true">◐</span> <span id="theme-label">Dark</span></button>
+        <button id="theme-toggle" type="button" hidden transition:persist="theme-control"><span aria-hidden="true">◐</span> <span id="theme-label">Dark</span></button>
       </div>
       <nav class="deck-nav" aria-label="Main navigation">
         <a href="/" aria-current={path === '/' ? 'page' : undefined}>Home</a>
@@ -77,6 +80,7 @@ const canonical = new URL(path, Astro.site || 'https://aryanbasantani.me');
       <div class="footer-bottom"><span>ARYAN BASANTANI</span><span aria-label="Made with love">Made with <b class="footer-heart" aria-hidden="true">♥</b></span><span>INDIA · 2026</span></div>
     </footer>
   </div>
+  <GlobalMusicPlayer/>
   <ChatWidget/>
   <script is:inline src="/theme.js" defer></script>
   <script is:inline src="/atmosphere.js" defer></script>
