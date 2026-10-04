@@ -946,3 +946,47 @@ html[data-motion='off'] *,html[data-motion='off'] *::before,html[data-motion='of
   .video-shelf-controls { justify-content: start; }
   .video-shelf.is-minimized .video-shelf-info { display: flex; }
 }
+
+/* Scheduling action shares the footer's tactile control treatment. */
+.footer-booking {
+  width: min(100%, 610px);
+  align-self: end;
+  margin-top: 1rem;
+}
+.footer-booking p {
+  margin: 0 0 .65rem;
+  color: var(--muted);
+  font-size: .85rem;
+  line-height: 1.55;
+}
+.footer-booking-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: .6rem;
+  min-height: 46px;
+  max-width: 100%;
+  padding: .7rem 1rem;
+  border: 1px solid var(--rule);
+  border-radius: 13px;
+  color: var(--ink);
+  background: linear-gradient(180deg, color-mix(in srgb, var(--panel) 88%, white 12%), var(--panel));
+  box-shadow: 0 3px 0 var(--control-side), inset 0 1px 0 rgba(255,255,255,.3);
+  font: .78rem var(--mono);
+  text-decoration: none;
+  transition: transform .18s var(--ease-touch), box-shadow .18s var(--ease-touch), color .2s, border-color .2s;
+}
+.footer-booking-button svg { width: 20px; height: 20px; flex: none; }
+.footer-booking-button > span:last-child { color: var(--accent); }
+.footer-booking-button:hover {
+  transform: translateY(-2px);
+  color: var(--accent);
+  border-color: var(--glow);
+  box-shadow: 0 5px 0 var(--control-side), 0 10px 20px var(--control-glow);
+}
+.footer-booking-button:active { transform: translateY(2px); box-shadow: 0 1px 0 var(--control-side); }
+.footer-booking-button:focus-visible { outline: 2px solid var(--accent); outline-offset: 5px; }
+@media (max-width: 800px) {
+  .footer-booking { width: 100%; align-self: stretch; }
+}
+
