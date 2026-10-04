@@ -501,11 +501,19 @@ html[data-motion='off'] *,html[data-motion='off'] *::before,html[data-motion='of
 
 /* Email stays primary; LinkedIn, X and Resume form one secondary row. */
 .footer-primary { grid-template-columns: 1fr; }
-.footer-secondary {
+.footer-secondary-row {
   width: min(100%,610px);
   align-self: end;
-  justify-content: flex-start;
+  display: flex;
+  align-items: center;
+  gap: .65rem;
   margin-top: .8rem;
+}
+.footer-secondary {
+  width: auto;
+  align-self: auto;
+  justify-content: flex-start;
+  margin-top: 0;
 }
 .footer-secondary .footer-resume-compact {
   width: auto;
@@ -556,11 +564,12 @@ html[data-motion='off'] *,html[data-motion='off'] *::before,html[data-motion='of
     padding-inline: clamp(.42rem,1.8vw,.68rem);
     font-size: clamp(.68rem,2.25vw,.78rem);
   }
-  .footer-primary,.footer-secondary {
+  .footer-primary {
     width: 100%;
     align-self: stretch;
   }
-  .footer-secondary { justify-content: flex-start; }
+  .footer-secondary-row { width: 100%; align-self: stretch; }
+  .footer-secondary { width: auto; align-self: auto; justify-content: flex-start; }
   .footer-bottom {
     font-size: clamp(.45rem,1.9vw,.56rem);
     letter-spacing: clamp(.035rem,.25vw,.0625rem);
@@ -949,9 +958,10 @@ html[data-motion='off'] *,html[data-motion='off'] *::before,html[data-motion='of
 
 /* Scheduling action shares the footer's tactile control treatment. */
 .footer-booking {
-  width: min(100%, 610px);
-  align-self: end;
-  margin-top: 1rem;
+  width: auto;
+  align-self: auto;
+  margin-top: 0;
+  flex: none;
 }
 .footer-booking-button {
   display: inline-flex;
@@ -980,7 +990,13 @@ html[data-motion='off'] *,html[data-motion='off'] *::before,html[data-motion='of
 }
 .footer-booking-button:active { transform: translateY(2px); box-shadow: 0 1px 0 var(--control-side); }
 .footer-booking-button:focus-visible { outline: 2px solid var(--accent); outline-offset: 5px; }
-@media (max-width: 800px) {
+@media (max-width: 560px) {
+  .footer-secondary-row {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: .7rem;
+  }
+  .footer-secondary { width: 100%; }
   .footer-booking { width: 100%; align-self: stretch; }
 }
 
