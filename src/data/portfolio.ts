@@ -3,6 +3,7 @@ export const person = {
   email: 'aryanbasantani1729@gmail.com',
   linkedin: 'https://www.linkedin.com/in/aryanbasantani',
   x: 'https://x.com/arbs_42',
+  calendly: 'https://calendly.com/aryanbasantani1729/let-s-chat',
   description: 'Product, technology and finance. Enterprise software, financial workflows, independent builds and analytical work by Aryan Basantani.',
 };
 
