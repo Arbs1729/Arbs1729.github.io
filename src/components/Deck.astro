@@ -27,6 +27,9 @@ const canonical = new URL(path, Astro.site || 'https://aryanbasantani.me');
   <meta property="og:type" content="website"/>
   <meta property="og:url" content={canonical}/>
   <link rel="icon" href="/favicon.svg"/>
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,SOFT,wght@0,9..144,50,400..600;1,9..144,50,400..500&family=JetBrains+Mono:wght@400;500;600&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap"/>
   <ClientRouter />
   <script is:inline>try{const saved=localStorage.getItem('aryan-theme');const theme=saved==='system'||saved==='light'||saved==='dark'?saved:'dark';if(theme==='system')delete document.documentElement.dataset.theme;else document.documentElement.dataset.theme=theme;}catch{document.documentElement.dataset.theme='dark';}</script>
 </head>

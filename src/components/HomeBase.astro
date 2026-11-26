@@ -24,21 +24,12 @@ const selected = stories.filter(story => story.selected);
   <div class="intro-shortcuts">
     <p class="intro-prompt">ON THIS PAGE</p>
     <nav class="home-jumps" aria-label="Jump within the homepage">
+      <a href="#selected-work">Selected work <span aria-hidden="true">↓</span></a>
       <a class="intro-play" href="#listening" data-start-music aria-label="Play A Town with an Ocean View and open the music section" title="Play the soundtrack">
         <span aria-hidden="true">▶</span>
       </a>
-      <a href="#selected-work">Selected work <span aria-hidden="true">↓</span></a>
     </nav>
   </div>
-</section>
-
-<section id="listening" class="home-section home-music" aria-labelledby="home-music-heading">
-  <div class="editorial-head">
-    <p class="mono">ON ROTATION</p>
-    <h2 id="home-music-heading">Music that changes the temperature of a room.</h2>
-  </div>
-  <MusicPlayer compact />
-  <a class="quiet-link" href="/interests/#music">More music, anime, racing and open tabs <Icon /></a>
 </section>
 
 <section id="selected-work" class="home-section home-work" aria-labelledby="work-title">
@@ -49,9 +40,23 @@ const selected = stories.filter(story => story.selected);
   <div class="work-lines">
     {selected.map((story, index) => <a href={`/work/${story.slug}/`}>
       <span class="work-number">0{index + 1}</span>
-      <span><small>{story.kind}</small><strong>{story.title}</strong><p>{story.deck}</p></span>
+      <span>
+        <small>{story.organisation} · {story.kind}</small>
+        <strong>{story.title}</strong>
+        <p>{story.deck}</p>
+        {story.impact && <span class="work-impact">{story.impact}</span>}
+      </span>
       <Icon />
     </a>)}
   </div>
   <a class="quiet-link" href="/work/">See the complete work and project index <Icon /></a>
+</section>
+
+<section id="listening" class="home-section home-music" aria-labelledby="home-music-heading">
+  <div class="editorial-head">
+    <p class="mono">ON ROTATION</p>
+    <h2 id="home-music-heading">Music that changes the temperature of a room.</h2>
+  </div>
+  <MusicPlayer compact />
+  <a class="quiet-link" href="/interests/#music">More music, anime, racing and open tabs <Icon /></a>
 </section>
