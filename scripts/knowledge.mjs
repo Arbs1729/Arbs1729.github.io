@@ -10,7 +10,7 @@ await writeFile('worker/knowledge.json',JSON.stringify({
     animeAndScreen:{favourites:['Dragon Ball Z (favourite)','Monster','Psycho-Pass season 1','Frieren','Cowboy Bebop','Neon Genesis Evangelion'],ratedPicks:screenPicks.map(({title,score,format})=>({title,score,format}))},
     formulaOne:'Follows Formula 1, especially Max Verstappen and Red Bull, including the engineering and upgrade trade-offs behind performance.',
     music:{selectedTracks:musicPicks.map(({title,artist,album})=>({title,artist,album})),broaderListening:['Joe Hisaishi Studio Ghibli works','Hans Zimmer Interstellar','Evan Call Frieren','Succession theme','Demon Slayer theme','Neon Genesis Evangelion theme','KK','Atif Aslam']},
-    technologyAndProduct:'Currently exploring AI and revisiting computer science basics; interested in the systems and product decisions behind useful technology.',
+    technologyAndProduct:'Explores Linux distros, fintech products, market systems, and AI agents (including Codex, OpenCode, Antigravity, and CLI/harness setups), while revisiting computer science fundamentals and product/systems design.',
     marketsAndMacro:'Follows macroeconomics and geopolitics, including oil prices, semiconductor supply, and DRAM/SSD price shifts.'
   },
   credentials:'BITS Pilani Hyderabad B.E. Computer Science, Finance minor, 2020–2024; CGPA 8.52, minor 9.67; CFA Level II cleared, FRM Parts I and II cleared',
