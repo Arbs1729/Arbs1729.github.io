@@ -6,7 +6,7 @@
   const $ = (selector, scope = document) => scope.querySelector(selector);
   const $$ = (selector, scope = document) => [...scope.querySelectorAll(selector)];
 
-  const MUSIC_KEY = 'aryan-music-state-v3';
+  const MUSIC_KEY = 'aryan-music-state-v4';
   const musicRoot = $('[data-global-music]');
 
   const setupGlobalMusic = root => {
@@ -16,11 +16,10 @@
     try { catalog = JSON.parse(root.dataset.catalog || '[]'); } catch {}
     if (!catalog.length) return null;
 
-    const drawer = $('[data-video-drawer]', root);
-    const drawerClose = $('[data-video-close]', root);
     const mount = $('[data-youtube-mount]', root);
     const fallback = $('[data-video-fallback]', root);
     const audio = $('[data-global-audio]', root);
+    const sourceLabel = $('[data-shelf-source-label]', root);
     const title = $('[data-shelf-title]', root);
     const meta = $('[data-shelf-meta]', root);
     const current = $('[data-shelf-current]', root);
@@ -29,7 +28,7 @@
     const toggle = $('[data-shelf-toggle]', root);
     const previous = $('[data-shelf-prev]', root);
     const next = $('[data-shelf-next]', root);
-    const videoToggle = $('[data-shelf-video]', root);
+    const minimize = $('[data-shelf-minimize]', root);
     const close = $('[data-shelf-close]', root);
     const youtubeLink = $('[data-shelf-youtube]', root);
 
@@ -43,8 +42,8 @@
       index: validIndex,
       currentTime: Math.max(0, Number(restored?.time) || 0),
       engaged: Boolean(restored?.engaged),
-      videoOpen: Boolean(restored?.videoOpen),
-      mode: restored?.mode === 'youtube' && restored?.videoOpen ? 'youtube' : 'local',
+      minimized: Boolean(restored?.minimized),
+      mode: restored?.mode === 'local' ? 'local' : 'youtube',
       playing: false,
     };
 
@@ -69,7 +68,7 @@
         if (state.mode !== 'youtube') return;
         const ytState = playerReady ? (() => { try { return player.getPlayerState(); } catch { return -1; } })() : -1;
         if (!playerReady || (autoplay && ytState !== 1 && ytState !== 3)) {
-          useLocal(autoplay, startSeconds, state.videoOpen);
+          useLocal(autoplay, startSeconds);
         }
       }, 4500);
     };
@@ -101,7 +100,7 @@
       index: state.index,
       currentTime: getTime(),
       engaged: state.engaged,
-      videoOpen: state.videoOpen,
+      minimized: state.minimized,
       mode: state.mode,
       playing: state.playing,
       autoplayBlockedLocal,
@@ -109,7 +108,10 @@
     });
 
     const syncBodyClass = () => {
-      document.body.classList.toggle('music-bar-open', state.engaged && !root.hidden);
+      const open = state.engaged && !root.hidden;
+      document.body.classList.toggle('music-bar-open', open);
+      document.body.classList.toggle('music-bar-local', open && state.mode === 'local');
+      document.body.classList.toggle('music-bar-minimized', open && state.minimized);
     };
 
     const save = () => {
@@ -119,7 +121,7 @@
           index: state.index,
           time: state.currentTime,
           engaged: state.engaged,
-          videoOpen: state.videoOpen,
+          minimized: state.minimized,
           mode: state.mode,
         }));
       } catch {}
@@ -138,14 +140,17 @@
       emit();
     };
 
-    const syncDrawerUI = () => {
-      if (drawer) drawer.hidden = !state.videoOpen;
-      root.classList.toggle('has-video-open', state.videoOpen);
-      if (videoToggle) {
-        videoToggle.setAttribute('aria-pressed', String(state.videoOpen));
-        videoToggle.textContent = state.videoOpen ? 'Audio' : 'Video';
-        videoToggle.title = state.videoOpen ? 'Switch back to minimal audio' : 'Watch on YouTube';
+    const syncChromeUI = () => {
+      root.classList.toggle('is-minimized', state.minimized);
+      if (minimize) {
+        minimize.textContent = state.minimized ? '□' : '−';
+        minimize.setAttribute('aria-label', state.minimized ? 'Expand music player' : 'Minimize music player');
+        minimize.title = state.minimized ? 'Expand' : 'Minimize';
       }
+      if (sourceLabel) {
+        sourceLabel.textContent = state.mode === 'local' ? 'Local audio' : 'YouTube';
+      }
+      syncBodyClass();
     };
 
     const updateTrackUI = () => {
@@ -159,9 +164,8 @@
 
     const showShelf = () => {
       root.hidden = false;
-      syncDrawerUI();
+      syncChromeUI();
       updateTrackUI();
-      syncBodyClass();
     };
 
     const updateProgress = () => {
@@ -217,14 +221,13 @@
       else audio.addEventListener('loadedmetadata', apply, { once: true });
     };
 
-    const useLocal = async (autoplay = false, startSeconds = state.currentTime, keepDrawer = false) => {
+    const useLocal = async (autoplay = false, startSeconds = state.currentTime) => {
       clearYouTubeWatchdog();
       state.mode = 'local';
-      state.videoOpen = Boolean(keepDrawer);
       autoplayBlockedLocal = false;
       try { player?.pauseVideo(); } catch {}
       root.classList.add('is-local');
-      if (fallback) fallback.hidden = !state.videoOpen;
+      if (fallback) fallback.hidden = false;
       const track = catalog[state.index];
       const nextSrc = new URL(track.audio, location.origin).href;
       if (audio.src !== nextSrc) {
@@ -268,14 +271,13 @@
           player.cueVideoById(command);
         }
       } catch {
-        useLocal(action.autoplay, requestedStartSeconds, true);
+        useLocal(action.autoplay, requestedStartSeconds);
       }
     };
 
     const ensureYouTube = async (autoplay = false, startSeconds = state.currentTime) => {
       try { audio.pause(); } catch {}
       state.mode = 'youtube';
-      state.videoOpen = true;
       requestedAutoplay = Boolean(autoplay);
       requestedStartSeconds = Math.max(0, startSeconds || 0);
       autoplayBlockedLocal = false;
@@ -307,7 +309,10 @@
           videoId: catalog[state.index].youtubeId,
           playerVars: {
             autoplay: 0,
-            controls: 1,
+            controls: 0,
+            disablekb: 1,
+            fs: 0,
+            iv_load_policy: 3,
             playsinline: 1,
             rel: 0,
             enablejsapi: 1,
@@ -317,7 +322,7 @@
             onReady: event => {
               playerReady = true;
               clearYouTubeWatchdog();
-              try { event.target.getIframe().title = 'YouTube music video player'; } catch {}
+              try { event.target.getIframe().title = 'YouTube music player'; } catch {}
               if (state.mode === 'youtube') runPending();
               updateProgress();
             },
@@ -339,11 +344,11 @@
               clearYouTubeWatchdog();
               setPlaying(false);
             },
-            onError: () => useLocal(requestedAutoplay, requestedStartSeconds, true),
+            onError: () => useLocal(requestedAutoplay, requestedStartSeconds),
           },
         });
       } catch {
-        useLocal(autoplay, requestedStartSeconds, true);
+        useLocal(autoplay, requestedStartSeconds);
       }
     };
 
@@ -356,19 +361,7 @@
       state.engaged = true;
       root.hidden = false;
       updateTrackUI();
-      if (state.videoOpen) ensureYouTube(autoplay, state.currentTime);
-      else useLocal(autoplay, state.currentTime, false);
-    };
-
-    const toggleVideoDrawer = () => {
-      const now = getTime();
-      const wasPlaying = state.playing;
-      if (state.videoOpen) {
-        useLocal(wasPlaying, now, false);
-      } else {
-        state.engaged = true;
-        ensureYouTube(wasPlaying, now);
-      }
+      ensureYouTube(autoplay, state.currentTime);
     };
 
     const togglePlayback = async () => {
@@ -394,7 +387,7 @@
         if (player.getPlayerState() === 1) player.pauseVideo();
         else player.playVideo();
       } catch {
-        useLocal(true, state.currentTime, false);
+        useLocal(true, state.currentTime);
       }
     };
 
@@ -403,18 +396,23 @@
       select(state.index + direction, wasPlaying, 0);
     };
 
+    const setMinimized = value => {
+      state.minimized = Boolean(value);
+      syncChromeUI();
+      save();
+      emit();
+    };
+
     const closeShelf = () => {
       clearYouTubeWatchdog();
       state.currentTime = getTime();
       audio.pause();
       try { player?.pauseVideo(); } catch {}
       state.engaged = false;
-      state.videoOpen = false;
-      state.mode = 'local';
+      state.minimized = false;
       setPlaying(false);
       root.hidden = true;
-      syncDrawerUI();
-      syncBodyClass();
+      syncChromeUI();
       save();
       emit();
     };
@@ -422,8 +420,7 @@
     toggle.addEventListener('click', togglePlayback);
     previous.addEventListener('click', () => skip(-1));
     next.addEventListener('click', () => skip(1));
-    videoToggle?.addEventListener('click', toggleVideoDrawer);
-    drawerClose?.addEventListener('click', () => useLocal(state.playing, getTime(), false));
+    minimize?.addEventListener('click', () => setMinimized(!state.minimized));
     close.addEventListener('click', closeShelf);
 
     progress.addEventListener('input', () => {
@@ -451,9 +448,6 @@
     audio.addEventListener('pause', () => { if (!audio.ended) setPlaying(false); });
     audio.addEventListener('timeupdate', updateProgress);
     audio.addEventListener('loadedmetadata', updateProgress);
-    audio.addEventListener('error', () => {
-      if (state.engaged && state.mode === 'local') ensureYouTube(state.playing, state.currentTime);
-    });
     audio.addEventListener('ended', () => {
       state.currentTime = 0;
       setPlaying(false);
@@ -463,12 +457,12 @@
 
     updateTrackUI();
     setPlaying(false);
-    syncDrawerUI();
+    syncChromeUI();
 
     if (state.engaged) {
       showShelf();
-      if (state.videoOpen) ensureYouTube(false, state.currentTime);
-      else useLocal(false, state.currentTime, false);
+      if (state.mode === 'local') useLocal(false, state.currentTime);
+      else ensureYouTube(false, state.currentTime);
     } else {
       root.hidden = true;
       syncBodyClass();
@@ -490,7 +484,6 @@
     return {
       select,
       toggle: togglePlayback,
-      toggleVideo: toggleVideoDrawer,
       startFirst: () => select(0, true, 0),
       snapshot,
       sync: () => { syncBodyClass(); updateProgress(); emit(); },
@@ -522,8 +515,9 @@
       play.hidden = false;
       play.textContent = state.playing ? 'Pause' : 'Play';
       if (!state.engaged) status.textContent = 'Ready — press play.';
-      else if (state.playing) status.textContent = state.mode === 'youtube' ? 'Playing · YouTube video.' : 'Playing.';
-      else if (state.mode === 'local' && state.autoplayBlockedLocal) status.textContent = 'Ready — press Play.';
+      else if (state.playing) status.textContent = state.mode === 'local' ? 'Playing · local fallback.' : 'Playing · YouTube.';
+      else if (state.mode === 'local' && state.autoplayBlockedLocal) status.textContent = 'Local audio ready — press Play.';
+      else if (state.mode === 'local') status.textContent = 'Paused · local fallback.';
       else status.textContent = 'Paused.';
     });
   };
