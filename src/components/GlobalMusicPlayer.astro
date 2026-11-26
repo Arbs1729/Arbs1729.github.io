@@ -20,37 +20,37 @@ const first = tracks[0];
   hidden
   transition:persist="global-music"
 >
-  <div class="music-dock-video-drawer" data-video-drawer hidden>
-    <div class="music-dock-drawer-head">
-      <span class="music-dock-drawer-label"><span class="yt-mark" aria-hidden="true">▶</span> YouTube video</span>
-      <button type="button" data-video-close aria-label="Hide video and keep listening">Hide video</button>
-    </div>
-    <div class="music-dock-video-stage" data-video-frame>
-      <div id="global-youtube-player" data-youtube-mount></div>
-      <div class="video-fallback" data-video-fallback hidden>
-        <span class="yt-mark" aria-hidden="true">▶</span>
-        <strong>Playing local audio</strong>
-        <small>YouTube video embed is unavailable for this track.</small>
-      </div>
-    </div>
-  </div>
-
-  <div class="music-dock-bar">
+  <div class="music-dock-card">
     <div class="music-dock-mobile-progress" aria-hidden="true"><i></i></div>
 
-    <div class="music-dock-track">
-      <span class="music-dock-disc" aria-hidden="true"><i></i></span>
-      <div class="music-dock-copy">
-        <strong data-shelf-title>{first.title}</strong>
-        <small data-shelf-meta>{first.artist} · {first.album}</small>
+    <div class="music-dock-stage" data-video-frame>
+      <div id="global-youtube-player" data-youtube-mount></div>
+      <div class="video-fallback" data-video-fallback hidden>
+        <span class="music-dock-disc" aria-hidden="true"><i></i></span>
+        <strong>Local audio</strong>
+        <small>YouTube unavailable</small>
       </div>
     </div>
 
-    <div class="music-dock-center">
-      <div class="music-dock-controls" aria-label="Playback controls">
-        <button class="dock-btn dock-prev" type="button" data-shelf-prev aria-label="Previous track" title="Previous track">‹</button>
-        <button class="dock-btn dock-play" type="button" data-shelf-toggle aria-label={`Play ${first.title}`} title="Play or pause">▶</button>
-        <button class="dock-btn dock-next" type="button" data-shelf-next aria-label="Next track" title="Next track">›</button>
+    <div class="music-dock-panel">
+      <div class="music-dock-top">
+        <span class="music-dock-badge" data-shelf-source>
+          <span class="yt-mark" aria-hidden="true">▶</span>
+          <span data-shelf-source-label>YouTube</span>
+        </span>
+        <div class="music-dock-win">
+          <a class="dock-mini-btn" data-shelf-youtube href={`https://music.youtube.com/watch?v=${first.youtubeId}`} target="_blank" rel="noreferrer" aria-label="Open in YouTube Music" title="Open in YouTube Music">↗</a>
+          <button class="dock-mini-btn" type="button" data-shelf-minimize aria-label="Minimize music player" title="Minimize">−</button>
+          <button class="dock-mini-btn" type="button" data-shelf-close aria-label="Close music player" title="Close">×</button>
+        </div>
+      </div>
+
+      <div class="music-dock-track">
+        <span class="music-dock-disc dock-local-disc" aria-hidden="true"><i></i></span>
+        <div class="music-dock-copy">
+          <strong data-shelf-title>{first.title}</strong>
+          <small data-shelf-meta>{first.artist} · {first.album}</small>
+        </div>
       </div>
 
       <div class="music-dock-scrubber">
@@ -58,14 +58,12 @@ const first = tracks[0];
         <input data-shelf-progress type="range" min="0" max="1000" value="0" aria-label="Track progress" />
         <span class="dock-time" data-shelf-duration>0:00</span>
       </div>
-    </div>
 
-    <div class="music-dock-actions">
-      <button class="dock-btn dock-video-toggle" type="button" data-shelf-video aria-pressed="false" aria-label="Toggle YouTube video view" title="Watch on YouTube">Video</button>
-      <a class="dock-btn dock-yt-link" data-shelf-youtube href={`https://music.youtube.com/watch?v=${first.youtubeId}`} target="_blank" rel="noreferrer" aria-label="Open current track in YouTube Music" title="Open in YouTube Music">
-        <span class="yt-mark" aria-hidden="true">▶</span>
-      </a>
-      <button class="dock-btn dock-close" type="button" data-shelf-close aria-label="Close music player" title="Close">×</button>
+      <div class="music-dock-controls" aria-label="Playback controls">
+        <button class="dock-btn dock-prev" type="button" data-shelf-prev aria-label="Previous track" title="Previous track">‹</button>
+        <button class="dock-btn dock-play" type="button" data-shelf-toggle aria-label={`Play ${first.title}`} title="Play or pause">▶</button>
+        <button class="dock-btn dock-next" type="button" data-shelf-next aria-label="Next track" title="Next track">›</button>
+      </div>
     </div>
   </div>
 
