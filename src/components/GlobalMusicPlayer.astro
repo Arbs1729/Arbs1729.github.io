@@ -33,30 +33,28 @@ const first = tracks[0];
     </div>
 
     <div class="music-dock-panel">
-      <div class="music-dock-top">
-        <span class="music-dock-badge" data-shelf-source>
-          <span class="yt-mark" aria-hidden="true">▶</span>
-          <span data-shelf-source-label>YouTube</span>
-        </span>
-        <div class="music-dock-win">
-          <a class="dock-mini-btn" data-shelf-youtube href={`https://music.youtube.com/watch?v=${first.youtubeId}`} target="_blank" rel="noreferrer" aria-label="Open in YouTube Music" title="Open in YouTube Music">↗</a>
-          <button class="dock-mini-btn" type="button" data-shelf-minimize aria-label="Minimize music player" title="Minimize">−</button>
-          <button class="dock-mini-btn" type="button" data-shelf-close aria-label="Close music player" title="Close">×</button>
-        </div>
-      </div>
-
-      <div class="music-dock-track">
-        <span class="music-dock-disc dock-local-disc" aria-hidden="true"><i></i></span>
-        <div class="music-dock-copy">
-          <strong data-shelf-title>{first.title}</strong>
-          <small data-shelf-meta>{first.artist} · {first.album}</small>
-        </div>
-      </div>
-
       <div class="music-dock-scrubber">
-        <span class="dock-time" data-shelf-current>0:00</span>
         <input data-shelf-progress type="range" min="0" max="1000" value="0" aria-label="Track progress" />
-        <span class="dock-time" data-shelf-duration>0:00</span>
+        <div class="music-dock-times">
+          <span class="dock-time" data-shelf-current>0:00</span>
+          <span class="dock-time" data-shelf-duration>0:00</span>
+        </div>
+      </div>
+
+      <div class="music-dock-meta-row">
+        <div class="music-dock-track">
+          <span class="music-dock-disc dock-local-disc" aria-hidden="true"><i></i></span>
+          <div class="music-dock-copy">
+            <strong data-shelf-title>{first.title}</strong>
+            <small data-shelf-meta>{first.artist} · {first.album}</small>
+          </div>
+        </div>
+        <div class="music-dock-win">
+          <a class="dock-mini-btn" data-shelf-youtube href={`https://music.youtube.com/watch?v=${first.youtubeId}`} target="_blank" rel="noreferrer" aria-label="Open in YouTube Music" title="Open in YouTube Music">
+            <span class="yt-mark" aria-hidden="true">▶</span>
+          </a>
+          <button class="dock-mini-btn dock-close-btn" type="button" data-shelf-close aria-label="Close music player" title="Close">×</button>
+        </div>
       </div>
 
       <div class="music-dock-controls" aria-label="Playback controls">

@@ -19,7 +19,6 @@
     const mount = $('[data-youtube-mount]', root);
     const fallback = $('[data-video-fallback]', root);
     const audio = $('[data-global-audio]', root);
-    const sourceLabel = $('[data-shelf-source-label]', root);
     const title = $('[data-shelf-title]', root);
     const meta = $('[data-shelf-meta]', root);
     const current = $('[data-shelf-current]', root);
@@ -28,7 +27,6 @@
     const toggle = $('[data-shelf-toggle]', root);
     const previous = $('[data-shelf-prev]', root);
     const next = $('[data-shelf-next]', root);
-    const minimize = $('[data-shelf-minimize]', root);
     const close = $('[data-shelf-close]', root);
     const youtubeLink = $('[data-shelf-youtube]', root);
 
@@ -42,7 +40,6 @@
       index: validIndex,
       currentTime: Math.max(0, Number(restored?.time) || 0),
       engaged: Boolean(restored?.engaged),
-      minimized: Boolean(restored?.minimized),
       mode: restored?.mode === 'local' ? 'local' : 'youtube',
       playing: false,
     };
@@ -100,7 +97,6 @@
       index: state.index,
       currentTime: getTime(),
       engaged: state.engaged,
-      minimized: state.minimized,
       mode: state.mode,
       playing: state.playing,
       autoplayBlockedLocal,
@@ -111,7 +107,6 @@
       const open = state.engaged && !root.hidden;
       document.body.classList.toggle('music-bar-open', open);
       document.body.classList.toggle('music-bar-local', open && state.mode === 'local');
-      document.body.classList.toggle('music-bar-minimized', open && state.minimized);
     };
 
     const save = () => {
@@ -121,7 +116,6 @@
           index: state.index,
           time: state.currentTime,
           engaged: state.engaged,
-          minimized: state.minimized,
           mode: state.mode,
         }));
       } catch {}
@@ -141,15 +135,6 @@
     };
 
     const syncChromeUI = () => {
-      root.classList.toggle('is-minimized', state.minimized);
-      if (minimize) {
-        minimize.textContent = state.minimized ? '□' : '−';
-        minimize.setAttribute('aria-label', state.minimized ? 'Expand music player' : 'Minimize music player');
-        minimize.title = state.minimized ? 'Expand' : 'Minimize';
-      }
-      if (sourceLabel) {
-        sourceLabel.textContent = state.mode === 'local' ? 'Local audio' : 'YouTube';
-      }
       syncBodyClass();
     };
 
@@ -396,20 +381,12 @@
       select(state.index + direction, wasPlaying, 0);
     };
 
-    const setMinimized = value => {
-      state.minimized = Boolean(value);
-      syncChromeUI();
-      save();
-      emit();
-    };
-
     const closeShelf = () => {
       clearYouTubeWatchdog();
       state.currentTime = getTime();
       audio.pause();
       try { player?.pauseVideo(); } catch {}
       state.engaged = false;
-      state.minimized = false;
       setPlaying(false);
       root.hidden = true;
       syncChromeUI();
@@ -420,7 +397,6 @@
     toggle.addEventListener('click', togglePlayback);
     previous.addEventListener('click', () => skip(-1));
     next.addEventListener('click', () => skip(1));
-    minimize?.addEventListener('click', () => setMinimized(!state.minimized));
     close.addEventListener('click', closeShelf);
 
     progress.addEventListener('input', () => {
