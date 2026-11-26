@@ -193,7 +193,16 @@
     drawTraffic(time, dark);
   };
 
+  const introBlocking = () => {
+    const cl = document.documentElement.classList;
+    return cl.contains('arrival-active') && !cl.contains('arrival-revealing');
+  };
+
   const loop = time => {
+    if (introBlocking()) {
+      frame = 0;
+      return;
+    }
     frame = requestAnimationFrame(loop);
     if (document.hidden || time - last < 42) return;
     last = time;
@@ -202,6 +211,8 @@
 
   const restart = () => {
     cancelAnimationFrame(frame);
+    frame = 0;
+    if (introBlocking()) return;
     draw(performance.now());
     if (!motionOff()) frame = requestAnimationFrame(loop);
   };
@@ -214,6 +225,9 @@
   }, { passive: true });
   document.addEventListener('aryan:motionchange', restart);
   document.addEventListener('aryan:themechange', restart);
+  document.addEventListener('aryan:arrivalreveal', restart);
+  document.addEventListener('aryan:arrivalcomplete', restart);
+  document.addEventListener('aryan:introreplay', () => { cancelAnimationFrame(frame); frame = 0; });
   reduced.addEventListener('change', restart);
   systemDark.addEventListener('change', restart);
 

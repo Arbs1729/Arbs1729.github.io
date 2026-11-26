@@ -33,6 +33,7 @@ for (const entry of groups.flatMap(g => g.entries)) {
 for (const path of [
   'public/arrival.js', 'public/atmosphere.js', 'public/deck.js',
   'public/media/intro-landscape.mp4', 'public/media/intro-portrait.mp4',
+  'public/media/intro-landscape-poster.webp', 'public/media/intro-portrait-poster.webp',
   'public/media/audio/town-ocean-view.m4a', 'public/media/audio/iktara.m4a',
   'public/media/audio/cruel-angels-thesis.m4a', 'public/media/audio/time.m4a',
   'public/media/audio/one-summers-day.m4a', 'public/media/audio/cha-la-head-cha-la.mp3',

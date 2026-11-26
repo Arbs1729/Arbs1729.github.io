@@ -51,7 +51,26 @@
     let pending = null;
     let youtubeReady = null;
     let requestedAutoplay = false;
+    let requestedStartSeconds = 0;
+    let youtubeWatchdog = 0;
+    let autoplayBlockedLocal = false;
     let saveTimer = 0;
+
+    const clearYouTubeWatchdog = () => {
+      clearTimeout(youtubeWatchdog);
+      youtubeWatchdog = 0;
+    };
+
+    const armYouTubeWatchdog = (autoplay, startSeconds) => {
+      clearYouTubeWatchdog();
+      youtubeWatchdog = setTimeout(() => {
+        if (state.mode !== 'youtube') return;
+        const ytState = playerReady ? (() => { try { return player.getPlayerState(); } catch { return -1; } })() : -1;
+        if (!playerReady || (autoplay && ytState !== 1 && ytState !== 3)) {
+          useLocal(autoplay, startSeconds);
+        }
+      }, 4500);
+    };
 
     const formatTime = seconds => {
       const safe = Number.isFinite(seconds) ? Math.max(0, Math.floor(seconds)) : 0;
@@ -83,6 +102,7 @@
       minimized: state.minimized,
       mode: state.mode,
       playing: state.playing,
+      autoplayBlockedLocal,
       track: catalog[state.index],
     });
 
@@ -105,6 +125,7 @@
 
     const setPlaying = value => {
       state.playing = Boolean(value);
+      if (state.playing) autoplayBlockedLocal = false;
       root.classList.toggle('is-playing', state.playing);
       toggle.textContent = state.playing ? 'Ⅱ' : '▶';
       toggle.setAttribute('aria-label', `${state.playing ? 'Pause' : 'Play'} ${catalog[state.index].title}`);
@@ -138,20 +159,32 @@
 
     const loadYouTube = () => youtubeReady ||= new Promise((resolve, reject) => {
       if (window.YT?.Player) { resolve(window.YT); return; }
+      const timer = setTimeout(() => {
+        youtubeReady = null;
+        reject(new Error('YouTube player timed out'));
+      }, 4500);
       const previousReady = window.onYouTubeIframeAPIReady;
       window.onYouTubeIframeAPIReady = () => {
+        clearTimeout(timer);
         try { previousReady?.(); } catch {}
         if (window.YT?.Player) resolve(window.YT);
-        else reject(new Error('YouTube player unavailable'));
+        else {
+          youtubeReady = null;
+          reject(new Error('YouTube player unavailable'));
+        }
       };
       if (!document.querySelector('script[data-youtube-iframe-api]')) {
         const script = document.createElement('script');
         script.src = 'https://www.youtube.com/iframe_api';
         script.dataset.youtubeIframeApi = 'true';
-        script.onerror = () => reject(new Error('YouTube API failed to load'));
+        script.onerror = () => {
+          clearTimeout(timer);
+          script.remove();
+          youtubeReady = null;
+          reject(new Error('YouTube API failed to load'));
+        };
         document.head.append(script);
       }
-      setTimeout(() => reject(new Error('YouTube player timed out')), 9000);
     });
 
     const seekLocalWhenReady = seconds => {
@@ -166,13 +199,18 @@
     };
 
     const useLocal = async (autoplay = false, startSeconds = state.currentTime) => {
+      clearYouTubeWatchdog();
       state.mode = 'local';
+      autoplayBlockedLocal = false;
       try { player?.pauseVideo(); } catch {}
       root.classList.add('is-local');
       fallback.hidden = false;
       const track = catalog[state.index];
       const nextSrc = new URL(track.audio, location.origin).href;
-      if (audio.src !== nextSrc) audio.src = track.audio;
+      if (audio.src !== nextSrc) {
+        audio.src = track.audio;
+        audio.load();
+      }
       seekLocalWhenReady(startSeconds);
       state.currentTime = startSeconds;
       showShelf();
@@ -181,7 +219,10 @@
       emit();
       if (autoplay) {
         try { await audio.play(); }
-        catch { setPlaying(false); }
+        catch {
+          autoplayBlockedLocal = true;
+          setPlaying(false);
+        }
       } else {
         audio.pause();
         setPlaying(false);
@@ -193,25 +234,33 @@
       const action = pending;
       pending = null;
       const track = catalog[action.index];
+      requestedStartSeconds = Math.max(0, action.startSeconds || 0);
       try {
         const command = {
           videoId: track.youtubeId,
-          startSeconds: Math.max(0, action.startSeconds || 0),
+          startSeconds: requestedStartSeconds,
         };
-        if (action.autoplay) player.loadVideoById(command);
-        else player.cueVideoById(command);
+        if (action.autoplay) {
+          armYouTubeWatchdog(true, requestedStartSeconds);
+          player.loadVideoById(command);
+        } else {
+          clearYouTubeWatchdog();
+          player.cueVideoById(command);
+        }
       } catch {
-        useLocal(action.autoplay, action.startSeconds || 0);
+        useLocal(action.autoplay, requestedStartSeconds);
       }
     };
 
     const ensureYouTube = async (autoplay = false, startSeconds = state.currentTime) => {
       state.mode = 'youtube';
       requestedAutoplay = Boolean(autoplay);
+      requestedStartSeconds = Math.max(0, startSeconds || 0);
+      autoplayBlockedLocal = false;
       root.classList.remove('is-local');
       fallback.hidden = true;
       showShelf();
-      pending = { index: state.index, autoplay, startSeconds };
+      pending = { index: state.index, autoplay, startSeconds: requestedStartSeconds };
       updateTrackUI();
       save();
       emit();
@@ -221,9 +270,15 @@
         return;
       }
 
+      armYouTubeWatchdog(autoplay, requestedStartSeconds);
+
       try {
         const YT = await loadYouTube();
-        if (player) return;
+        if (state.mode !== 'youtube') return;
+        if (player) {
+          if (playerReady) runPending();
+          return;
+        }
         player = new YT.Player(mount, {
           width: '100%',
           height: '100%',
@@ -239,13 +294,17 @@
           events: {
             onReady: event => {
               playerReady = true;
+              clearYouTubeWatchdog();
               try { event.target.getIframe().title = 'Persistent YouTube music player'; } catch {}
-              runPending();
+              if (state.mode === 'youtube') runPending();
               updateProgress();
             },
             onStateChange: event => {
               if (state.mode !== 'youtube') return;
-              if (event.data === 1) setPlaying(true);
+              if (event.data === 1) {
+                clearYouTubeWatchdog();
+                setPlaying(true);
+              }
               if (event.data === 2) setPlaying(false);
               if (event.data === 0) {
                 setPlaying(false);
@@ -254,12 +313,15 @@
                 save();
               }
             },
-            onAutoplayBlocked: () => setPlaying(false),
-            onError: () => useLocal(requestedAutoplay, getTime()),
+            onAutoplayBlocked: () => {
+              clearYouTubeWatchdog();
+              setPlaying(false);
+            },
+            onError: () => useLocal(requestedAutoplay, requestedStartSeconds),
           },
         });
       } catch {
-        useLocal(autoplay, startSeconds);
+        useLocal(autoplay, requestedStartSeconds);
       }
     };
 
@@ -416,7 +478,8 @@
       play.hidden = false;
       play.textContent = state.playing ? 'Pause' : 'Play';
       if (!state.engaged) status.textContent = 'Ready — press play.';
-      else if (state.playing) status.textContent = '';
+      else if (state.playing) status.textContent = state.mode === 'local' ? 'Playing · local preview.' : '';
+      else if (state.mode === 'local' && state.autoplayBlockedLocal) status.textContent = 'Local preview ready — press Play.';
       else if (state.mode === 'local') status.textContent = 'Paused · local preview.';
       else status.textContent = 'Paused.';
     });
