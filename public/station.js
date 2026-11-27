@@ -185,6 +185,7 @@
       const snap = window.AryanMusic?.snapshot?.();
       const playing = Boolean(snap?.playing);
       if (vuBox) vuBox.classList.toggle('is-playing', playing);
+      document.body.classList.toggle('music-is-playing', playing);
       if (musicBtn) musicBtn.setAttribute('aria-pressed', String(playing));
       if (trackLabel) {
         trackLabel.textContent = playing ? 'Playing' : 'Play';
@@ -194,6 +195,7 @@
     function updateScroll() {
       const maxScroll = Math.max(1, document.documentElement.scrollHeight - window.innerHeight);
       const pct = Math.min(100, Math.max(0, Math.round((window.scrollY / maxScroll) * 100)));
+      document.documentElement.style.setProperty('--scroll-pct', String(pct));
       if (depthPct) depthPct.textContent = `${String(pct).padStart(2, '0')}%`;
       if (depthFill) depthFill.style.width = `${pct}%`;
 

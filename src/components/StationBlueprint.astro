@@ -1,0 +1,115 @@
+---
+const { variant = 'station' } = Astro.props;
+---
+{variant === 'station' && (
+  <figure class="blueprint-plate" aria-hidden="true">
+    <div class="bp-frame-bar mono">
+      <span>FIG 01 · ORBITAL DECK</span>
+      <span>SCALE 1:500</span>
+    </div>
+    <svg class="bp-svg" viewBox="0 0 320 220" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <!-- Drafting registration grid inside blueprint frame -->
+      <g class="bp-grid" stroke="currentColor" stroke-width="0.45">
+        <line x1="0" y1="55" x2="320" y2="55" stroke-dasharray="2 4" />
+        <line x1="0" y1="110" x2="320" y2="110" />
+        <line x1="0" y1="165" x2="320" y2="165" stroke-dasharray="2 4" />
+        <line x1="80" y1="0" x2="80" y2="220" stroke-dasharray="2 4" />
+        <line x1="160" y1="0" x2="160" y2="220" />
+        <line x1="240" y1="0" x2="240" y2="220" stroke-dasharray="2 4" />
+      </g>
+
+      <!-- Orbital transfer trajectory arc (blueprint cobalt in light, amber-cyan in dark) -->
+      <g class="bp-vector">
+        <ellipse cx="158" cy="112" rx="134" ry="52" transform="rotate(-14 158 112)" stroke-width="1" stroke-dasharray="4 3" />
+        <path d="M 38 156 Q 155 186 286 68" stroke-width="0.9" stroke-dasharray="2 3" opacity="0.7" />
+        <!-- Transfer periapsis / apoapsis nodes -->
+        <circle cx="48" cy="147" r="3" class="bp-node" />
+        <circle cx="272" cy="76" r="3" class="bp-node" />
+      </g>
+
+      <!-- Rotating outer compass / docking calibration ring -->
+      <g class="bp-ring-spin">
+        <circle cx="158" cy="110" r="78" class="bp-thin" stroke-dasharray="1.5 5.5" />
+        <circle cx="158" cy="110" r="64" class="bp-primary" stroke-width="1.2" />
+        <circle cx="158" cy="110" r="56" class="bp-thin" />
+        <!-- Cardinal spokes & outer habitability ring modules -->
+        <line x1="158" y1="30" x2="158" y2="46" class="bp-primary" stroke-width="1.2" />
+        <line x1="158" y1="174" x2="158" y2="190" class="bp-primary" stroke-width="1.2" />
+        <line x1="78" y1="110" x2="94" y2="110" class="bp-primary" stroke-width="1.2" />
+        <line x1="222" y1="110" x2="238" y2="110" class="bp-primary" stroke-width="1.2" />
+
+        <!-- Ring docking bays (4 symmetric habitat pods) -->
+        <rect x="150" y="42" width="16" height="8" rx="1.5" class="bp-fill-module" />
+        <rect x="150" y="170" width="16" height="8" rx="1.5" class="bp-fill-module" />
+        <rect x="90" y="102" width="8" height="16" rx="1.5" class="bp-fill-module" />
+        <rect x="218" y="102" width="8" height="16" rx="1.5" class="bp-fill-module" />
+      </g>
+
+      <!-- Central Orbital Station Core & Solar Truss Wings -->
+      <g class="bp-core">
+        <!-- Left & Right truss booms -->
+        <line x1="56" y1="110" x2="260" y2="110" class="bp-primary" stroke-width="1.4" />
+        <!-- Left solar array wing (cross-hatched blueprint panel) -->
+        <g transform="translate(22, 88)">
+          <rect x="0" y="0" width="44" height="44" rx="1" class="bp-panel" />
+          <line x1="0" y1="11" x2="44" y2="11" class="bp-thin" />
+          <line x1="0" y1="22" x2="44" y2="22" class="bp-primary" stroke-width="0.9" />
+          <line x1="0" y1="33" x2="44" y2="33" class="bp-thin" />
+          <line x1="14.6" y1="0" x2="14.6" y2="44" class="bp-thin" />
+          <line x1="29.3" y1="0" x2="29.3" y2="44" class="bp-thin" />
+        </g>
+        <!-- Right solar array wing -->
+        <g transform="translate(250, 88)">
+          <rect x="0" y="0" width="44" height="44" rx="1" class="bp-panel" />
+          <line x1="0" y1="11" x2="44" y2="11" class="bp-thin" />
+          <line x1="0" y1="22" x2="44" y2="22" class="bp-primary" stroke-width="0.9" />
+          <line x1="0" y1="33" x2="44" y2="33" class="bp-thin" />
+          <line x1="14.6" y1="0" x2="14.6" y2="44" class="bp-thin" />
+          <line x1="29.3" y1="0" x2="29.3" y2="44" class="bp-thin" />
+        </g>
+
+        <!-- Central spire & observation cupola -->
+        <polygon points="158,64 166,86 150,86" class="bp-fill-module" />
+        <rect x="148" y="86" width="20" height="48" rx="3" class="bp-fill-module" />
+        <circle cx="158" cy="110" r="14" class="bp-hub" />
+        <circle cx="158" cy="110" r="6" class="bp-accent-ring" />
+        <circle cx="158" cy="110" r="2.2" class="bp-accent-dot" />
+        <!-- Lower radiator fins -->
+        <path d="M 150 134 L 143 152 L 154 148 Z" class="bp-panel" />
+        <path d="M 166 134 L 173 152 L 162 148 Z" class="bp-panel" />
+        <!-- Top antenna mast -->
+        <line x1="158" y1="48" x2="158" y2="64" class="bp-primary" stroke-width="1.2" />
+        <path d="M 151 54 Q 158 58 165 54" class="bp-accent-ring" stroke-width="1.1" />
+      </g>
+
+      <!-- Retro Crew Shuttle approaching upper-right docking vector -->
+      <g class="bp-shuttle" transform="translate(248, 34) rotate(-28)">
+        <path d="M 0 8 L 16 2 L 26 8 L 16 14 Z" class="bp-fill-module" />
+        <path d="M 8 4 L 3 -2 L 14 3" class="bp-primary" stroke-width="1" />
+        <path d="M 8 12 L 3 18 L 14 13" class="bp-primary" stroke-width="1" />
+        <circle cx="17" cy="8" r="2" class="bp-accent-dot" />
+        <line x1="-10" y1="8" x2="-2" y2="8" class="bp-accent-ring" stroke-dasharray="2 2" />
+      </g>
+
+      <!-- Engineering drafting dimension callouts (pure numeric/geometric marks) -->
+      <g class="bp-dims">
+        <!-- Horizontal span caliper at bottom -->
+        <line x1="94" y1="198" x2="222" y2="198" stroke-width="0.8" />
+        <line x1="94" y1="194" x2="94" y2="202" stroke-width="0.8" />
+        <line x1="222" y1="194" x2="222" y2="202" stroke-width="0.8" />
+        <text x="158" y="211" text-anchor="middle" class="bp-label">Ø 128.0 M</text>
+
+        <!-- Azimuth degree ticks & sheet metadata (clear of solar panels and corner screws) -->
+        <text x="158" y="18" text-anchor="middle" class="bp-label">000°</text>
+        <text x="272" y="146" text-anchor="middle" class="bp-label">090°</text>
+        <text x="44" y="81" text-anchor="middle" class="bp-label">270°</text>
+        <text x="294" y="211" text-anchor="end" class="bp-label">INC 28.5°</text>
+        <text x="26" y="211" text-anchor="start" class="bp-label">REV · 04</text>
+      </g>
+    </svg>
+    <span class="bp-screw bp-screw-tl"></span>
+    <span class="bp-screw bp-screw-tr"></span>
+    <span class="bp-screw bp-screw-bl"></span>
+    <span class="bp-screw bp-screw-br"></span>
+  </figure>
+)}

@@ -20,7 +20,7 @@ for (const file of sourceFiles.filter(f => f.endsWith('.astro'))) {
   const errors = result.diagnostics.filter(d => d.severity === 1);
   assert.equal(errors.length, 0, `${file}: ${JSON.stringify(errors)}`);
 }
-for (const css of ['global','deck','arrival','revamp','station']) postcss.parse(await readFile(`src/styles/${css}.css`, 'utf8'));
+for (const css of ['global','deck','arrival','revamp','station','horizon']) postcss.parse(await readFile(`src/styles/${css}.css`, 'utf8'));
 const js = stripTypeScriptTypes(await readFile('src/data/portfolio.ts', 'utf8'));
 const { groups, stories } = await import(`data:text/javascript;base64,${Buffer.from(js).toString('base64')}`);
 assert.equal(groups.flatMap(g => g.entries).length, 22);

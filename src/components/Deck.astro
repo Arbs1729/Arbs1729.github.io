@@ -3,6 +3,7 @@ import '../styles/global.css';
 import '../styles/deck.css';
 import '../styles/revamp.css';
 import '../styles/station.css';
+import '../styles/horizon.css';
 import {person} from '../data/portfolio';
 import ChatWidget from './ChatWidget.astro';
 import Atmosphere from './Atmosphere.astro';
@@ -105,6 +106,11 @@ const canonical = new URL(path, Astro.site || 'https://aryanbasantani.me');
         <a class="footer-top-link" href="#main">Back to top ↑</a>
       </div>
     </footer>
+  </div>
+  <div class="brass-vernier" aria-hidden="true" transition:persist="brass-vernier">
+    <span class="vernier-screw"></span>
+    <div class="vernier-scale"><span class="vernier-cursor"></span></div>
+    <span class="vernier-screw"></span>
   </div>
   <StationConsole/>
   <GlobalMusicPlayer/>

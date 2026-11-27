@@ -8,6 +8,18 @@ const first = musicPicks[0];
     <p class="mono">NOW PLAYING</p>
     <h3 id={compact ? 'home-music-title' : 'interests-music-title'} data-track-title>{first.title}</h3>
     <p data-track-meta>{first.artist} · {first.album}</p>
+    <div class="cassette-deck" aria-hidden="true">
+      <div class="cassette-label-band">
+        <span>SIDE A · SOUNDTRACK</span>
+        <span>C-60</span>
+      </div>
+      <div class="cassette-window">
+        <span class="cassette-reel"></span>
+        <div class="cassette-bridge">HI-BIAS · 70μs</div>
+        <span class="cassette-reel"></span>
+      </div>
+      <div class="cassette-foot"><i></i><i></i><i></i></div>
+    </div>
     <p class="player-state" data-player-state role="status">Preparing playback…</p>
 
     <div class="player-actions">
