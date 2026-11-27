@@ -40,6 +40,16 @@
     document.dispatchEvent(new CustomEvent('aryan:themechange', { detail: { preference } }));
   }
 
+  window.AryanTheme = {
+    get: () => preference,
+    set: next => {
+      if (!modes.includes(next)) return;
+      preference = next;
+      try { localStorage.setItem('aryan-theme', preference); } catch {}
+      apply();
+    },
+  };
+
   apply();
 
   document.addEventListener('astro:before-swap', event => {

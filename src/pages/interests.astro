@@ -1,6 +1,7 @@
 ---
 import Base from '../layouts/Base.astro';
 import MusicPlayer from '../components/MusicPlayer.astro';
+import F1Card from '../components/F1Card.astro';
 import { screenPicks } from '../data/culture';
 ---
 <Base title="Interests" description="Music, anime, Formula 1, technology, markets and other interests that shape how Aryan Basantani sees the world.">
@@ -92,6 +93,7 @@ import { screenPicks } from '../data/culture';
     <article id="formula-one" class="interest-chapter">
       <div class="chapter-intro"><p class="mono">03</p><h2>Formula 1</h2></div>
       <p>Max Verstappen and Red Bull pulled me in. I stay for the engineering: how regulation, upgrade opportunities, packaging and driver decisions change what happens on track.</p>
+      <F1Card />
     </article>
     <article id="technology" class="interest-chapter">
       <div class="chapter-intro"><p class="mono">04</p><h2>Technology</h2></div>

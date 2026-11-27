@@ -2,12 +2,14 @@
 import '../styles/global.css';
 import '../styles/deck.css';
 import '../styles/revamp.css';
+import '../styles/station.css';
 import {person} from '../data/portfolio';
 import ChatWidget from './ChatWidget.astro';
 import Atmosphere from './Atmosphere.astro';
 import BrandMark from './BrandMark.astro';
 import GlobalMusicPlayer from './GlobalMusicPlayer.astro';
 import BookingSheet from './BookingSheet.astro';
+import StationConsole from './StationConsole.astro';
 import { ClientRouter } from 'astro:transitions';
 const {title='Product, technology & finance',description=person.description,immersive=false,noindex=false}=Astro.props;
 const path = Astro.url.pathname;
@@ -32,7 +34,7 @@ const canonical = new URL(path, Astro.site || 'https://aryanbasantani.me');
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,SOFT,wght@0,9..144,50,400..600;1,9..144,50,400..500&family=JetBrains+Mono:wght@400;500;600&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap"/>
   <ClientRouter />
-  <script is:inline>try{const saved=localStorage.getItem('aryan-theme');const theme=saved==='system'||saved==='light'||saved==='dark'?saved:'dark';if(theme==='system')delete document.documentElement.dataset.theme;else document.documentElement.dataset.theme=theme;}catch{document.documentElement.dataset.theme='dark';}</script>
+  <script is:inline>try{const saved=localStorage.getItem('aryan-theme');const theme=saved==='system'||saved==='light'||saved==='dark'?saved:'dark';if(theme==='system')delete document.documentElement.dataset.theme;else document.documentElement.dataset.theme=theme;const sp=JSON.parse(localStorage.getItem('aryan-station-prefs-v1')||'null');document.documentElement.dataset.hud=sp&&sp.hud===false?'off':'on';document.documentElement.dataset.stars=sp&&sp.stars===false?'off':'on';}catch{document.documentElement.dataset.theme='dark';document.documentElement.dataset.hud='on';document.documentElement.dataset.stars='on';}</script>
 </head>
 <body class:list={{"immersive-home":immersive}}>
   <a class="skip" href="#main">Skip to content</a>
@@ -45,6 +47,10 @@ const canonical = new URL(path, Astro.site || 'https://aryanbasantani.me');
         <button id="intro-replay" type="button" hidden aria-label="Play intro animation">
           <svg class="btn-glyph intro-replay-glyph" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><path d="M4.2 3.1a.6.6 0 0 1 .9-.52l8.1 4.9a.6.6 0 0 1 0 1.04l-8.1 4.9A.6.6 0 0 1 4.2 12.9V3.1Z"/></svg>
           <span id="intro-replay-label">Play intro</span>
+        </button>
+        <button id="console-toggle" type="button" hidden aria-expanded="false" aria-controls="station-console" aria-label="Open page controls" title="Page controls">
+          <svg class="btn-glyph" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" aria-hidden="true"><path d="M2.5 4.5h11M2.5 8h11M2.5 11.5h11"/><circle cx="6" cy="4.5" r="1.5" fill="currentColor" stroke="none"/><circle cx="10.5" cy="8" r="1.5" fill="currentColor" stroke="none"/><circle cx="7" cy="11.5" r="1.5" fill="currentColor" stroke="none"/></svg>
+          <span class="console-toggle-label">Controls</span>
         </button>
         <button id="theme-toggle" type="button" hidden transition:persist="theme-control">
           <svg class="btn-glyph" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><circle cx="8" cy="8" r="5.5"/><path d="M8 2.5a5.5 5.5 0 0 1 0 11Z" fill="currentColor" stroke="none"/></svg>
@@ -100,13 +106,16 @@ const canonical = new URL(path, Astro.site || 'https://aryanbasantani.me');
       </div>
     </footer>
   </div>
+  <StationConsole/>
   <GlobalMusicPlayer/>
   <ChatWidget/>
   <BookingSheet/>
   <script is:inline src="/theme.js" defer></script>
   <script is:inline src="/atmosphere.js" defer></script>
   <script is:inline src="/deck.js" defer></script>
+  <script is:inline src="/station.js" defer></script>
   <script is:inline src="/anilist.js" defer></script>
+  <script is:inline src="/f1.js" defer></script>
   <script is:inline src="/booking.js" defer></script>
   {immersive && <script is:inline src="/arrival.js" defer data-astro-rerun></script>}
 </body>
