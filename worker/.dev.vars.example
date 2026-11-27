@@ -1,2 +1,10 @@
-# Copy to .dev.vars for local Worker testing. Never commit the real value.
+# Copy to .dev.vars for local Worker testing. Never commit real values.
 GEMINI_API_KEY=
+
+# Optional native Calendly API mode (otherwise /booking/availability returns embed mode)
+# CALENDLY_API_TOKEN=
+# CALENDLY_EVENT_TYPE_URI=https://api.calendly.com/event_types/...
+
+# Optional native Cal.com v2 API mode
+# CALCOM_API_KEY=
+# CALCOM_EVENT_TYPE_ID=

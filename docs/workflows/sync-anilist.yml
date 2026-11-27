@@ -1,0 +1,40 @@
+# Copy this file to `.github/workflows/sync-anilist.yml` on GitHub (or locally)
+# to enable automatic 6-hour AniList snapshot updates with GitHub Pro Actions.
+# Commits and redeploys GitHub Pages ONLY when your AniList data actually changes.
+
+name: Sync AniList snapshot
+
+on:
+  schedule:
+    - cron: '0 */6 * * *' # Every 6 hours (00:00, 06:00, 12:00, 18:00 UTC)
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Fetch latest AniList data (@arbs42)
+        run: node scripts/sync-anilist.mjs
+
+      - name: Commit snapshot only if data changed
+        run: |
+          if git diff --quiet src/data/anilist-snapshot.json; then
+            echo "No AniList changes detected."
+            exit 0
+          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add src/data/anilist-snapshot.json
+          git commit -m "chore(anilist): refresh @arbs42 snapshot"
+          git push

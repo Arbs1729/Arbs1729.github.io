@@ -21,9 +21,71 @@ import { screenPicks } from '../data/culture';
 
   <section id="screen" class="interest-chapter" aria-labelledby="screen-title">
     <div class="chapter-intro"><p class="mono">02</p><h2 id="screen-title">Anime, films and series</h2><p>Dragon Ball Z is still the favourite. The wider list leans psychological, speculative and quietly adventurous.</p></div>
-    <div class="screen-filters" hidden><button type="button" data-screen-filter="all" aria-pressed="true">All</button><button type="button" data-screen-filter="Film" aria-pressed="false">Films</button><button type="button" data-screen-filter="Series" aria-pressed="false">Series</button></div>
-    <div class="screen-strip">{screenPicks.map(item => <a href={item.url} class="screen-card" data-format={item.format} target="_blank" rel="noreferrer"><div class="screen-cover"><img src={item.cover} alt="" width="150" height="220" loading="lazy" referrerpolicy="no-referrer"/><span>{item.score}<small>/10</small></span></div><small>{item.format}</small><h3>{item.title}</h3></a>)}</div>
-    <p class="tiny">Personal AniList ratings from September 2026.</p>
+    <div class="anilist-shelf" data-anilist-root data-anilist-user="arbs42">
+      <div class="anilist-meta-bar">
+        <div class="anilist-meta-lead">
+          <span class="anilist-status-wrap">
+            <i class="anilist-dot" data-anilist-dot aria-hidden="true"></i>
+            <span data-anilist-status>Personal AniList ratings · @arbs42</span>
+          </span>
+          <span class="anilist-stats mono" data-anilist-stats hidden></span>
+        </div>
+        <div class="anilist-meta-actions">
+          <a class="anilist-profile-link mono" href="https://anilist.co/user/arbs42/" target="_blank" rel="noopener noreferrer" data-anilist-profile>
+            <span>anilist.co/user/arbs42</span><span aria-hidden="true">↗</span>
+          </a>
+          <button type="button" class="anilist-refresh" data-anilist-refresh hidden>Refresh</button>
+        </div>
+      </div>
+
+      <div class="anilist-group" data-anilist-watching hidden>
+        <div class="anilist-subhead">
+          <div>
+            <p class="mono">CURRENTLY WATCHING</p>
+            <h3>On screen right now</h3>
+          </div>
+          <span class="anilist-count mono" data-anilist-watching-count></span>
+        </div>
+        <div class="screen-strip anilist-watching-strip" data-anilist-watching-strip></div>
+      </div>
+
+      <div class="anilist-group" data-anilist-favorites hidden>
+        <div class="anilist-subhead">
+          <div>
+            <p class="mono">ALL-TIME FAVORITES</p>
+            <h3>The ones that stayed</h3>
+          </div>
+          <span class="anilist-count mono" data-anilist-favorites-count></span>
+        </div>
+        <div class="screen-strip anilist-favorites-strip" data-anilist-favorites-strip></div>
+      </div>
+
+      <div class="anilist-group" data-anilist-top>
+        <div class="anilist-subhead anilist-subhead-filterable">
+          <div>
+            <p class="mono">TOP RATED</p>
+            <h3>Highest personal scores <span class="anilist-count mono" data-anilist-top-count>{screenPicks.length}</span></h3>
+          </div>
+          <div class="screen-filters" hidden>
+            <button type="button" data-screen-filter="all" aria-pressed="true">All</button>
+            <button type="button" data-screen-filter="Film" aria-pressed="false">Films</button>
+            <button type="button" data-screen-filter="Series" aria-pressed="false">Series</button>
+          </div>
+        </div>
+        <div class="screen-strip" data-anilist-top-strip>
+          {screenPicks.map(item => (
+            <a href={item.url} class="screen-card" data-format={item.format} target="_blank" rel="noopener noreferrer">
+              <div class="screen-cover">
+                <img src={item.cover} alt="" width="150" height="220" loading="lazy" referrerpolicy="no-referrer"/>
+                <span>{item.score}<small>/10</small></span>
+              </div>
+              <small>{item.format}</small>
+              <h3>{item.title}</h3>
+            </a>
+          ))}
+        </div>
+      </div>
+    </div>
   </section>
 
   <section class="interest-duo" aria-label="Formula 1 and technology">

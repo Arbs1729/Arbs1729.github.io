@@ -7,6 +7,7 @@ import ChatWidget from './ChatWidget.astro';
 import Atmosphere from './Atmosphere.astro';
 import BrandMark from './BrandMark.astro';
 import GlobalMusicPlayer from './GlobalMusicPlayer.astro';
+import BookingSheet from './BookingSheet.astro';
 import { ClientRouter } from 'astro:transitions';
 const {title='Product, technology & finance',description=person.description,immersive=false,noindex=false}=Astro.props;
 const path = Astro.url.pathname;
@@ -85,7 +86,7 @@ const canonical = new URL(path, Astro.site || 'https://aryanbasantani.me');
             <span>Resume</span>
             <svg class="footer-arrow" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4.5 11.5 11.5 4.5M6 4.5h5.5V10"/></svg>
           </a>
-          <a class="footer-pill-btn footer-cta-btn" href={person.calendly} target="_blank" rel="noopener noreferrer" aria-label="Let's chat on Calendly (opens in a new tab)">
+          <a class="footer-pill-btn footer-cta-btn" href={person.calendly} target="_blank" rel="noopener noreferrer" data-open-booking aria-label="Let's chat — schedule a conversation">
             <svg class="btn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="5" width="18" height="16" rx="3"/><path d="M16 3v4M8 3v4M3 11h18M8 15h2M14 15h2"/></svg>
             <span>Let’s chat</span>
             <svg class="footer-arrow" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4.5 11.5 11.5 4.5M6 4.5h5.5V10"/></svg>
@@ -101,9 +102,12 @@ const canonical = new URL(path, Astro.site || 'https://aryanbasantani.me');
   </div>
   <GlobalMusicPlayer/>
   <ChatWidget/>
+  <BookingSheet/>
   <script is:inline src="/theme.js" defer></script>
   <script is:inline src="/atmosphere.js" defer></script>
   <script is:inline src="/deck.js" defer></script>
+  <script is:inline src="/anilist.js" defer></script>
+  <script is:inline src="/booking.js" defer></script>
   {immersive && <script is:inline src="/arrival.js" defer data-astro-rerun></script>}
 </body>
 </html>
