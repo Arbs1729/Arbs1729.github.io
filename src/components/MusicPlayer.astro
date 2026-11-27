@@ -13,7 +13,9 @@ const first = musicPicks[0];
     <div class="player-actions">
       <button class="player-key player-key-primary" type="button" data-play-toggle hidden>Play</button>
       <a class="player-key current-youtube" data-current-youtube href={`https://music.youtube.com/watch?v=${first.youtubeId}`} target="_blank" rel="noreferrer">
-        <span class="yt-mark" aria-hidden="true">▶</span><span>YouTube Music</span><span class="btn-arrow" aria-hidden="true">↗</span>
+        <span class="yt-mark" aria-hidden="true"><svg viewBox="0 0 12 12" fill="currentColor"><path d="M3.2 2.2a.5.5 0 0 1 .76-.42l6.1 3.8a.5.5 0 0 1 0 .84l-6.1 3.8A.5.5 0 0 1 3.2 9.8V2.2Z"/></svg></span>
+        <span>YouTube Music</span>
+        <svg class="btn-arrow" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4.5 11.5 11.5 4.5M6 4.5h5.5V10"/></svg>
       </a>
     </div>
   </div>
