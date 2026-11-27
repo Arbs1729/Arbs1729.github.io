@@ -1,0 +1,86 @@
+---
+import f1Snapshot from '../data/f1-snapshot.json';
+
+const done = Number(f1Snapshot.roundCompleted) || 0;
+const total = Math.max(1, Number(f1Snapshot.totalRounds) || 23);
+const seasonPct = Math.min(100, Math.round((done / total) * 100));
+const maxDriverPts = Math.max(1, ...f1Snapshot.drivers.map(d => d.points));
+const maxTeamPts = Math.max(1, ...f1Snapshot.constructors.map(c => c.points));
+const race = f1Snapshot.nextRace;
+---
+<div
+  class="f1-card"
+  data-f1-card
+  data-f1-snapshot={JSON.stringify(f1Snapshot)}
+>
+  <div class="f1-top">
+    <div class="f1-race-info">
+      <p class="mono f1-kicker">NEXT GRAND PRIX · {f1Snapshot.season}</p>
+      <h3 data-f1-race-name>{race ? race.name : `${f1Snapshot.season} Season`}</h3>
+      <p class="f1-circuit" data-f1-circuit>{race ? `${race.circuit} · ${race.country}` : 'Calendar updating'}</p>
+    </div>
+    <div class="f1-countdown-wrap">
+      <span class="f1-countdown mono" data-f1-countdown>{race ? race.date : 'Off-season'}</span>
+      <span class="f1-round mono" data-f1-round>RD {String(done).padStart(2, '0')} / {total}</span>
+    </div>
+  </div>
+
+  <div class="f1-season-meter">
+    <div class="cal-gauge-head mono">
+      <span>SEASON PROGRESS</span>
+      <span>{seasonPct}%</span>
+    </div>
+    <div class="cal-gauge" aria-label={`Season progress: round ${done} of ${total}`}>
+      <i data-f1-season-fill style={`width: ${seasonPct}%`}></i>
+    </div>
+    <div class="cal-ticks mono" aria-hidden="true">
+      <span>01</span>
+      <span>{Math.round(total * 0.25)}</span>
+      <span>{Math.round(total * 0.5)}</span>
+      <span>{Math.round(total * 0.75)}</span>
+      <span>{total}</span>
+    </div>
+  </div>
+
+  <div class="f1-standings">
+    <div class="f1-standings-head">
+      <div class="f1-tabs" role="group" aria-label="Championship standings">
+        <button type="button" data-f1-tab="drivers" aria-pressed="true">Drivers</button>
+        <button type="button" data-f1-tab="constructors" aria-pressed="false">Constructors</button>
+      </div>
+      <span class="mono f1-meta" data-f1-meta>Updated Mon &amp; Fri · Jolpica-F1</span>
+    </div>
+
+    <div class="f1-bars" data-f1-drivers>
+      {f1Snapshot.drivers.map(driver => {
+        const pct = Math.min(100, Math.max(6, Math.round((driver.points / maxDriverPts) * 100)));
+        const isFav = /verstappen|red bull/i.test(`${driver.name} ${driver.team}`);
+        return (
+          <div class:list={['f1-row', { 'is-fav': isFav }]}>
+            <div class="f1-row-head">
+              <span class="f1-row-name"><b class="mono">P{driver.pos}</b> {driver.name}<small> · {driver.team}</small></span>
+              <span class="mono f1-pts">{driver.points} PTS</span>
+            </div>
+            <div class="cal-gauge cal-gauge-sm" aria-hidden="true"><i style={`width: ${pct}%`}></i></div>
+          </div>
+        );
+      })}
+    </div>
+
+    <div class="f1-bars" data-f1-constructors hidden>
+      {f1Snapshot.constructors.map(team => {
+        const pct = Math.min(100, Math.max(6, Math.round((team.points / maxTeamPts) * 100)));
+        const isFav = /red bull/i.test(team.name);
+        return (
+          <div class:list={['f1-row', { 'is-fav': isFav }]}>
+            <div class="f1-row-head">
+              <span class="f1-row-name"><b class="mono">P{team.pos}</b> {team.name}</span>
+              <span class="mono f1-pts">{team.points} PTS</span>
+            </div>
+            <div class="cal-gauge cal-gauge-sm" aria-hidden="true"><i style={`width: ${pct}%`}></i></div>
+          </div>
+        );
+      })}
+    </div>
+  </div>
+</div>

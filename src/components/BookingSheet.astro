@@ -1,0 +1,142 @@
+---
+import { person } from '../data/portfolio';
+
+const chatEndpoint = import.meta.env.PUBLIC_CHAT_ENDPOINT || '';
+const bookingBase = (
+  import.meta.env.PUBLIC_BOOKING_ENDPOINT ||
+  (chatEndpoint ? chatEndpoint.replace(/\/chat\/?$/, '') : '')
+).replace(/\/+$/, '');
+---
+<div
+  id="booking-sheet"
+  class="booking-sheet"
+  hidden
+  role="dialog"
+  aria-modal="true"
+  aria-labelledby="booking-sheet-title"
+  data-booking-sheet
+  data-api-base={bookingBase}
+  data-booking-url={person.calendly}
+  transition:persist="booking-sheet"
+>
+  <div class="booking-backdrop" data-booking-close aria-hidden="true"></div>
+  <div class="booking-dialog" tabindex="-1">
+    <header class="booking-head">
+      <div>
+        <p class="mono">SCHEDULE A CONVERSATION</p>
+        <h2 id="booking-sheet-title">Let’s chat</h2>
+      </div>
+      <div class="booking-head-actions">
+        <a
+          class="booking-ext-link mono"
+          href={person.calendly}
+          target="_blank"
+          rel="noopener noreferrer"
+          data-booking-ext
+        >
+          <span>Open in new tab</span><span aria-hidden="true">↗</span>
+        </a>
+        <button
+          type="button"
+          class="booking-close"
+          data-booking-close
+          aria-label="Close booking calendar"
+        >
+          ×
+        </button>
+      </div>
+    </header>
+
+    <div class="booking-body">
+      <div class="booking-loading" data-booking-loading>
+        <span class="booking-spinner" aria-hidden="true"></span>
+        <p class="mono">Checking open times…</p>
+      </div>
+
+      <div class="booking-native" data-booking-native hidden>
+        <div class="booking-toolbar">
+          <p class="booking-tz mono" data-booking-tz></p>
+          <div class="booking-week-nav">
+            <button type="button" class="booking-nav-btn" data-booking-prev aria-label="Previous 7 days">← Prev</button>
+            <span class="booking-range mono" data-booking-range></span>
+            <button type="button" class="booking-nav-btn" data-booking-next aria-label="Next 7 days">Next →</button>
+          </div>
+        </div>
+
+        <div class="booking-picker" data-booking-picker>
+          <div class="booking-col">
+            <p class="mono booking-col-label">01 · PICK A DAY</p>
+            <div class="booking-days" data-booking-days role="listbox" aria-label="Available dates"></div>
+          </div>
+          <div class="booking-col">
+            <p class="mono booking-col-label">02 · PICK A TIME</p>
+            <div class="booking-slots" data-booking-slots role="listbox" aria-label="Available times"></div>
+          </div>
+        </div>
+
+        <form class="booking-form" data-booking-form hidden novalidate>
+          <div class="booking-selected-bar">
+            <div>
+              <p class="mono">SELECTED TIME</p>
+              <strong data-booking-chosen></strong>
+            </div>
+            <button type="button" class="booking-link-btn mono" data-booking-back>Change time</button>
+          </div>
+
+          <div class="booking-fields">
+            <label class="booking-field">
+              <span>Name</span>
+              <input name="name" type="text" required maxlength="120" autocomplete="name" placeholder="Your name" />
+            </label>
+            <label class="booking-field">
+              <span>Email</span>
+              <input name="email" type="email" required maxlength="254" autocomplete="email" placeholder="you@example.com" />
+            </label>
+            <label class="booking-field booking-field-full">
+              <span>What should we talk about? <small>(optional)</small></span>
+              <textarea name="note" rows="3" maxlength="500" placeholder="Role, product question, project, or just saying hello…"></textarea>
+            </label>
+          </div>
+
+          <p class="booking-error" data-booking-error role="alert" hidden></p>
+
+          <div class="booking-form-actions">
+            <button type="button" class="booking-btn-secondary" data-booking-back-btn>Back</button>
+            <button type="submit" class="booking-btn-primary" data-booking-submit>Confirm booking</button>
+          </div>
+        </form>
+
+        <div class="booking-confirmed" data-booking-confirmed hidden>
+          <p class="mono booking-confirm-badge">CONFIRMED</p>
+          <h3>You’re on the calendar.</h3>
+          <p class="booking-confirm-time" data-booking-confirm-time></p>
+          <p class="booking-confirm-note">A calendar invite and meeting details have been sent to your inbox.</p>
+          <div class="booking-confirm-links" data-booking-confirm-links></div>
+          <div class="booking-confirm-actions">
+            <button type="button" class="booking-btn-primary" data-booking-done>Done</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="booking-embed" data-booking-embed hidden>
+        <div class="booking-embed-mount" data-booking-embed-mount></div>
+        <div class="booking-embed-fallback" data-booking-embed-fallback hidden>
+          <p class="mono">DIRECT SCHEDULING</p>
+          <h3>Calendar embed was blocked by your browser or network.</h3>
+          <p>You can still pick a time directly on Calendly.</p>
+          <a
+            class="booking-btn-primary"
+            href={person.calendly}
+            target="_blank"
+            rel="noopener noreferrer"
+            data-booking-fallback-link
+          >
+            Open Calendly ↗
+          </a>
+        </div>
+      </div>
+
+      <p class="tiny booking-status" data-booking-status role="status" aria-live="polite"></p>
+    </div>
+  </div>
+</div>

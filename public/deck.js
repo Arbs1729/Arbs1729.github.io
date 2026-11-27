@@ -559,8 +559,10 @@
     filters.hidden = false;
     filters.querySelectorAll('button').forEach(button => button.addEventListener('click', () => {
       filters.querySelectorAll('button').forEach(item => item.setAttribute('aria-pressed', String(item === button)));
-      $$('.screen-card').forEach(card => {
-        card.hidden = button.dataset.screenFilter !== 'all' && !card.dataset.format.startsWith(button.dataset.screenFilter);
+      const scope = $('[data-anilist-top-strip]') || document;
+      $$('.screen-card', scope).forEach(card => {
+        const format = card.dataset.format || '';
+        card.hidden = button.dataset.screenFilter !== 'all' && !format.startsWith(button.dataset.screenFilter);
       });
     }));
   };

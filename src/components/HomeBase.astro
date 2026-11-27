@@ -1,10 +1,18 @@
 ---
 import Icon from './Icon.astro';
 import MusicPlayer from './MusicPlayer.astro';
+import StationBlueprint from './StationBlueprint.astro';
 import { stories } from '../data/portfolio';
 const selected = stories.filter(story => story.selected);
 ---
-<section id="home-base" class="home-intro" aria-labelledby="home-title">
+<section id="home-base" class="home-intro station-deck" aria-labelledby="home-title">
+  <div class="station-horizon" aria-hidden="true"></div>
+  <div class="station-mullion station-mullion-l" aria-hidden="true"></div>
+  <div class="station-mullion station-mullion-r" aria-hidden="true"></div>
+  <span class="hud-corner hud-tl" aria-hidden="true"></span>
+  <span class="hud-corner hud-tr" aria-hidden="true"></span>
+  <span class="hud-corner hud-bl" aria-hidden="true"></span>
+  <span class="hud-corner hud-br" aria-hidden="true"></span>
   <div class="intro-primary">
     <h1 id="home-title">Hi, I’m Aryan.</h1>
     <div class="intro-copy">
@@ -14,12 +22,15 @@ const selected = stories.filter(story => story.selected);
     </div>
   </div>
   <div class="intro-navigation">
-    <p class="intro-prompt">EXPLORE</p>
-    <nav class="home-paths" aria-label="Explore Aryan’s portfolio">
-      <a href="/work/">Work <Icon /></a>
-      <a href="/interests/">Interests <Icon /></a>
-      <a href="/about/">About <Icon /></a>
-    </nav>
+    <div class="intro-nav-group">
+      <p class="intro-prompt">EXPLORE</p>
+      <nav class="home-paths" aria-label="Explore Aryan’s portfolio">
+        <a href="/work/"><span class="room-idx"><i class="room-led" aria-hidden="true"></i><span class="room-num">01</span><span>Work</span></span><Icon /></a>
+        <a href="/interests/"><span class="room-idx"><i class="room-led" aria-hidden="true"></i><span class="room-num">02</span><span>Interests</span></span><Icon /></a>
+        <a href="/about/"><span class="room-idx"><i class="room-led" aria-hidden="true"></i><span class="room-num">03</span><span>About</span></span><Icon /></a>
+      </nav>
+    </div>
+    <StationBlueprint variant="station" />
   </div>
   <div class="intro-shortcuts">
     <p class="intro-prompt">ON THIS PAGE</p>

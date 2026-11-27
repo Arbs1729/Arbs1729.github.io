@@ -1,0 +1,727 @@
+/* ============================================================================
+   Station Revamp V2 — Hybrid Orbital Station × Sunlit Ghibli Drafting Vellum
+   Calibrated gauges, tactile knobs/sliders/switches, haptic HUD framing
+   ============================================================================ */
+
+:root {
+  --station-night: 0.88;
+  --horizon-warm: rgba(235, 132, 74, 0.36);
+  --horizon-cool: rgba(68, 138, 150, 0.16);
+  --hud-line: rgba(239, 155, 105, 0.52);
+  --console-bg-top: #263137;
+  --console-bg-bot: #161e22;
+  --console-border: rgba(243, 236, 220, 0.22);
+  --console-ink: #f3ecdc;
+  --console-muted: rgba(243, 236, 220, 0.62);
+  --gauge-track: rgba(11, 17, 20, 0.72);
+  --gauge-tick: rgba(243, 236, 220, 0.34);
+  --grid-tint: rgba(243, 236, 220, 0.035);
+}
+
+/* Sunlit Ghibli Drafting Vellum (Light Mode) */
+:root[data-theme='light'] {
+  --paper: #f4efe2;
+  --panel: #fbf7ed;
+  --surface: #e8e0cc;
+  --ink: #202521;
+  --muted: #585e54;
+  --accent: #b84526;
+  --glow: #c85532;
+  --rule: #c8bfa9;
+  --control-side: #a99c84;
+  --horizon-warm: rgba(208, 104, 56, 0.22);
+  --horizon-cool: rgba(54, 126, 146, 0.2);
+  --hud-line: rgba(184, 69, 38, 0.48);
+  --console-bg-top: #f7f1e3;
+  --console-bg-bot: #e3dac4;
+  --console-border: rgba(58, 52, 42, 0.26);
+  --console-ink: #202521;
+  --console-muted: #5d584b;
+  --gauge-track: rgba(62, 56, 44, 0.14);
+  --gauge-tick: rgba(62, 56, 44, 0.42);
+  --grid-tint: rgba(58, 72, 66, 0.075);
+}
+
+/* Dramatic Architectural Grid in Daylight Vellum + Subtle Orbital Grid in Night */
+body::before {
+  background:
+    linear-gradient(var(--space-wash), var(--space-wash)),
+    linear-gradient(var(--grid-tint) 1px, transparent 1px),
+    linear-gradient(90deg, var(--grid-tint) 1px, transparent 1px),
+    radial-gradient(circle at 50% 42%, color-mix(in srgb, var(--paper) 22%, transparent), transparent 65%);
+  background-size: 100% 100%, 36px 36px, 36px 36px, 100% 100%;
+}
+
+/* Respect HUD & Stars physical toggle switches */
+:root[data-hud='off'] body::after { opacity: 0 !important; }
+:root[data-hud='off'] .hud-corner,
+:root[data-hud='off'] .station-mullion { opacity: 0 !important; }
+:root[data-stars='off'] .space-atmosphere { opacity: 0 !important; transition: opacity .35s ease; }
+:root[data-stars='off'] .station-horizon { opacity: 0.18 !important; }
+
+/* Extra bottom breathing room on desktop for centered Station Console dock */
+@media (min-width: 960px) {
+  .deck-footer { padding-bottom: 6.2rem; }
+  body.music-bar-open .music-dock { bottom: 96px; }
+}
+
+/* ============================================================================
+   Panoramic Observation Deck Hero (Preserves exact copy; elevates spatial feel)
+   ============================================================================ */
+.home-intro.station-deck {
+  position: relative;
+  overflow: hidden;
+  min-height: auto;
+  margin-top: 1.4rem;
+  padding: clamp(2rem, 4.6vw, 3.6rem) clamp(1.4rem, 3.6vw, 2.8rem) clamp(2.4rem, 4.8vw, 3.8rem);
+  border: 1px solid color-mix(in srgb, var(--rule) 82%, transparent);
+  border-radius: 22px;
+  background:
+    radial-gradient(ellipse 90% 52% at 60% 106%, var(--horizon-warm), var(--horizon-cool) 46%, transparent 74%),
+    linear-gradient(180deg, color-mix(in srgb, var(--panel) 54%, transparent), color-mix(in srgb, var(--paper) 74%, transparent));
+  box-shadow: 0 24px 60px rgba(0, 0, 0, .2), inset 0 1px 0 rgba(255, 255, 255, .14);
+}
+:root[data-theme='light'] .home-intro.station-deck {
+  box-shadow: 0 20px 50px rgba(72, 58, 36, .09), inset 0 1px 0 rgba(255, 255, 255, .8);
+}
+
+/* Curved Twilight / Sunlit Planet Horizon Arc */
+.station-horizon {
+  position: absolute;
+  left: -14%;
+  right: -14%;
+  bottom: -230px;
+  height: 270px;
+  border-radius: 50%;
+  pointer-events: none;
+  z-index: 0;
+  border-top: 1.5px solid color-mix(in srgb, var(--accent) 68%, transparent);
+  background: radial-gradient(ellipse at 50% 0%, color-mix(in srgb, var(--accent) 22%, transparent), transparent 64%);
+  box-shadow: 0 -10px 44px var(--horizon-warm);
+  transition: opacity .35s ease;
+}
+
+/* Architectural observatory mullion hairlines */
+.station-mullion {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 1px;
+  pointer-events: none;
+  z-index: 0;
+  background: linear-gradient(180deg, color-mix(in srgb, var(--rule) 55%, transparent), transparent 48%, color-mix(in srgb, var(--rule) 45%, transparent));
+  transition: opacity .25s ease;
+}
+.station-mullion-l { left: 32%; }
+.station-mullion-r { right: 30%; }
+
+/* Crisp HUD Corner Registration Reticles */
+.hud-corner {
+  position: absolute;
+  width: 15px;
+  height: 15px;
+  border-color: var(--hud-line);
+  border-style: solid;
+  border-width: 0;
+  pointer-events: none;
+  z-index: 2;
+  transition: opacity .25s ease;
+}
+.hud-tl { top: 14px; left: 14px; border-top-width: 1.5px; border-left-width: 1.5px; }
+.hud-tr { top: 14px; right: 14px; border-top-width: 1.5px; border-right-width: 1.5px; }
+.hud-bl { bottom: 14px; left: 14px; border-bottom-width: 1.5px; border-left-width: 1.5px; }
+.hud-br { bottom: 14px; right: 14px; border-bottom-width: 1.5px; border-right-width: 1.5px; }
+
+.home-intro.station-deck > *:not(.station-horizon):not(.station-mullion):not(.hud-corner) {
+  position: relative;
+  z-index: 1;
+}
+
+/* Station Room Selector Keys (EXPLORE column) */
+.home-paths a .room-idx {
+  display: inline-flex;
+  align-items: center;
+  gap: .5rem;
+}
+.home-paths a .room-led {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: color-mix(in srgb, var(--muted) 55%, transparent);
+  transition: background .2s, box-shadow .2s;
+  flex: none;
+}
+.home-paths a:hover .room-led {
+  background: var(--accent);
+  box-shadow: 0 0 8px var(--accent);
+}
+.home-paths a .room-num {
+  color: var(--accent);
+  font: 500 .7rem/1 var(--mono);
+  opacity: .85;
+}
+
+/* ============================================================================
+   Calibrated Gauges & Tick Bars (Clearly Discernible Markings Everywhere)
+   ============================================================================ */
+.cal-gauge-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: .68rem;
+  letter-spacing: .08em;
+  color: var(--muted);
+  margin-bottom: .35rem;
+}
+.cal-gauge {
+  position: relative;
+  height: 10px;
+  width: 100%;
+  border-radius: 99px;
+  background: var(--gauge-track);
+  border: 1px solid color-mix(in srgb, var(--rule) 75%, transparent);
+  overflow: hidden;
+  box-shadow: inset 0 1px 3px rgba(0, 0, 0, .28);
+}
+/* Crisp calibrated tick markings overlaid cleanly across every bar */
+.cal-gauge::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: repeating-linear-gradient(
+    90deg,
+    transparent 0,
+    transparent calc(10% - 1px),
+    var(--gauge-tick) calc(10% - 1px),
+    var(--gauge-tick) 10%
+  );
+}
+.cal-gauge > i {
+  display: block;
+  height: 100%;
+  border-radius: 99px;
+  background: linear-gradient(90deg, color-mix(in srgb, var(--brand-blue) 75%, var(--accent)), var(--accent));
+  box-shadow: 0 0 10px color-mix(in srgb, var(--accent) 45%, transparent);
+  transition: width .35s var(--ease-flight);
+}
+.cal-gauge-sm { height: 8px; }
+.cal-gauge-console { height: 8px; }
+.cal-ticks {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: .28rem;
+  font-size: .62rem;
+  color: var(--muted);
+  letter-spacing: .04em;
+}
+.cal-ticks-console {
+  font-size: .56rem;
+  margin-top: .2rem;
+  color: var(--console-muted);
+}
+
+/* Upgrade AniList episode progress bars to calibrated tick gauges */
+.anilist-progress-bar {
+  position: relative;
+  height: 7px !important;
+  background: var(--gauge-track) !important;
+  border: 1px solid color-mix(in srgb, var(--rule) 65%, transparent);
+}
+.anilist-progress-bar::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: repeating-linear-gradient(
+    90deg,
+    transparent 0,
+    transparent calc(25% - 1px),
+    var(--gauge-tick) calc(25% - 1px),
+    var(--gauge-tick) 25%
+  );
+}
+
+/* ============================================================================
+   Formula 1 Weekend Live Card (/interests/#formula-one)
+   ============================================================================ */
+.f1-card {
+  margin-top: 1.4rem;
+  padding: 1.15rem 1.2rem;
+  border-radius: 14px;
+  border: 1px solid color-mix(in srgb, var(--rule) 82%, transparent);
+  background: color-mix(in srgb, var(--panel) 84%, transparent);
+  box-shadow: 0 2px 0 var(--control-side), 0 12px 28px rgba(0, 0, 0, .12);
+  display: flex;
+  flex-direction: column;
+  gap: 1.05rem;
+}
+.f1-top {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+.f1-kicker { color: var(--accent); margin-bottom: .25rem; }
+.f1-race-info h3 {
+  font: 500 1.2rem/1.2 var(--serif);
+  margin: 0;
+}
+.f1-circuit {
+  margin-top: .22rem;
+  font-size: .82rem;
+  color: var(--muted);
+}
+.f1-countdown-wrap {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: .3rem;
+}
+.f1-countdown {
+  display: inline-flex;
+  align-items: center;
+  padding: .28rem .6rem;
+  border-radius: 99px;
+  border: 1px solid color-mix(in srgb, var(--accent) 55%, var(--rule));
+  background: color-mix(in srgb, var(--accent) 14%, transparent);
+  color: var(--accent);
+  font-size: .7rem;
+  font-weight: 600;
+}
+.f1-round {
+  font-size: .68rem;
+  color: var(--muted);
+}
+.f1-standings {
+  padding-top: .9rem;
+  border-top: 1px solid color-mix(in srgb, var(--rule) 72%, transparent);
+  display: flex;
+  flex-direction: column;
+  gap: .75rem;
+}
+.f1-standings-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: .6rem;
+  flex-wrap: wrap;
+}
+.f1-tabs {
+  display: inline-flex;
+  gap: .4rem;
+}
+.f1-tabs button {
+  height: 30px;
+  padding: 0 .72rem;
+  border-radius: var(--btn-r-sm);
+  border: 1px solid color-mix(in srgb, var(--rule) 82%, transparent);
+  background: color-mix(in srgb, var(--surface) 70%, transparent);
+  color: var(--muted);
+  font: 500 .75rem/1.2 var(--sans);
+  cursor: pointer;
+  transition: border-color .16s, color .16s, background .16s;
+}
+.f1-tabs button[aria-pressed='true'] {
+  border-color: var(--accent);
+  background: color-mix(in srgb, var(--accent) 14%, var(--panel));
+  color: var(--accent);
+}
+.f1-meta { font-size: .64rem; color: var(--muted); }
+.f1-bars { display: flex; flex-direction: column; gap: .62rem; }
+.f1-row-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: .5rem;
+  font-size: .82rem;
+  margin-bottom: .25rem;
+}
+.f1-row-name b { color: var(--muted); font-size: .7rem; margin-right: .25rem; }
+.f1-row-name small { color: var(--muted); font-size: .75rem; }
+.f1-row.is-fav .f1-row-name b,
+.f1-row.is-fav .f1-pts { color: var(--accent); }
+.f1-pts { font-size: .72rem; color: var(--muted); white-space: nowrap; }
+
+/* ============================================================================
+   Docked Hardware Station Console (Knobs, Calibrated Slider, Switches, VU)
+   ============================================================================ */
+.station-console {
+  position: fixed;
+  left: 50%;
+  bottom: 14px;
+  transform: translateX(-50%);
+  z-index: 38;
+  width: min(804px, calc(100vw - 260px));
+  border-radius: 16px;
+  border: 1px solid var(--console-border);
+  background: linear-gradient(180deg, var(--console-bg-top), var(--console-bg-bot));
+  color: var(--console-ink);
+  box-shadow:
+    0 3px 0 color-mix(in srgb, var(--control-side) 92%, black),
+    0 18px 44px rgba(0, 0, 0, .38),
+    inset 0 1px 0 rgba(255, 255, 255, .18);
+  backdrop-filter: blur(16px);
+}
+.console-mobile-bar { display: none; }
+.console-inner {
+  display: grid;
+  grid-template-columns: auto 1px minmax(140px, 1.08fr) 1px minmax(112px, .82fr) 1px auto 1px auto;
+  align-items: center;
+  gap: .75rem;
+  padding: .52rem .95rem;
+}
+.console-divider {
+  width: 1px;
+  height: 36px;
+  background: color-mix(in srgb, var(--console-border) 85%, transparent);
+}
+.console-kicker {
+  display: block;
+  font-size: .56rem;
+  letter-spacing: .12em;
+  color: var(--console-muted);
+}
+
+/* Rotary Section Dial */
+.console-dial-block {
+  display: flex;
+  align-items: center;
+  gap: .55rem;
+}
+.rotary-dial {
+  width: 48px;
+  height: 48px;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: var(--console-muted);
+  display: grid;
+  place-items: center;
+  cursor: pointer;
+  flex: none;
+}
+.dial-bezel { width: 48px; height: 48px; display: block; overflow: visible; }
+.dial-ticks line { stroke-width: 1.5; }
+.dial-cap {
+  fill: color-mix(in srgb, var(--console-bg-top) 70%, var(--console-ink) 16%);
+  stroke: var(--console-border);
+  stroke-width: 1.5;
+}
+.dial-needle-group {
+  transform-origin: 32px 32px;
+  transition: transform .28s cubic-bezier(.22, .85, .32, 1);
+}
+.dial-needle {
+  stroke: var(--accent);
+  stroke-width: 2.6;
+  stroke-linecap: round;
+  filter: drop-shadow(0 0 3px var(--accent));
+}
+.rotary-dial:hover .dial-cap { stroke: var(--accent); }
+.console-readout strong {
+  display: block;
+  font: 600 .76rem/1.2 var(--sans);
+  color: var(--console-ink);
+  white-space: nowrap;
+}
+
+/* Calibrated Daylight <-> Night Fader */
+.console-fader-block,
+.console-depth-block { min-width: 0; }
+.console-fader-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: .3rem;
+  font-size: .56rem;
+  letter-spacing: .08em;
+  color: var(--console-muted);
+  margin-bottom: .24rem;
+}
+.console-val { color: var(--accent); font-weight: 600; }
+.fader-shell { position: relative; padding-bottom: 6px; }
+.console-slider {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 100%;
+  height: 7px;
+  border-radius: 99px;
+  background: linear-gradient(90deg, #e7c98f, #b85d38 50%, #243842);
+  border: 1px solid var(--console-border);
+  outline: none;
+  cursor: pointer;
+  display: block;
+}
+.console-slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  width: 16px;
+  height: 20px;
+  border-radius: 4px;
+  background: linear-gradient(180deg, #ede9df, #9da29c);
+  border: 1px solid #161d20;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, .45), inset 0 1px 0 #fff;
+  cursor: grab;
+}
+.console-slider::-moz-range-thumb {
+  width: 16px;
+  height: 20px;
+  border-radius: 4px;
+  background: linear-gradient(180deg, #ede9df, #9da29c);
+  border: 1px solid #161d20;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, .45);
+  cursor: grab;
+}
+.fader-ruler {
+  display: flex;
+  justify-content: space-between;
+  padding: 3px 6px 0;
+}
+.fader-ruler i {
+  width: 1px;
+  height: 4px;
+  background: var(--gauge-tick);
+  display: block;
+}
+.fader-ruler i:nth-child(odd) { height: 6px; background: var(--console-muted); }
+
+/* Physical LED Toggle Switches */
+.console-switches {
+  display: flex;
+  align-items: center;
+  gap: .5rem;
+}
+.hw-switch {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: .22rem;
+  padding: .15rem .2rem;
+  border: 0;
+  background: transparent;
+  color: var(--console-muted);
+  cursor: pointer;
+}
+.hw-switch .mono { font-size: .54rem; letter-spacing: .09em; }
+.hw-led {
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: color-mix(in srgb, var(--console-muted) 40%, transparent);
+  transition: background .18s, box-shadow .18s;
+}
+.hw-switch[aria-pressed='true'] .hw-led {
+  background: var(--accent);
+  box-shadow: 0 0 7px var(--accent);
+}
+.hw-track {
+  width: 30px;
+  height: 15px;
+  border-radius: 99px;
+  padding: 2px;
+  background: var(--gauge-track);
+  border: 1px solid var(--console-border);
+  display: flex;
+  align-items: center;
+  transition: border-color .18s;
+}
+.hw-track i {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: #b7b3a6;
+  transition: transform .18s var(--ease-touch), background .18s;
+}
+.hw-switch[aria-pressed='true'] .hw-track { border-color: color-mix(in srgb, var(--accent) 65%, transparent); }
+.hw-switch[aria-pressed='true'] .hw-track i {
+  transform: translateX(14px);
+  background: linear-gradient(155deg, #f39365, #c24b2b);
+}
+
+/* Calibrated Audio VU Trigger */
+.console-vu-btn {
+  display: flex;
+  align-items: center;
+  gap: .5rem;
+  padding: .35rem .55rem;
+  border-radius: 10px;
+  border: 1px solid var(--console-border);
+  background: color-mix(in srgb, var(--gauge-track) 65%, transparent);
+  color: var(--console-ink);
+  cursor: pointer;
+  transition: border-color .18s, transform .14s;
+}
+.console-vu-btn:hover { border-color: var(--accent); transform: translateY(-1px); }
+.vu-meter {
+  display: flex;
+  align-items: flex-end;
+  gap: 2.5px;
+  height: 22px;
+  padding: 2px 3px;
+}
+.vu-meter i {
+  width: 3.5px;
+  height: 100%;
+  border-radius: 1.5px;
+  background: #53a99c;
+  transform-origin: bottom;
+  transform: scaleY(.28);
+  transition: transform .2s ease;
+}
+.vu-meter i:nth-child(5),
+.vu-meter i:nth-child(6) { background: var(--accent); }
+.vu-meter.is-playing i { animation: station-vu 1.05s ease-in-out infinite; }
+.vu-meter.is-playing i:nth-child(2) { animation-delay: .14s; }
+.vu-meter.is-playing i:nth-child(3) { animation-delay: .28s; }
+.vu-meter.is-playing i:nth-child(4) { animation-delay: .08s; }
+.vu-meter.is-playing i:nth-child(5) { animation-delay: .22s; }
+.vu-meter.is-playing i:nth-child(6) { animation-delay: .36s; }
+@keyframes station-vu {
+  0%, 100% { transform: scaleY(.28); }
+  50% { transform: scaleY(1); }
+}
+.vu-meta { text-align: left; }
+.vu-meta strong { display: block; font: 600 .74rem/1.15 var(--sans); }
+
+/* Header Controls toggle button (visible on mobile/tablet < 960px) */
+#console-toggle { display: none; }
+
+/* Subtler scanlines in Daylight Ghibli Drafting Vellum */
+:root[data-theme='light'] body::after { opacity: .028; }
+
+/* Ensure StationConsole always clears ChatWidget across all desktop widths */
+@media (min-width: 1220px) {
+  .station-console { width: min(780px, calc(100vw - 420px)); }
+}
+@media (max-width: 1219px) and (min-width: 960px) {
+  .station-console {
+    left: 18px;
+    transform: none;
+    width: min(760px, calc(100vw - 232px));
+  }
+}
+@media (max-width: 1060px) and (min-width: 960px) {
+  .console-depth-block, .console-depth-block + .console-divider { display: none; }
+  .console-inner { grid-template-columns: auto 1px minmax(136px, 1fr) 1px auto 1px auto; }
+}
+
+/* Mobile & narrow tablet: slide-up on-demand Hardware Drawer (zero collision with chat or YouTube dock) */
+@media (max-width: 959px) {
+  #console-toggle { display: inline-flex; }
+  .station-console {
+    left: 12px;
+    right: 12px;
+    bottom: 12px;
+    width: auto;
+    transform: translateY(calc(100% + 28px));
+    opacity: 0;
+    pointer-events: none;
+    z-index: 48;
+    transition: transform .26s var(--ease-flight), opacity .22s ease;
+  }
+  .station-console.is-open {
+    transform: translateY(0);
+    opacity: 1;
+    pointer-events: auto;
+  }
+  .console-mobile-bar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: .6rem .9rem .45rem;
+    border-bottom: 1px solid var(--console-border);
+    font-size: .68rem;
+    letter-spacing: .12em;
+    color: var(--console-muted);
+  }
+  .console-close-btn {
+    width: 30px;
+    height: 30px;
+    border-radius: 8px;
+    border: 1px solid var(--console-border);
+    background: transparent;
+    color: var(--console-ink);
+    font-size: 1.15rem;
+    line-height: 1;
+    display: inline-grid;
+    place-items: center;
+  }
+  .console-inner {
+    grid-template-columns: 1fr auto;
+    gap: .85rem .75rem;
+    padding: .85rem .9rem .95rem;
+  }
+  .console-divider { display: none; }
+  .console-dial-block { grid-column: 1; grid-row: 1; }
+  .console-vu-btn { grid-column: 2; grid-row: 1; justify-content: center; }
+  .console-fader-block { grid-column: 1 / -1; grid-row: 2; }
+  .console-depth-block { grid-column: 1 / -1; grid-row: 3; }
+  .console-switches {
+    grid-column: 1 / -1;
+    grid-row: 4;
+    justify-content: space-around;
+    padding-top: .35rem;
+    border-top: 1px solid color-mix(in srgb, var(--console-border) 70%, transparent);
+    gap: .8rem;
+  }
+  .home-intro.station-deck {
+    margin-top: .65rem;
+    padding: 1.25rem 1rem 1.45rem;
+    border-radius: 16px;
+  }
+  .station-mullion { display: none; }
+}
+
+@media (max-width: 560px) {
+  .home-paths a .room-num { display: none; }
+  .home-paths a .room-idx { gap: .32rem; min-width: 0; }
+  .deck-settings { gap: .36rem; }
+  #console-toggle {
+    width: var(--btn-h-sm);
+    padding: 0;
+  }
+  #console-toggle .console-toggle-label {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
+  }
+}
+
+@media (max-width: 420px) {
+  .deck-brand { min-width: 88px; width: 92px; }
+  .deck-settings { gap: .28rem; }
+  .deck-settings button { padding: 0 .54rem; font-size: .68rem; }
+  #console-toggle { width: 34px; padding: 0; }
+  .home-paths { gap: .35rem; }
+  .home-paths a { padding: 0 .48rem; font-size: .78rem; gap: .22rem; }
+  .home-paths a .room-led { width: 5px; height: 5px; }
+  .home-paths a .icon { width: 13px; height: 13px; }
+  .home-jumps a,
+  .home-jumps .intro-play { padding: 0 .52rem; font-size: .78rem; gap: .35rem; }
+}
+
+/* Give BookingSheet subtle matching HUD corner ticks */
+.booking-dialog {
+  position: relative;
+}
+.booking-dialog::before,
+.booking-dialog::after {
+  content: '';
+  position: absolute;
+  width: 12px;
+  height: 12px;
+  border-color: var(--hud-line);
+  border-style: solid;
+  border-width: 0;
+  pointer-events: none;
+}
+.booking-dialog::before { top: 8px; left: 8px; border-top-width: 1.5px; border-left-width: 1.5px; }
+.booking-dialog::after { bottom: 8px; right: 8px; border-bottom-width: 1.5px; border-right-width: 1.5px; }

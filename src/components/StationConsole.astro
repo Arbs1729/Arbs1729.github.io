@@ -1,0 +1,143 @@
+<aside
+  class="station-console"
+  id="station-console"
+  data-station-console
+  aria-label="Page controls"
+  transition:persist="station-console"
+>
+  <div class="console-mobile-bar">
+    <span class="mono">CONTROLS</span>
+    <button type="button" class="console-close-btn" data-console-close aria-label="Close controls">×</button>
+  </div>
+
+  <div class="console-inner">
+    <!-- 1. Calibrated Rotary Section Dial -->
+    <div class="console-block console-dial-block">
+      <button
+        type="button"
+        class="rotary-dial"
+        data-station-dial
+        aria-label="Turn section dial to jump to next section"
+        title="Click or scroll to step through sections"
+      >
+        <svg class="dial-bezel" viewBox="0 0 64 64" aria-hidden="true">
+          <g class="dial-ticks" stroke="currentColor" stroke-linecap="round">
+            <line x1="32" y1="3" x2="32" y2="8" transform="rotate(-120 32 32)" />
+            <line x1="32" y1="4" x2="32" y2="7.5" transform="rotate(-90 32 32)" opacity="0.45" />
+            <line x1="32" y1="4" x2="32" y2="7.5" transform="rotate(-60 32 32)" opacity="0.45" />
+            <line x1="32" y1="3" x2="32" y2="8" transform="rotate(-40 32 32)" />
+            <line x1="32" y1="4" x2="32" y2="7.5" transform="rotate(-15 32 32)" opacity="0.45" />
+            <line x1="32" y1="4" x2="32" y2="7.5" transform="rotate(15 32 32)" opacity="0.45" />
+            <line x1="32" y1="3" x2="32" y2="8" transform="rotate(40 32 32)" />
+            <line x1="32" y1="4" x2="32" y2="7.5" transform="rotate(65 32 32)" opacity="0.45" />
+            <line x1="32" y1="4" x2="32" y2="7.5" transform="rotate(92 32 32)" opacity="0.45" />
+            <line x1="32" y1="3" x2="32" y2="8" transform="rotate(120 32 32)" />
+          </g>
+          <circle cx="32" cy="32" r="21" class="dial-cap" />
+          <g class="dial-needle-group" data-dial-needle>
+            <line x1="32" y1="15" x2="32" y2="23" class="dial-needle" />
+          </g>
+        </svg>
+      </button>
+      <div class="console-readout">
+        <span class="console-kicker mono">SECTION</span>
+        <strong data-dial-label>01 · Top</strong>
+      </div>
+    </div>
+
+    <div class="console-divider" aria-hidden="true"></div>
+
+    <!-- 2. System-Time Adaptive Orbital Sky Fader (Clickable DAY / NIGHT + Draggable Sky Scrubber) -->
+    <div class="console-block console-fader-block">
+      <div class="console-fader-head mono">
+        <button type="button" class="sky-mode-btn sky-mode-day" data-set-day aria-pressed="false" title="Switch to sunlit orbital day">
+          <svg class="sky-glyph" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" aria-hidden="true">
+            <circle cx="8" cy="8" r="3.1" fill="currentColor" stroke="none" />
+            <path d="M8 1.8v1.7M8 12.5v1.7M1.8 8h1.7M12.5 8h1.7M3.6 3.6l1.2 1.2M11.2 11.2l1.2 1.2M12.4 3.6l-1.2 1.2M4.8 11.2l-1.2 1.2" />
+          </svg>
+          <span>DAY</span>
+        </button>
+        <button type="button" class="console-val sky-phase-readout" data-sync-time title="Drag slider to scrub orbital sky — click to sync with your local clock">
+          <span data-light-label>LOCAL · DAY</span>
+        </button>
+        <button type="button" class="sky-mode-btn sky-mode-night" data-set-night aria-pressed="true" title="Switch to orbital night">
+          <svg class="sky-glyph" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true">
+            <path d="M11.8 10.4A5.1 5.1 0 0 1 5.6 4.2a5.2 5.2 0 1 0 6.2 6.2Z" />
+          </svg>
+          <span>NIGHT</span>
+        </button>
+      </div>
+      <div class="fader-shell fader-shell-sky" title="Drag to shift Earth’s orbital day, sunset terminator, and night">
+        <span class="sky-terminator-notch" aria-hidden="true"></span>
+        <input
+          type="range"
+          min="0"
+          max="100"
+          value="88"
+          class="console-slider"
+          data-light-slider
+          aria-label="Drag to adjust orbital sky from sunlit Day through Sunset to Night"
+        />
+        <div class="fader-ruler mono" aria-hidden="true">
+          <i></i><i></i><i></i><i></i><i class="is-mid"></i><i></i><i></i><i></i><i></i>
+        </div>
+      </div>
+    </div>
+
+    <div class="console-divider" aria-hidden="true"></div>
+
+    <!-- 3. Calibrated Scroll Progress Gauge -->
+    <div class="console-block console-depth-block">
+      <div class="console-fader-head mono">
+        <span>PAGE</span>
+        <span class="console-val" data-depth-pct>00%</span>
+      </div>
+      <div class="cal-gauge cal-gauge-console" aria-hidden="true">
+        <i data-depth-fill style="width: 0%"></i>
+      </div>
+      <div class="cal-ticks cal-ticks-console mono" aria-hidden="true">
+        <span>0</span><span>25</span><span>50</span><span>75</span><span>100</span>
+      </div>
+    </div>
+
+    <div class="console-divider" aria-hidden="true"></div>
+
+    <!-- 4. Physical Toggle Switches with Glowing LEDs -->
+    <div class="console-block console-switches" role="group" aria-label="Atmosphere switches">
+      <button type="button" class="hw-switch" data-hw-switch="hud" aria-pressed="true" title="Toggle HUD framing and drafting lines">
+        <span class="hw-led" aria-hidden="true"></span>
+        <span class="hw-track" aria-hidden="true"><i></i></span>
+        <span class="mono">HUD</span>
+      </button>
+      <button type="button" class="hw-switch" data-hw-switch="stars" aria-pressed="true" title="Toggle Earth horizon and starfield">
+        <span class="hw-led" aria-hidden="true"></span>
+        <span class="hw-track" aria-hidden="true"><i></i></span>
+        <span class="mono">STARS</span>
+      </button>
+      <button type="button" class="hw-switch" data-hw-switch="click" aria-pressed="false" title="Toggle tactile click sound">
+        <span class="hw-led" aria-hidden="true"></span>
+        <span class="hw-track" aria-hidden="true"><i></i></span>
+        <span class="mono">CLICK</span>
+      </button>
+    </div>
+
+    <div class="console-divider" aria-hidden="true"></div>
+
+    <!-- 5. Calibrated Audio VU Meter & Soundtrack Trigger -->
+    <button
+      type="button"
+      class="console-block console-vu-btn"
+      data-console-music
+      aria-label="Play or pause soundtrack"
+      title="Play or pause soundtrack"
+    >
+      <span class="vu-meter" data-console-vu aria-hidden="true">
+        <i></i><i></i><i></i><i></i><i></i><i></i>
+      </span>
+      <span class="vu-meta">
+        <span class="console-kicker mono">AUDIO</span>
+        <strong data-console-track>Play</strong>
+      </span>
+    </button>
+  </div>
+</aside>

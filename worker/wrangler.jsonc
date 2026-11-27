@@ -7,12 +7,17 @@
     "nodejs_compat"
   ],
   "workers_dev": true,
+  // Public non-secret config vars only. Store API tokens via `wrangler secret put`:
+  // - GEMINI_API_KEY
+  // - Optional native Calendly booking: CALENDLY_API_TOKEN, CALENDLY_EVENT_TYPE_URI
+  // - Optional native Cal.com v2 booking: CALCOM_API_KEY, CALCOM_EVENT_TYPE_ID
   "vars": {
     "GEMINI_MODEL": "gemini-4-neon",
     "GEMINI_THINKING_LEVEL": "low",
     "GEMINI_FALLBACK_MODEL": "gemini-4-hydrogen",
     "GEMINI_FALLBACK_THINKING_LEVEL": "medium",
-    "ALLOWED_ORIGINS": "https://aryanbasantani.me,http://localhost:4176,http://127.0.0.1:4176,http://127.0.0.1:4321,http://localhost:4321"
+    "ALLOWED_ORIGINS": "https://aryanbasantani.me,http://localhost:4176,http://127.0.0.1:4176,http://127.0.0.1:4321,http://localhost:4321",
+    "CALENDLY_BOOKING_URL": "https://calendly.com/aryanbasantani1729/let-s-chat"
   },
   "ratelimits": [
     {
@@ -20,6 +25,14 @@
       "namespace_id": "2026091201",
       "simple": {
         "limit": 5,
+        "period": 60
+      }
+    },
+    {
+      "name": "BOOKING_LIMITER",
+      "namespace_id": "2026091202",
+      "simple": {
+        "limit": 20,
         "period": 60
       }
     }

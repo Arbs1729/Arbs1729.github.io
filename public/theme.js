@@ -4,7 +4,13 @@
 
   const modes = ['system', 'light', 'dark'];
   const names = { system: 'Auto', light: 'Light', dark: 'Dark' };
-  let preference = 'dark';
+
+  function localClockTheme() {
+    const h = new Date().getHours();
+    return h >= 6 && h < 18 ? 'light' : 'dark';
+  }
+
+  let preference = localClockTheme();
   try {
     const stored = localStorage.getItem('aryan-theme');
     if (modes.includes(stored)) preference = stored;
@@ -40,6 +46,19 @@
     document.dispatchEvent(new CustomEvent('aryan:themechange', { detail: { preference } }));
   }
 
+  window.AryanTheme = {
+    get: () => preference,
+    localClockTheme,
+    set: (next, { persist = true } = {}) => {
+      if (!modes.includes(next)) return;
+      preference = next;
+      if (persist) {
+        try { localStorage.setItem('aryan-theme', preference); } catch {}
+      }
+      apply();
+    },
+  };
+
   apply();
 
   document.addEventListener('astro:before-swap', event => {
@@ -49,7 +68,7 @@
 
   window.addEventListener('storage', event => {
     if (event.key === 'aryan-theme' || event.key === null) {
-      preference = modes.includes(event.newValue) ? event.newValue : 'dark';
+      preference = modes.includes(event.newValue) ? event.newValue : localClockTheme();
       apply();
     }
   });

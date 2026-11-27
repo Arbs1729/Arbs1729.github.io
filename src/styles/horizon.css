@@ -1,0 +1,888 @@
+/* ============================================================================
+   Horizon Flight Deck × Retro Space Station Drafting Edition (revamp-v2-horizon)
+   Light: Sunlit Ghibli Drafting Vellum + Brushed Brass Slide-Rules + Sepia/Cobalt Blueprints
+   Dark:  90s Anime Warm Amber-Gold Orbital Night HUD + Dark Brass Bezels + Cassette Audio Deck
+   ============================================================================ */
+
+/* ----------------------------------------------------------------------------
+   1. DARK MODE — Warm 90s Anime Amber-Gold Orbital Night HUD
+   ---------------------------------------------------------------------------- */
+:root {
+  --paper: #0d1219;
+  --panel: #141c26;
+  --surface: #1b2430;
+  --ink: #f4ebd8;
+  --muted: #b1aa99;
+  --accent: #e59a4a;
+  --glow: #f2b768;
+  --rule: rgba(226, 186, 118, 0.22);
+  --control-side: #080b10;
+  --space-wash: rgba(11, 16, 23, 0.56);
+
+  /* Horizon Flight Deck hardware & blueprint tokens (Night) */
+  --horizon-warm: rgba(232, 154, 72, 0.32);
+  --horizon-cool: rgba(74, 146, 168, 0.16);
+  --hud-line: rgba(235, 179, 98, 0.58);
+  --brass-hi: #8a6e3e;
+  --brass-mid: #4a3b24;
+  --brass-lo: #241d14;
+  --brass-edge: rgba(236, 194, 116, 0.36);
+  --brass-screw: #b99352;
+  --console-bg-top: #221f1c;
+  --console-bg-bot: #12151a;
+  --console-border: rgba(232, 188, 112, 0.34);
+  --console-ink: #f5ecda;
+  --console-muted: rgba(238, 220, 186, 0.66);
+  --gauge-track: rgba(9, 13, 18, 0.84);
+  --gauge-tick: rgba(236, 194, 118, 0.42);
+  --grid-minor: rgba(236, 198, 132, 0.028);
+  --grid-major: rgba(236, 198, 132, 0.068);
+
+  /* Blueprint SVG colors (Night: luminous amber-gold + cyan telemetry) */
+  --bp-bg: rgba(12, 18, 26, 0.62);
+  --bp-border: rgba(232, 184, 108, 0.34);
+  --bp-ink: #ebbc74;
+  --bp-thin: rgba(235, 188, 116, 0.38);
+  --bp-vector: #6cc4d6;
+  --bp-fill: rgba(235, 176, 94, 0.12);
+  --bp-panel: rgba(108, 196, 214, 0.12);
+  --bp-accent: #f49b56;
+  --bp-grid: rgba(235, 188, 116, 0.14);
+  --bp-label: rgba(242, 212, 162, 0.72);
+  --bp-glow: drop-shadow(0 0 6px rgba(235, 168, 76, 0.22));
+}
+
+/* ----------------------------------------------------------------------------
+   2. LIGHT MODE — Sunlit Studio Ghibli Drafting Vellum + Brushed Brass
+   ---------------------------------------------------------------------------- */
+:root[data-theme='light'] {
+  --paper: #f3ead5;
+  --panel: #fbf6e8;
+  --surface: #e9dec4;
+  --ink: #241f19;
+  --muted: #615749;
+  --accent: #b84a27;
+  --glow: #cc5a33;
+  --rule: rgba(122, 98, 66, 0.32);
+  --control-side: #a38e6c;
+  --space-wash: rgba(244, 234, 210, 0.62);
+
+  /* Horizon Flight Deck hardware & blueprint tokens (Sunlit Vellum) */
+  --horizon-warm: rgba(214, 134, 68, 0.2);
+  --horizon-cool: rgba(58, 116, 152, 0.18);
+  --hud-line: rgba(178, 82, 44, 0.56);
+  --brass-hi: #ebd49a;
+  --brass-mid: #c5a15b;
+  --brass-lo: #8d6d34;
+  --brass-edge: rgba(114, 84, 34, 0.45);
+  --brass-screw: #b58f48;
+  --console-bg-top: #f3e8ce;
+  --console-bg-bot: #dfcfa9;
+  --console-border: rgba(132, 99, 46, 0.48);
+  --console-ink: #262018;
+  --console-muted: #5f5039;
+  --gauge-track: rgba(96, 76, 46, 0.16);
+  --gauge-tick: rgba(96, 76, 46, 0.46);
+  --grid-minor: rgba(132, 108, 74, 0.09);
+  --grid-major: rgba(120, 94, 58, 0.19);
+
+  /* Blueprint SVG colors (Daylight: warm sepia drafting ink + blueprint cobalt) */
+  --bp-bg: linear-gradient(180deg, rgba(252, 248, 236, 0.94), rgba(241, 231, 206, 0.92));
+  --bp-border: rgba(136, 104, 54, 0.42);
+  --bp-ink: #4a3a28;
+  --bp-thin: rgba(92, 72, 48, 0.38);
+  --bp-vector: #2e6088;
+  --bp-fill: rgba(184, 74, 39, 0.1);
+  --bp-panel: rgba(46, 96, 136, 0.11);
+  --bp-accent: #b84a27;
+  --bp-grid: rgba(126, 100, 64, 0.17);
+  --bp-label: #62513d;
+  --bp-glow: none;
+}
+
+/* ----------------------------------------------------------------------------
+   3. Dual-Scale Engineering Millimeter Graph Paper & Sunlit Vellum Texture
+   ---------------------------------------------------------------------------- */
+body::before {
+  background:
+    linear-gradient(var(--grid-major) 1px, transparent 1px),
+    linear-gradient(90deg, var(--grid-major) 1px, transparent 1px),
+    linear-gradient(var(--grid-minor) 1px, transparent 1px),
+    linear-gradient(90deg, var(--grid-minor) 1px, transparent 1px),
+    radial-gradient(ellipse 85% 60% at 14% 6%, rgba(255, 246, 218, 0.12), transparent 58%),
+    linear-gradient(var(--space-wash), var(--space-wash));
+  background-size: 80px 80px, 80px 80px, 16px 16px, 16px 16px, 100% 100%, 100% 100%;
+}
+
+:root[data-theme='light'] body::before {
+  background:
+    linear-gradient(var(--grid-major) 1px, transparent 1px),
+    linear-gradient(90deg, var(--grid-major) 1px, transparent 1px),
+    linear-gradient(var(--grid-minor) 1px, transparent 1px),
+    linear-gradient(90deg, var(--grid-minor) 1px, transparent 1px),
+    radial-gradient(ellipse 72% 48% at 12% 4%, rgba(255, 250, 232, 0.85), transparent 62%),
+    radial-gradient(ellipse 85% 70% at 92% 96%, rgba(190, 152, 92, 0.2), transparent 66%),
+    linear-gradient(var(--space-wash), var(--space-wash));
+  background-size: 80px 80px, 80px 80px, 16px 16px, 16px 16px, 100% 100%, 100% 100%, 100% 100%;
+}
+
+/* Light mode uses fine vellum cotton grain instead of dark CRT scanlines */
+:root[data-theme='light'] body::after {
+  opacity: .22;
+  background:
+    radial-gradient(rgba(116, 92, 56, 0.16) 0.65px, transparent 0.65px);
+  background-size: 9px 9px;
+}
+:root[data-theme='light'] .space-atmosphere {
+  opacity: .86;
+}
+
+/* Continuous Golden-Hour Sunset Terminator Wash when scrubbing near 50% */
+:root[data-sky-zone='terminator'] .station-horizon {
+  border-top-color: rgba(244, 134, 62, 0.92);
+  box-shadow: 0 -18px 64px rgba(242, 128, 56, 0.52);
+}
+
+/* ----------------------------------------------------------------------------
+   4. Hero Drafting Board & Orbital Station Observation Deck
+   ---------------------------------------------------------------------------- */
+.home-intro.station-deck {
+  border-color: var(--bp-border);
+  box-shadow:
+    0 24px 64px rgba(0, 0, 0, .34),
+    inset 0 1px 0 rgba(246, 212, 146, .18);
+  transition: background .3s ease, border-color .3s ease, box-shadow .3s ease;
+}
+
+:root[data-theme='light'] .home-intro.station-deck {
+  background:
+    linear-gradient(rgba(126, 100, 62, 0.065) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(126, 100, 62, 0.065) 1px, transparent 1px),
+    radial-gradient(ellipse 96% 52% at 64% 108%, rgba(236, 132, 60, calc(0.18 + var(--terminator-glow, 0) * 0.34)), rgba(76, 152, 206, 0.18) 44%, transparent 72%),
+    linear-gradient(180deg, rgba(253, 249, 238, 0.88), rgba(244, 234, 211, 0.88));
+  background-size: 32px 32px, 32px 32px, 100% 100%, 100% 100%;
+  border: 1px solid rgba(142, 110, 62, 0.42);
+  box-shadow:
+    0 22px 54px rgba(102, 78, 42, .13),
+    inset 0 1px 0 rgba(255, 255, 255, .92),
+    inset 0 0 0 4px rgba(245, 236, 214, .45);
+}
+
+/* Give the hero desktop right rail comfortable room for Room Keys + Orbital Blueprint Plate */
+@media (min-width: 900px) {
+  .home-intro.station-deck {
+    grid-template-columns: minmax(0, 1.48fr) minmax(272px, 0.72fr);
+    column-gap: clamp(2.4rem, 5vw, 4.4rem);
+  }
+  .home-intro.station-deck .intro-navigation {
+    display: flex;
+    flex-direction: column;
+    gap: 1.15rem;
+    padding-top: .35rem;
+  }
+}
+
+/* ----------------------------------------------------------------------------
+   5. Bespoke Orbital Station & Crew Shuttle Technical Blueprint Plate
+   ---------------------------------------------------------------------------- */
+.blueprint-plate {
+  position: relative;
+  margin: 0;
+  border-radius: 12px;
+  border: 1px solid var(--bp-border);
+  background: var(--bp-bg);
+  overflow: hidden;
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, .14),
+    0 10px 26px rgba(0, 0, 0, .14);
+}
+
+:root[data-theme='light'] .blueprint-plate {
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, .9),
+    0 8px 22px rgba(108, 84, 46, .1);
+}
+
+.bp-frame-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: .5rem;
+  padding: .42rem 1.3rem;
+  border-bottom: 1px solid var(--bp-border);
+  font-size: .56rem;
+  letter-spacing: .12em;
+  color: var(--bp-label);
+  background: color-mix(in srgb, var(--brass-mid) 14%, transparent);
+}
+
+.bp-svg {
+  display: block;
+  width: 100%;
+  height: auto;
+  filter: var(--bp-glow);
+}
+
+.bp-grid { color: var(--bp-grid); }
+.bp-primary { stroke: var(--bp-ink); }
+.bp-thin { stroke: var(--bp-thin); stroke-width: 0.75; }
+.bp-vector { stroke: var(--bp-vector); }
+.bp-node { fill: var(--bp-vector); stroke: var(--bp-ink); stroke-width: 0.7; }
+.bp-fill-module { fill: var(--bp-fill); stroke: var(--bp-ink); stroke-width: 1.1; }
+.bp-panel { fill: var(--bp-panel); stroke: var(--bp-vector); stroke-width: 0.95; }
+.bp-hub { fill: var(--bp-fill); stroke: var(--bp-ink); stroke-width: 1.3; }
+.bp-accent-ring { stroke: var(--bp-accent); stroke-width: 1.1; fill: none; }
+.bp-accent-dot { fill: var(--bp-accent); }
+.bp-dims { stroke: var(--bp-thin); }
+.bp-label {
+  fill: var(--bp-label);
+  stroke: none;
+  font: 500 7.2px/1 var(--mono);
+  letter-spacing: .09em;
+}
+
+/* Gentle continuous orbital ring rotation (disabled under reduced motion) */
+.bp-ring-spin {
+  transform-origin: 158px 110px;
+  animation: bp-orbit-spin 64s linear infinite;
+}
+.bp-shuttle {
+  animation: bp-shuttle-drift 6.5s ease-in-out infinite alternate;
+}
+@keyframes bp-orbit-spin {
+  to { transform: rotate(360deg); }
+}
+@keyframes bp-shuttle-drift {
+  from { transform: translate(248px, 34px) rotate(-28deg); }
+  to { transform: translate(242px, 39px) rotate(-25deg); }
+}
+
+/* Tiny machined brass corner screws on blueprint plate */
+.bp-screw {
+  position: absolute;
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: radial-gradient(circle at 32% 32%, var(--brass-hi), var(--brass-lo));
+  border: 0.6px solid var(--brass-edge);
+  pointer-events: none;
+  opacity: .85;
+}
+.bp-screw::after {
+  content: '';
+  position: absolute;
+  left: 1px;
+  right: 1px;
+  top: 50%;
+  height: 1px;
+  background: rgba(30, 22, 12, 0.55);
+  transform: translateY(-50%) rotate(-32deg);
+}
+.bp-screw-tl { top: 5px; left: 5px; }
+.bp-screw-tr { top: 5px; right: 5px; }
+.bp-screw-bl { bottom: 5px; left: 5px; }
+.bp-screw-br { bottom: 5px; right: 5px; }
+
+:root[data-hud='off'] .blueprint-plate .bp-grid,
+:root[data-hud='off'] .blueprint-plate .bp-dims { opacity: .25; }
+
+/* On mobile, keep the blueprint plate sleek and compact below EXPLORE buttons */
+@media (max-width: 899px) {
+  .blueprint-plate {
+    margin-top: .95rem;
+  }
+  .bp-svg {
+    max-height: 156px;
+  }
+}
+
+/* ----------------------------------------------------------------------------
+   6. Brushed Brass Slide-Rule Console & Vertical Scroll Vernier
+   ---------------------------------------------------------------------------- */
+.station-console {
+  border: 1.5px solid var(--console-border);
+  background:
+    linear-gradient(180deg, var(--console-bg-top), var(--console-bg-bot));
+  box-shadow:
+    0 3px 0 color-mix(in srgb, var(--brass-lo) 72%, black),
+    0 18px 46px rgba(0, 0, 0, .42),
+    inset 0 1px 0 rgba(255, 240, 200, .28);
+}
+
+:root[data-theme='light'] .station-console {
+  box-shadow:
+    0 3px 0 #9f8147,
+    0 16px 38px rgba(98, 72, 32, .2),
+    inset 0 1px 0 rgba(255, 252, 240, .92);
+}
+
+/* Brushed brass end-caps & screws on console shell */
+.station-console::before,
+.station-console::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: radial-gradient(circle at 30% 30%, var(--brass-hi), var(--brass-lo));
+  border: 1px solid var(--brass-edge);
+  transform: translateY(-50%);
+  pointer-events: none;
+  z-index: 3;
+}
+.station-console::before { left: 6px; }
+.station-console::after { right: 6px; }
+
+.console-inner {
+  padding-inline: 1.35rem;
+}
+@media (min-width: 1220px) {
+  .station-console {
+    width: min(848px, calc(100vw - 404px));
+  }
+  .console-inner {
+    grid-template-columns: auto 1px minmax(208px, 1.45fr) 1px minmax(106px, .76fr) 1px auto 1px auto;
+  }
+}
+@media (max-width: 1219px) and (min-width: 1061px) {
+  .console-inner {
+    grid-template-columns: auto 1px minmax(194px, 1.35fr) 1px minmax(96px, .72fr) 1px auto 1px auto;
+  }
+}
+@media (max-width: 1060px) and (min-width: 960px) {
+  .console-inner {
+    grid-template-columns: auto 1px minmax(194px, 1.35fr) 1px auto 1px auto;
+  }
+}
+
+/* Machined Brass Rotary Dial Cap */
+.dial-cap {
+  fill: color-mix(in srgb, var(--brass-mid) 36%, var(--console-bg-top));
+  stroke: var(--brass-hi);
+  stroke-width: 1.5;
+}
+:root[data-theme='light'] .dial-cap {
+  fill: #e7d8b5;
+  stroke: #9b7a3d;
+}
+
+/* Clickable Distinct-Color DAY & NIGHT Buttons + System-Clock Sync Readout */
+.console-fader-block .console-fader-head {
+  gap: .28rem;
+  margin-bottom: .32rem;
+}
+
+.sky-mode-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: .22rem;
+  height: 19px;
+  padding: 0 .38rem;
+  border-radius: 5px;
+  border: 1px solid transparent;
+  background: transparent;
+  font: 600 .54rem/1 var(--mono);
+  letter-spacing: .08em;
+  cursor: pointer;
+  transition: background .18s, border-color .18s, color .18s, box-shadow .18s, transform .14s;
+}
+.sky-mode-btn:hover {
+  transform: translateY(-1px);
+}
+.sky-glyph {
+  width: 10px;
+  height: 10px;
+  display: block;
+  flex: none;
+}
+
+/* Distinct DAY color: sunlit warm amber-gold / daylight sky */
+.sky-mode-day {
+  color: #e4a948;
+  border-color: rgba(228, 169, 72, 0.32);
+  background: rgba(228, 169, 72, 0.1);
+}
+.sky-mode-day:hover,
+.sky-mode-day[aria-pressed='true'] {
+  color: #3a2308;
+  border-color: #d48e2a;
+  background: linear-gradient(180deg, #fce29f, #e5a946);
+  box-shadow: 0 0 10px rgba(235, 174, 72, 0.42);
+}
+
+/* Distinct NIGHT color: deep orbital indigo / starlight blue */
+.sky-mode-night {
+  color: #8cb2f0;
+  border-color: rgba(112, 152, 224, 0.34);
+  background: rgba(52, 82, 140, 0.16);
+}
+:root[data-theme='light'] .sky-mode-night {
+  color: #2f4b7c;
+  border-color: rgba(47, 75, 124, 0.35);
+  background: rgba(47, 75, 124, 0.1);
+}
+.sky-mode-night:hover,
+.sky-mode-night[aria-pressed='true'] {
+  color: #edf4ff;
+  border-color: #6b93d9;
+  background: linear-gradient(180deg, #2b4474, #182745);
+  box-shadow: 0 0 10px rgba(102, 148, 226, 0.42);
+}
+
+.sky-phase-readout {
+  border: 0;
+  padding: 0 .2rem;
+  background: transparent;
+  font: 600 .54rem/1 var(--mono);
+  letter-spacing: .06em;
+  color: var(--accent);
+  cursor: pointer;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.sky-phase-readout:hover {
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
+/* Machined Brass Sky Scrubber Fader (Clearly signals dragging shifts background sky) */
+.fader-shell {
+  position: relative;
+  padding: 6px 9px 4px;
+  border-radius: 7px;
+  border: 1px solid var(--brass-edge);
+  background: linear-gradient(180deg, color-mix(in srgb, var(--brass-hi) 22%, var(--console-bg-top)), color-mix(in srgb, var(--brass-mid) 18%, var(--console-bg-bot)));
+  box-shadow: inset 0 1px 2px rgba(0, 0, 0, .24);
+  transition: border-color .2s, box-shadow .2s;
+}
+.fader-shell-sky:hover,
+.fader-shell-sky.is-dragging {
+  border-color: var(--accent);
+  box-shadow: inset 0 1px 2px rgba(0, 0, 0, .24), 0 0 0 2px color-mix(in srgb, var(--accent) 22%, transparent);
+}
+
+/* Central Sunset / Sunrise Terminator Diamond Notch at 50% */
+.sky-terminator-notch {
+  position: absolute;
+  left: 50%;
+  top: 2px;
+  width: 5px;
+  height: 5px;
+  transform: translateX(-50%) rotate(45deg);
+  background: #f0823c;
+  box-shadow: 0 0 5px rgba(240, 130, 60, 0.65);
+  pointer-events: none;
+  z-index: 1;
+}
+
+/* Sky-to-Orbit Atmospheric Gradient Track: Cerulean Day -> Gold -> Sunset Orange -> Indigo Twilight -> Deep Space */
+.console-slider {
+  position: relative;
+  z-index: 2;
+  height: 9px;
+  background: linear-gradient(90deg, #74bce8 0%, #f1cf78 28%, #e37638 50%, #304978 74%, #0f1829 100%);
+  border: 1px solid var(--brass-edge);
+  box-shadow: inset 0 1px 3px rgba(0, 0, 0, .35);
+}
+
+.console-slider::-webkit-slider-thumb {
+  width: 22px;
+  height: 22px;
+  border-radius: 5px;
+  background:
+    repeating-linear-gradient(90deg, transparent 0 4px, rgba(44, 30, 12, 0.58) 4px 5.5px, transparent 5.5px 7px),
+    linear-gradient(180deg, #f7e6b2 0%, #cca458 52%, #8e6c2e 100%);
+  border: 1px solid #4e3917;
+  box-shadow: 0 2px 7px rgba(0, 0, 0, .46), inset 0 1px 0 rgba(255, 250, 232, .9);
+  cursor: grab;
+  transition: transform .14s ease, box-shadow .14s ease;
+}
+.console-slider:hover::-webkit-slider-thumb {
+  transform: scale(1.06);
+  box-shadow: 0 3px 10px rgba(0, 0, 0, .5), 0 0 0 2px color-mix(in srgb, var(--accent) 45%, transparent);
+}
+.console-slider:active::-webkit-slider-thumb {
+  cursor: grabbing;
+  transform: scale(1.09);
+}
+
+.console-slider::-moz-range-thumb {
+  width: 22px;
+  height: 22px;
+  border-radius: 5px;
+  background:
+    repeating-linear-gradient(90deg, transparent 0 4px, rgba(44, 30, 12, 0.58) 4px 5.5px, transparent 5.5px 7px),
+    linear-gradient(180deg, #f7e6b2 0%, #cca458 52%, #8e6c2e 100%);
+  border: 1px solid #4e3917;
+  box-shadow: 0 2px 7px rgba(0, 0, 0, .46);
+  cursor: grab;
+}
+.fader-ruler i.is-mid {
+  background: #e37638;
+  height: 7px;
+}
+
+/* Brushed brass toggle knobs */
+.hw-switch[aria-pressed='true'] .hw-track i {
+  background: linear-gradient(155deg, #f5cd7c, #c77b34);
+  box-shadow: 0 0 6px rgba(236, 174, 78, .5);
+}
+
+/* Wide-desktop Left-Margin Brass Vertical Slide-Rule Scroll Vernier (inspired by Horizon Flight Deck plate) */
+.brass-vernier {
+  display: none;
+}
+
+@media (min-width: 1320px) {
+  .brass-vernier {
+    position: fixed;
+    left: 20px;
+    top: 50%;
+    transform: translateY(-50%);
+    z-index: 28;
+    width: 30px;
+    height: 252px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: space-between;
+    padding: 9px 0;
+    border-radius: 7px;
+    border: 1px solid var(--brass-edge);
+    background: linear-gradient(90deg, var(--brass-lo), var(--brass-hi) 46%, var(--brass-mid) 78%, var(--brass-lo));
+    box-shadow:
+      0 10px 26px rgba(0, 0, 0, .28),
+      inset 0 1px 0 rgba(255, 248, 224, .5);
+    pointer-events: none;
+    transition: opacity .28s ease;
+  }
+  :root[data-hud='off'] .brass-vernier {
+    opacity: 0;
+  }
+  .vernier-screw {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: radial-gradient(circle at 30% 30%, #f5e2ad, #765824);
+    border: 1px solid rgba(46, 32, 12, .55);
+    position: relative;
+  }
+  .vernier-screw::after {
+    content: '';
+    position: absolute;
+    left: 1px;
+    right: 1px;
+    top: 50%;
+    height: 1px;
+    background: rgba(34, 24, 10, .65);
+    transform: translateY(-50%) rotate(25deg);
+  }
+  .vernier-scale {
+    position: relative;
+    width: 16px;
+    height: 206px;
+    border-radius: 3px;
+    background: var(--panel);
+    border: 1px solid var(--brass-edge);
+    box-shadow: inset 0 1px 4px rgba(0, 0, 0, .35);
+    overflow: visible;
+  }
+  .vernier-scale::before {
+    content: '';
+    position: absolute;
+    inset: 4px 2px;
+    background: repeating-linear-gradient(
+      180deg,
+      var(--gauge-tick) 0 1px,
+      transparent 1px 8px
+    );
+  }
+  .vernier-cursor {
+    position: absolute;
+    left: -5px;
+    right: -5px;
+    top: calc(var(--scroll-pct, 0) * 1%);
+    height: 16px;
+    transform: translateY(-50%);
+    border-radius: 3px;
+    background: linear-gradient(180deg, #f3dfa6, #be984e 55%, #846228);
+    border: 1px solid #483414;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, .42), inset 0 1px 0 rgba(255, 250, 232, .85);
+    transition: top .12s linear;
+  }
+  .vernier-cursor::after {
+    content: '';
+    position: absolute;
+    left: 2px;
+    right: 2px;
+    top: 50%;
+    height: 1.5px;
+    background: var(--accent);
+    transform: translateY(-50%);
+  }
+}
+
+/* ----------------------------------------------------------------------------
+   7. Retro 90s Anime Cassette Tape Deck inside MusicPlayer (Purely Visual)
+   ---------------------------------------------------------------------------- */
+.cassette-deck {
+  position: relative;
+  width: min(100%, 340px);
+  margin: .95rem 0 1.05rem;
+  padding: 10px 12px 12px;
+  border-radius: 12px;
+  border: 1.5px solid var(--brass-edge);
+  background: linear-gradient(180deg, #27221d, #151415);
+  box-shadow:
+    0 4px 0 rgba(8, 10, 14, .85),
+    0 12px 28px rgba(0, 0, 0, .28),
+    inset 0 1px 0 rgba(246, 206, 134, .22);
+  color: #f4e6c8;
+}
+
+:root[data-theme='light'] .cassette-deck {
+  background: linear-gradient(180deg, #3c342b, #26211c);
+  box-shadow:
+    0 4px 0 #8a7350,
+    0 10px 24px rgba(86, 66, 36, .18),
+    inset 0 1px 0 rgba(246, 212, 146, .28);
+}
+
+.cassette-label-band {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: .28rem .58rem;
+  border-radius: 5px 5px 2px 2px;
+  background: linear-gradient(90deg, #e7a348, #d47934);
+  color: #1f1710;
+  font: 700 .6rem/1 var(--mono);
+  letter-spacing: .1em;
+  margin-bottom: 8px;
+}
+
+.cassette-window {
+  display: grid;
+  grid-template-columns: 44px 1fr 44px;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 12px;
+  border-radius: 8px;
+  background: linear-gradient(180deg, #0d1116, #191d22);
+  border: 1px solid rgba(235, 190, 114, 0.28);
+  box-shadow: inset 0 2px 8px rgba(0, 0, 0, .7);
+}
+
+.cassette-reel {
+  width: 42px;
+  height: 42px;
+  border-radius: 50%;
+  border: 2px solid #d5a659;
+  background:
+    repeating-conic-gradient(from 0deg, #d5a659 0deg 14deg, #1b1f24 14deg 60deg);
+  display: grid;
+  place-items: center;
+  box-shadow: inset 0 0 0 6px #181c22;
+}
+
+.cassette-reel::after {
+  content: '';
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background: #0d1116;
+  border: 1.5px solid #e7b96b;
+}
+
+.music-player.is-playing .cassette-reel,
+body.music-is-playing .cassette-reel {
+  animation: bp-orbit-spin 4.2s linear infinite;
+}
+
+.cassette-bridge {
+  height: 22px;
+  border-radius: 4px;
+  border: 1px solid rgba(235, 190, 114, 0.22);
+  background:
+    repeating-linear-gradient(90deg, transparent 0 8px, rgba(235, 190, 114, 0.16) 8px 9px),
+    linear-gradient(180deg, rgba(230, 160, 72, 0.16), rgba(16, 20, 26, 0.85));
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font: 500 .55rem/1 var(--mono);
+  letter-spacing: .12em;
+  color: rgba(242, 212, 162, .72);
+}
+
+.cassette-foot {
+  display: flex;
+  justify-content: center;
+  gap: 26px;
+  margin-top: 8px;
+}
+
+.cassette-foot i {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: #0d1116;
+  border: 1px solid rgba(235, 190, 114, .34);
+}
+
+/* ----------------------------------------------------------------------------
+   8. Tactile Brass Refinement on F1 Card, AniList Meta Bar & Booking Sheet
+   ---------------------------------------------------------------------------- */
+.f1-card {
+  border-color: var(--bp-border);
+  box-shadow:
+    0 3px 0 color-mix(in srgb, var(--control-side) 88%, transparent),
+    0 14px 32px rgba(0, 0, 0, .14),
+    inset 0 1px 0 rgba(255, 250, 232, .16);
+}
+:root[data-theme='light'] .f1-card {
+  background: linear-gradient(180deg, rgba(253, 249, 238, 0.96), rgba(245, 237, 216, 0.94));
+  box-shadow:
+    0 3px 0 #b19b74,
+    0 12px 26px rgba(102, 78, 42, .1),
+    inset 0 1px 0 rgba(255, 255, 255, .95);
+}
+
+.cal-gauge > i {
+  background: linear-gradient(90deg, var(--bp-vector), var(--accent));
+}
+
+/* ----------------------------------------------------------------------------
+   9. Spatial-First Station Rooms & Abode Ambiance (Work · Interests · About)
+   Text-first reading clarity framed inside distinct rooms of an orbital abode
+   ---------------------------------------------------------------------------- */
+.station-room-head {
+  position: relative;
+  max-width: none;
+  margin: 1.35rem 0 1.65rem;
+  padding: clamp(1.5rem, 3.2vw, 2.35rem) clamp(1.3rem, 3vw, 2.2rem);
+  border-radius: 18px;
+  border: 1px solid var(--bp-border);
+  display: grid;
+  grid-template-columns: minmax(0, 1.35fr) minmax(240px, 0.65fr);
+  align-items: center;
+  gap: 1.6rem clamp(1.6rem, 4vw, 3.2rem);
+  background:
+    radial-gradient(ellipse 80% 70% at 88% 100%, var(--room-ambient, var(--horizon-warm)), transparent 70%),
+    linear-gradient(180deg, color-mix(in srgb, var(--panel) 84%, transparent), color-mix(in srgb, var(--paper) 82%, transparent));
+  box-shadow:
+    0 18px 46px rgba(0, 0, 0, .18),
+    inset 0 1px 0 rgba(255, 250, 232, .18);
+  overflow: hidden;
+}
+
+:root[data-theme='light'] .station-room-head {
+  background:
+    linear-gradient(rgba(126, 100, 62, 0.055) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(126, 100, 62, 0.055) 1px, transparent 1px),
+    radial-gradient(ellipse 82% 70% at 88% 100%, var(--room-ambient, var(--horizon-warm)), transparent 72%),
+    linear-gradient(180deg, rgba(253, 249, 238, 0.9), rgba(244, 234, 211, 0.88));
+  background-size: 28px 28px, 28px 28px, 100% 100%, 100% 100%;
+  box-shadow:
+    0 16px 40px rgba(102, 78, 42, .1),
+    inset 0 1px 0 rgba(255, 255, 255, .92);
+}
+
+.room-head-copy {
+  position: relative;
+  z-index: 1;
+  min-width: 0;
+}
+.room-head-copy h1 {
+  margin: .65rem 0 .7rem;
+  max-width: 16ch;
+}
+.room-head-copy p:not(.eyebrow) {
+  color: var(--muted);
+  max-width: 54ch;
+  font-size: clamp(.98rem, 1.3vw, 1.08rem);
+}
+.room-head-plate {
+  position: relative;
+  z-index: 1;
+}
+.blueprint-plate-room .bp-svg {
+  max-height: 152px;
+}
+
+/* Subtle Per-Room Ambient Light Signatures */
+body[data-room='work'] {
+  --room-ambient: rgba(74, 146, 198, 0.2);
+}
+body[data-room='interests'] {
+  --room-ambient: rgba(235, 144, 68, 0.24);
+}
+body[data-room='about'] {
+  --room-ambient: rgba(154, 178, 126, 0.2);
+}
+
+/* Room 01 · Work (Drafting Bay) — recessed vellum / HUD folio sheets */
+body[data-room='work'] .experience-ledger,
+body[data-room='work'] .case-ledger {
+  padding: .25rem clamp(.85rem, 2.2vw, 1.5rem);
+  border-radius: 14px;
+  border: 1px solid color-mix(in srgb, var(--bp-border) 78%, transparent);
+  background: color-mix(in srgb, var(--panel) 72%, transparent);
+}
+body[data-room='work'] .experience-ledger > article:first-child,
+body[data-room='work'] .case-ledger > a:first-child {
+  border-top: 0;
+}
+
+/* Room 03 · About (Personal Study) — calm framed desk logbook + brass credentials plaque */
+body[data-room='about'] .about-prose {
+  max-width: 780px;
+  padding: clamp(1.4rem, 3vw, 2.2rem) clamp(1.2rem, 3vw, 2.2rem);
+  border-radius: 16px;
+  border: 1px solid color-mix(in srgb, var(--bp-border) 74%, transparent);
+  background: color-mix(in srgb, var(--panel) 78%, transparent);
+  box-shadow: 0 12px 32px rgba(0, 0, 0, .08), inset 0 1px 0 rgba(255, 255, 255, .14);
+}
+body[data-room='about'] .about-prose p:last-child {
+  margin-bottom: 0;
+}
+body[data-room='about'] .about-credentials {
+  padding: clamp(1.4rem, 3vw, 2rem) clamp(1.2rem, 3vw, 2rem);
+  border-radius: 14px;
+  border: 1px solid var(--bp-border);
+  border-left: 3px solid var(--accent);
+  background: color-mix(in srgb, var(--panel) 84%, transparent);
+}
+
+@media (max-width: 820px) {
+  .station-room-head {
+    grid-template-columns: 1fr;
+    gap: 1.15rem;
+    margin-top: .75rem;
+    padding: 1.3rem 1.05rem;
+    border-radius: 14px;
+  }
+  .blueprint-plate-room .bp-svg {
+    max-height: 126px;
+  }
+}
+
+/* Mobile drawer hides outer decorative console screws so corners stay clean */
+@media (max-width: 959px) {
+  .station-console::before,
+  .station-console::after {
+    display: none;
+  }
+  .console-inner {
+    padding-inline: .9rem;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .bp-ring-spin,
+  .bp-shuttle,
+  .cassette-reel {
+    animation: none !important;
+  }
+}

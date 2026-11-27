@@ -1,0 +1,57 @@
+# Copy this file to `.github/workflows/sync-live-data.yml` on GitHub (or locally)
+# to enable automated GitHub Pro scheduled updates for BOTH:
+#   - AniList (@arbs42): every 6 hours (00:00, 06:00, 12:00, 18:00 UTC)
+#   - Formula 1 Weekend & Standings: twice weekly (Monday post-race + Friday pre-weekend)
+#
+# Commits and triggers a GitHub Pages rebuild ONLY when upstream data actually changes.
+
+name: Sync live portfolio data
+
+on:
+  schedule:
+    - cron: '0 */6 * * *'   # AniList every 6 hours; F1 runs on Mon & Fri 06:00 UTC
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Sync AniList snapshot (@arbs42)
+        continue-on-error: true
+        run: node scripts/sync-anilist.mjs
+
+      - name: Sync Formula 1 standings & next GP (Mon/Fri or manual trigger)
+        continue-on-error: true
+        run: |
+          DOW=$(date -u +%u)
+          HOUR=$(date -u +%-H)
+          if [ "${{ github.event_name }}" = "workflow_dispatch" ] || ([ "$DOW" = "1" -o "$DOW" = "5" ] && [ "$HOUR" -ge 5 -a "$HOUR" -le 8 ]); then
+            node scripts/sync-f1.mjs
+          else
+            echo "Skipping F1 sync outside Mon/Fri morning UTC window."
+          fi
+
+      - name: Commit snapshots only when data changed
+        run: |
+          CHANGED=$(git status --porcelain src/data/anilist-snapshot.json src/data/f1-snapshot.json)
+          if [ -z "$CHANGED" ]; then
+            echo "No live data changes detected."
+            exit 0
+          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          [ -f src/data/anilist-snapshot.json ] && git add src/data/anilist-snapshot.json
+          [ -f src/data/f1-snapshot.json ] && git add src/data/f1-snapshot.json
+          git commit -m "chore(sync): refresh live AniList & F1 snapshots"
+          git push
