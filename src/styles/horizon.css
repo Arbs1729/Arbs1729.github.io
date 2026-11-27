@@ -1187,8 +1187,11 @@ body[data-room='about'] .about-credentials {
 
 @media (max-width: 760px) {
   .music-dock-topbar {
+    grid-column: 1 / -1;
     cursor: default;
-    padding: .28rem .42rem .28rem .58rem;
+    padding: .24rem .36rem .24rem .5rem;
+    border-radius: 10px 10px 0 0;
+    margin: -.42rem -.42rem .1rem;
   }
   .music-dock-grip {
     display: none;
@@ -1196,6 +1199,44 @@ body[data-room='about'] .about-credentials {
   .music-dock-topbar .music-dock-win {
     margin-left: auto;
   }
+  .music-dock-card {
+    grid-template-columns: 168px minmax(0, 1fr);
+    gap: .45rem .5rem;
+  }
+  .music-dock-stage {
+    width: 168px;
+    height: 152px;
+    min-height: 152px;
+    aspect-ratio: auto;
+  }
+  .music-dock-stage > div:first-child,
+  .music-dock-stage iframe {
+    min-width: 168px;
+    min-height: 152px;
+  }
+  .music-dock.is-local .music-dock-topbar {
+    margin: -.5rem -.6rem .28rem;
+  }
+  .music-dock.is-local .music-dock-card {
+    grid-template-columns: 1fr;
+  }
+  body.music-bar-open .chat-widget {
+    bottom: 222px;
+  }
+  body.music-bar-open.music-bar-local .chat-widget {
+    bottom: 112px;
+  }
+}
+
+.footer-links-row {
+  grid-template-columns: var(--btn-h-md) var(--btn-h-md) minmax(0, 1fr);
+}
+
+.ib-source-note {
+  margin-top: .45rem;
+  font-size: .58rem;
+  letter-spacing: .1em;
+  color: var(--accent);
 }
 
 /* ----------------------------------------------------------------------------

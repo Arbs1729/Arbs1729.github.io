@@ -3,8 +3,6 @@
   globalThis.__aryanInlineBookingBooted = true;
 
   const DEFAULT_BOOKING_URL = 'https://calendly.com/aryanbasantani1729/let-s-chat';
-  // Default IST (UTC+5:30) conversation slots converted cleanly into visitor's local timezone
-  // (used when Calendly Free mode has no paid API token; automatically replaced by live Worker slots when API is configured)
   const DEFAULT_IST_HOURS = [
     { h: 19, m: 30 },
     { h: 20, m: 0 },
@@ -62,25 +60,42 @@
     return `${wd} ${d} ${mo}`;
   }
 
-  function buildFallbackSlotsForMonth(year, month, tz) {
+  function groupSlotsByDay(rawSlots, tz, bookingUrl) {
     const map = new Map();
-    const now = Date.now();
-    const minLead = now + 2 * 3600_000;
+    const now = Date.now() + 60_000;
+    const base = bookingUrl.replace(/\/+$/, '');
+    for (const s of rawSlots) {
+      const startIso = s.startTime || s.start || s.start_time;
+      if (!startIso) continue;
+      const ts = Date.parse(startIso);
+      if (!Number.isFinite(ts) || ts < now) continue;
+      const lk = localDayKey(new Date(ts), tz);
+      const list = map.get(lk) || [];
+      list.push({
+        start: new Date(ts).toISOString(),
+        rawIso: startIso,
+        label: formatSlot24(ts, tz),
+        schedulingUrl: s.schedulingUrl || `${base}/${encodeURIComponent(startIso)}`,
+      });
+      map.set(lk, list);
+    }
+    for (const list of map.values()) {
+      list.sort((a, b) => Date.parse(a.start) - Date.parse(b.start));
+    }
+    return map;
+  }
+
+  function buildFallbackSlotsForMonth(year, month, tz, bookingUrl) {
+    const raw = [];
     const daysInMonth = new Date(year, month + 1, 0).getDate();
     for (let day = 1; day <= daysInMonth; day++) {
       const dateStr = dayKey(year, month, day);
       for (const { h, m } of DEFAULT_IST_HOURS) {
-        // Construct exact IST (+05:30) timestamp so every visitor sees accurate local time
-        const iso = `${dateStr}T${String(h).padStart(2, '0')}:${String(m).padStart(2, '0')}:00+05:30`;
-        const ts = Date.parse(iso);
-        if (!Number.isFinite(ts) || ts < minLead) continue;
-        const lk = localDayKey(new Date(ts), tz);
-        const list = map.get(lk) || [];
-        list.push({ start: new Date(ts).toISOString(), label: formatSlot24(ts, tz), rawIso: iso });
-        map.set(lk, list);
+        const rawIso = `${dateStr}T${String(h).padStart(2, '0')}:${String(m).padStart(2, '0')}:00+05:30`;
+        raw.push({ startTime: rawIso });
       }
     }
-    return map;
+    return groupSlotsByDay(raw, tz, bookingUrl);
   }
 
   function mountInlineBooking() {
@@ -89,8 +104,11 @@
     root.dataset.ibBound = 'true';
 
     const apiBase = (root.dataset.apiBase || '').replace(/\/+$/, '');
-    const bookingUrl = root.dataset.bookingUrl || DEFAULT_BOOKING_URL;
+    const bookingUrl = (root.dataset.bookingUrl || DEFAULT_BOOKING_URL).replace(/\/+$/, '');
     const tz = detectTimeZone();
+
+    let snapshot = null;
+    try { snapshot = JSON.parse(root.dataset.snapshot || 'null'); } catch {}
 
     const prevBtn = root.querySelector('[data-ib-prev]');
     const nextBtn = root.querySelector('[data-ib-next]');
@@ -99,6 +117,7 @@
     const dateHeading = root.querySelector('[data-ib-date-heading]');
     const slotsBox = root.querySelector('[data-ib-slots]');
     const tzEl = root.querySelector('[data-ib-tz]');
+    const sourceEl = root.querySelector('[data-ib-source]');
     const form = root.querySelector('[data-ib-form]');
     const cancelBtn = root.querySelector('[data-ib-cancel]');
     const submitBtn = root.querySelector('[data-ib-submit]');
@@ -114,15 +133,29 @@
     let viewMonth = today.getMonth();
     let selectedDay = '';
     let selectedSlot = null;
-    let liveProvider = null;
-    let slotsByDay = buildFallbackSlotsForMonth(viewYear, viewMonth, tz);
+    let bookingMode = 'fallback'; // 'native' | 'public-slots' | 'snapshot' | 'fallback'
+    let slotsByDay = new Map();
 
     function pickDefaultDay() {
-      const sorted = [...slotsByDay.keys()].filter(k => k.startsWith(`${viewYear}-${String(viewMonth + 1).padStart(2, '0')}`)).sort();
-      if (selectedDay && slotsByDay.has(selectedDay)) return;
+      const prefix = `${viewYear}-${String(viewMonth + 1).padStart(2, '0')}`;
+      const sorted = [...slotsByDay.keys()].filter(k => k.startsWith(prefix)).sort();
+      if (selectedDay && slotsByDay.has(selectedDay) && selectedDay.startsWith(prefix)) return;
       selectedDay = sorted[0] || '';
       selectedSlot = null;
       if (form) form.hidden = true;
+    }
+
+    function updateSourceBadge() {
+      if (!sourceEl) return;
+      if (bookingMode === 'native' || bookingMode === 'public-slots') {
+        sourceEl.textContent = 'LIVE AVAILABILITY · CALENDLY';
+        sourceEl.hidden = false;
+      } else if (bookingMode === 'snapshot') {
+        sourceEl.textContent = 'SYNCED WITH CALENDLY';
+        sourceEl.hidden = false;
+      } else {
+        sourceEl.hidden = true;
+      }
     }
 
     function renderSlots() {
@@ -165,7 +198,9 @@
             form.querySelector('input[name="name"]')?.focus();
           }
           if (submitBtn) {
-            submitBtn.textContent = liveProvider ? `Confirm ${slot.label}` : `Continue for ${slot.label} ↗`;
+            submitBtn.textContent = bookingMode === 'native'
+              ? `Confirm ${slot.label}`
+              : `Continue to confirm ${slot.label}`;
           }
         });
         slotsBox.append(btn);
@@ -179,7 +214,7 @@
         monthLabel.textContent = new Intl.DateTimeFormat('en-US', { month: 'long', year: 'numeric', timeZone: 'UTC' }).format(monthDt);
       }
 
-      const firstDow = (new Date(viewYear, viewMonth, 1).getDay() + 6) % 7; // Mon = 0 .. Sun = 6
+      const firstDow = (new Date(viewYear, viewMonth, 1).getDay() + 6) % 7;
       const daysInMonth = new Date(viewYear, viewMonth + 1, 0).getDate();
       daysGrid.replaceChildren();
 
@@ -220,10 +255,11 @@
     }
 
     async function loadMonth() {
-      slotsByDay = buildFallbackSlotsForMonth(viewYear, viewMonth, tz);
-      liveProvider = null;
+      const monthPrefix = `${viewYear}-${String(viewMonth + 1).padStart(2, '0')}`;
+      bookingMode = 'fallback';
+      slotsByDay = new Map();
 
-      // Try live Worker availability first if configured
+      // 1. Live Worker availability (supports both paid native API AND free public Calendly slot proxy!)
       if (apiBase) {
         try {
           const startDate = new Date(viewYear, viewMonth, 1);
@@ -232,26 +268,41 @@
           url.searchParams.set('start', dayKey(startDate.getFullYear(), startDate.getMonth(), startDate.getDate()));
           url.searchParams.set('end', dayKey(endDate.getFullYear(), endDate.getMonth(), endDate.getDate()));
           url.searchParams.set('timezone', tz);
-          const res = await fetch(url.href, { signal: AbortSignal.timeout(5000) });
+          url.searchParams.set('public', '1');
+          const res = await fetch(url.href, { signal: AbortSignal.timeout(7000) });
           if (res.ok) {
             const payload = await res.json();
-            if (payload.mode === 'native' && Array.isArray(payload.slots) && payload.slots.length) {
-              liveProvider = payload.provider || 'api';
-              const nextMap = new Map();
-              for (const s of payload.slots) {
-                const startIso = s.start || s.start_time;
-                if (!startIso) continue;
-                const lk = localDayKey(new Date(startIso), tz);
-                const list = nextMap.get(lk) || [];
-                list.push({ start: startIso, label: formatSlot24(startIso, tz) });
-                nextMap.set(lk, list);
-              }
-              slotsByDay = nextMap;
+            if ((payload.mode === 'native' || payload.mode === 'public-slots') && Array.isArray(payload.slots)) {
+              bookingMode = payload.mode;
+              slotsByDay = groupSlotsByDay(payload.slots, tz, payload.fallbackUrl || bookingUrl);
+              updateSourceBadge();
+              pickDefaultDay();
+              renderMonth();
+              renderSlots();
+              return;
             }
           }
         } catch {}
       }
 
+      // 2. Real Calendly snapshot synced via GitHub Pro Actions (scripts/sync-calendly.mjs)
+      if (snapshot && Array.isArray(snapshot.slots) && snapshot.slots.length) {
+        const snapMap = groupSlotsByDay(snapshot.slots, tz, snapshot.bookingUrl || bookingUrl);
+        const hasMonthSlots = [...snapMap.keys()].some(k => k.startsWith(monthPrefix));
+        if (hasMonthSlots) {
+          bookingMode = 'snapshot';
+          slotsByDay = snapMap;
+          updateSourceBadge();
+          pickDefaultDay();
+          renderMonth();
+          renderSlots();
+          return;
+        }
+      }
+
+      // 3. Graceful fallback schedule (pre-fills exact date & visitor info straight into Calendly)
+      slotsByDay = buildFallbackSlotsForMonth(viewYear, viewMonth, tz, bookingUrl);
+      updateSourceBadge();
       pickDefaultDay();
       renderMonth();
       renderSlots();
@@ -297,13 +348,13 @@
       }
       if (errorEl) errorEl.hidden = true;
 
-      if (liveProvider && apiBase) {
+      if (bookingMode === 'native' && apiBase) {
         if (submitBtn) { submitBtn.disabled = true; submitBtn.textContent = 'Booking…'; }
         try {
           const res = await fetch(`${apiBase}/booking/create`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ start: selectedSlot.start, name, email, note, timezone: tz }),
+            body: JSON.stringify({ startTime: selectedSlot.start, name, email, note, timezone: tz }),
           });
           const data = await res.json();
           if (!res.ok) throw new Error(data.error || 'Could not confirm slot');
@@ -324,9 +375,13 @@
         return;
       }
 
-      // Calendly Free backend handoff: pre-fill exact month, date, name & email seamlessly
+      // Calendly Free handoff: jump directly to exact slot (when live/synced) or exact date,
+      // passing BOTH URL params AND Calendly.initInlineWidget prefill object so zero fields are re-typed!
       try {
-        const target = new URL(bookingUrl);
+        const directBase = (bookingMode === 'public-slots' || bookingMode === 'snapshot') && selectedSlot.schedulingUrl
+          ? selectedSlot.schedulingUrl
+          : bookingUrl;
+        const target = new URL(directBase);
         target.searchParams.set('month', selectedDay.slice(0, 7));
         target.searchParams.set('date', selectedDay);
         target.searchParams.set('name', name);
@@ -334,7 +389,7 @@
         if (note) target.searchParams.set('a1', note);
         window.AryanStation?.pulse?.('mode');
         if (window.AryanBooking?.open) {
-          window.AryanBooking.open(target.href);
+          window.AryanBooking.open(target.href, { name, email, note });
         } else {
           window.open(target.href, '_blank', 'noopener,noreferrer');
         }

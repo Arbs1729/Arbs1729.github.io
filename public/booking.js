@@ -361,15 +361,18 @@
       setStatus(slots.length ? `${slots.length} open time${slots.length === 1 ? '' : 's'} shown in your local timezone.` : 'No open slots in this 7-day window.');
     }
 
-    async function mountEmbed(url) {
+    async function mountEmbed(url, prefill = null) {
       state.mode = 'embed';
       const safeBase = sanitizeUrl(url) || defaultUrl;
       setExternalUrl(safeBase);
       showSection('embed');
-      setStatus('Interactive Calendly calendar loaded on-site.');
+      setStatus(prefill?.name || prefill?.email
+        ? 'Your selected time and details are pre-filled below — click Schedule Event to confirm.'
+        : 'Interactive Calendly calendar loaded on-site.');
 
       const dark = isDarkTheme();
-      if (state.embedUrlMounted === safeBase && state.embedThemeDark === dark && embedMount?.childElementCount) {
+      const cacheKey = `${safeBase}|${dark}|${prefill?.name || ''}|${prefill?.email || ''}|${prefill?.note || ''}`;
+      if (state.embedCacheKey === cacheKey && embedMount?.childElementCount) {
         return;
       }
 
@@ -379,15 +382,24 @@
         embedMount.replaceChildren();
       }
 
+      const prefillObj = {};
+      if (prefill?.name) prefillObj.name = prefill.name;
+      if (prefill?.email) prefillObj.email = prefill.email;
+      if (prefill?.note) prefillObj.customAnswers = { a1: prefill.note };
+
       try {
         const Calendly = await loadCalendlyWidget();
         if (!state.open || !embedMount) return;
         embedMount.replaceChildren();
-        Calendly.initInlineWidget({
+        const opts = {
           url: buildEmbedUrl(safeBase),
           parentElement: embedMount,
-        });
+        };
+        if (Object.keys(prefillObj).length) opts.prefill = prefillObj;
+        Calendly.initInlineWidget(opts);
         state.embedUrlMounted = safeBase;
+        state.embedPrefillMounted = prefill;
+        state.embedCacheKey = cacheKey;
         state.embedThemeDark = dark;
       } catch {
         if (embedMount) embedMount.hidden = true;
@@ -532,16 +544,24 @@
       }
     }
 
-    function open(triggerUrl) {
-      if (state.open) return;
+    function open(triggerUrl, prefill = null) {
+      const hasDirectTarget = Boolean(
+        prefill || (triggerUrl && sanitizeUrl(triggerUrl) && sanitizeUrl(triggerUrl) !== sanitizeUrl(defaultUrl)),
+      );
+      if (state.open && !hasDirectTarget) return;
       state.open = true;
-      state.previousFocus = document.activeElement;
+      if (!state.previousFocus) state.previousFocus = document.activeElement;
       if (triggerUrl) setExternalUrl(triggerUrl);
       sheet.hidden = false;
       document.body.classList.add('booking-open');
 
       const closeBtn = sheet.querySelector('.booking-close');
       (closeBtn || dialog)?.focus();
+
+      if (hasDirectTarget) {
+        mountEmbed(triggerUrl || defaultUrl, prefill);
+        return;
+      }
 
       if (state.mode === 'embed' && state.embedThemeDark === isDarkTheme() && embedMount?.childElementCount) {
         showSection('embed');
@@ -613,7 +633,7 @@
 
     function handleThemeChange() {
       if (state.mode === 'embed' && state.open && state.embedUrlMounted) {
-        mountEmbed(state.embedUrlMounted);
+        mountEmbed(state.embedUrlMounted, state.embedPrefillMounted || null);
       }
     }
 
@@ -659,8 +679,8 @@
   }
 
   globalThis.AryanBooking = {
-    open(url) {
-      ensureController()?.open(url);
+    open(url, prefill) {
+      ensureController()?.open(url, prefill);
     },
     close() {
       controller?.close();

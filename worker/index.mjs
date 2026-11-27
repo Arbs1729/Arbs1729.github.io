@@ -320,6 +320,58 @@ async function handleBookingAvailability(request, url, env, headers, reply) {
   const provider = getBookingProvider(env);
 
   if (provider === 'embed') {
+    if (url.searchParams.get('public') === '1') {
+      try {
+        const parsedUrl = new URL(fallbackUrl);
+        const parts = parsedUrl.pathname.split('/').filter(Boolean);
+        if (parts.length >= 2) {
+          const [profileSlug, eventTypeSlug] = parts;
+          const tzParam = url.searchParams.get('timezone') || 'Asia/Kolkata';
+          const safeTz = isValidTimeZone(tzParam) ? tzParam : 'Asia/Kolkata';
+          const startStr = url.searchParams.get('start') || new Date(range.startMs).toISOString().slice(0, 10);
+          const rawEndStr = url.searchParams.get('end') || new Date(range.startMs + 31 * DAY_MS).toISOString().slice(0, 10);
+          const endMsCap = Math.min(Date.parse(`${rawEndStr}T23:59:59Z`) || (range.startMs + 31 * DAY_MS), range.startMs + 45 * DAY_MS);
+          const endStr = new Date(endMsCap).toISOString().slice(0, 10);
+
+          const lookupRes = await fetch(
+            `https://calendly.com/api/booking/event_types/lookup?event_type_slug=${encodeURIComponent(eventTypeSlug)}&profile_slug=${encodeURIComponent(profileSlug)}`,
+            { headers: { Accept: 'application/json' }, signal: AbortSignal.timeout(8000) },
+          );
+          if (lookupRes.ok) {
+            const lookup = JSON.parse(await boundedText(lookupRes.body, 65536));
+            if (typeof lookup?.uuid === 'string' && lookup.uuid) {
+              const rangeRes = await fetch(
+                `https://calendly.com/api/booking/event_types/${encodeURIComponent(lookup.uuid)}/calendar/range?timezone=${encodeURIComponent(safeTz)}&diagnostics=false&range_start=${encodeURIComponent(startStr)}&range_end=${encodeURIComponent(endStr)}`,
+                { headers: { Accept: 'application/json' }, signal: AbortSignal.timeout(9000) },
+              );
+              if (rangeRes.ok) {
+                const rangeData = JSON.parse(await boundedText(rangeRes.body, 262144));
+                const base = fallbackUrl.replace(/\/+$/, '');
+                const slots = [];
+                for (const day of Array.isArray(rangeData?.days) ? rangeData.days : []) {
+                  if (!day || day.status !== 'available' || !Array.isArray(day.spots)) continue;
+                  for (const spot of day.spots) {
+                    if (!spot || (spot.status && spot.status !== 'available') || spot.invitees_remaining === 0) continue;
+                    if (typeof spot.start_time !== 'string' || !Number.isFinite(Date.parse(spot.start_time))) continue;
+                    slots.push({
+                      startTime: spot.start_time,
+                      schedulingUrl: `${base}/${encodeURIComponent(spot.start_time)}`,
+                    });
+                  }
+                }
+                slots.sort((a, b) => Date.parse(a.startTime) - Date.parse(b.startTime));
+                return reply({
+                  mode: 'public-slots',
+                  provider: 'calendly',
+                  slots,
+                  fallbackUrl,
+                });
+              }
+            }
+          }
+        }
+      } catch {}
+    }
     return reply({ mode: 'embed', provider: 'calendly', url: fallbackUrl });
   }
 
