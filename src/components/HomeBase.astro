@@ -26,7 +26,7 @@ const selected = stories.filter(story => story.selected);
     <nav class="home-jumps" aria-label="Jump within the homepage">
       <a href="#selected-work">Selected work <span aria-hidden="true">↓</span></a>
       <a class="intro-play" href="#listening" data-start-music aria-label="Play A Town with an Ocean View and open the music section" title="Play the soundtrack">
-        <span aria-hidden="true">▶</span>
+        <span class="play-glyph" aria-hidden="true">▶</span><span>Play soundtrack</span>
       </a>
     </nav>
   </div>
@@ -35,7 +35,10 @@ const selected = stories.filter(story => story.selected);
 <section id="selected-work" class="home-section home-work" aria-labelledby="work-title">
   <div class="editorial-head">
     <p class="mono">SELECTED WORK</p>
-    <h2 id="work-title">A few things worth opening.</h2>
+    <div class="editorial-head-main">
+      <h2 id="work-title">A few things worth opening.</h2>
+      <a class="section-action" href="/work/">Complete work index <Icon /></a>
+    </div>
   </div>
   <div class="work-lines">
     {selected.map((story, index) => <a href={`/work/${story.slug}/`}>
@@ -49,14 +52,15 @@ const selected = stories.filter(story => story.selected);
       <Icon />
     </a>)}
   </div>
-  <a class="quiet-link" href="/work/">See the complete work and project index <Icon /></a>
 </section>
 
 <section id="listening" class="home-section home-music" aria-labelledby="home-music-heading">
   <div class="editorial-head">
     <p class="mono">ON ROTATION</p>
-    <h2 id="home-music-heading">Music that changes the temperature of a room.</h2>
+    <div class="editorial-head-main">
+      <h2 id="home-music-heading">Music that changes the temperature of a room.</h2>
+      <a class="section-action" href="/interests/#music">All interests &amp; tabs <Icon /></a>
+    </div>
   </div>
   <MusicPlayer compact />
-  <a class="quiet-link" href="/interests/#music">More music, anime, racing and open tabs <Icon /></a>
 </section>

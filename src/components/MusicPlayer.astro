@@ -11,9 +11,9 @@ const first = musicPicks[0];
     <p class="player-state" data-player-state role="status">Preparing playback…</p>
 
     <div class="player-actions">
-      <button class="player-key" type="button" data-play-toggle hidden>Play</button>
+      <button class="player-key player-key-primary" type="button" data-play-toggle hidden>Play</button>
       <a class="player-key current-youtube" data-current-youtube href={`https://music.youtube.com/watch?v=${first.youtubeId}`} target="_blank" rel="noreferrer">
-        <span class="yt-mark" aria-hidden="true">▶</span><span>Listen on YouTube Music</span>
+        <span class="yt-mark" aria-hidden="true">▶</span><span>YouTube Music</span><span class="btn-arrow" aria-hidden="true">↗</span>
       </a>
     </div>
   </div>
