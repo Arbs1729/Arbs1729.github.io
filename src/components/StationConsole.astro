@@ -47,7 +47,7 @@
 
     <div class="console-divider" aria-hidden="true"></div>
 
-    <!-- 2. System-Time Adaptive Orbital Sky Fader (Clickable DAY / NIGHT + Draggable Sky Scrubber) -->
+    <!-- 2. System-Time Adaptive Orbital Sky Fader (Gradual Whole-Palette Scrubber) -->
     <div class="console-block console-fader-block">
       <div class="console-fader-head mono">
         <button type="button" class="sky-mode-btn sky-mode-day" data-set-day aria-pressed="false" title="Switch to sunlit orbital day">
@@ -57,7 +57,7 @@
           </svg>
           <span>DAY</span>
         </button>
-        <button type="button" class="console-val sky-phase-readout" data-sync-time title="Drag slider to scrub orbital sky — click to sync with your local clock">
+        <button type="button" class="console-val sky-phase-readout" data-sync-time title="Drag slider to blend palette & orbital sky — click to sync with local clock">
           <span data-light-label>LOCAL · DAY</span>
         </button>
         <button type="button" class="sky-mode-btn sky-mode-night" data-set-night aria-pressed="true" title="Switch to orbital night">
@@ -67,7 +67,7 @@
           <span>NIGHT</span>
         </button>
       </div>
-      <div class="fader-shell fader-shell-sky" title="Drag to shift Earth’s orbital day, sunset terminator, and night">
+      <div class="fader-shell fader-shell-sky" title="Drag to gradually shift the entire palette & orbital sky from Day through Sunset to Night">
         <span class="sky-terminator-notch" aria-hidden="true"></span>
         <input
           type="range"
@@ -76,7 +76,7 @@
           value="88"
           class="console-slider"
           data-light-slider
-          aria-label="Drag to adjust orbital sky from sunlit Day through Sunset to Night"
+          aria-label="Drag to gradually blend page palette and orbital sky from sunlit Day through Sunset to Night"
         />
         <div class="fader-ruler mono" aria-hidden="true">
           <i></i><i></i><i></i><i></i><i class="is-mid"></i><i></i><i></i><i></i><i></i>
@@ -86,23 +86,7 @@
 
     <div class="console-divider" aria-hidden="true"></div>
 
-    <!-- 3. Calibrated Scroll Progress Gauge -->
-    <div class="console-block console-depth-block">
-      <div class="console-fader-head mono">
-        <span>PAGE</span>
-        <span class="console-val" data-depth-pct>00%</span>
-      </div>
-      <div class="cal-gauge cal-gauge-console" aria-hidden="true">
-        <i data-depth-fill style="width: 0%"></i>
-      </div>
-      <div class="cal-ticks cal-ticks-console mono" aria-hidden="true">
-        <span>0</span><span>25</span><span>50</span><span>75</span><span>100</span>
-      </div>
-    </div>
-
-    <div class="console-divider" aria-hidden="true"></div>
-
-    <!-- 4. Physical Toggle Switches with Glowing LEDs -->
+    <!-- 3. Physical Toggle Switches with Glowing LEDs -->
     <div class="console-block console-switches" role="group" aria-label="Atmosphere switches">
       <button type="button" class="hw-switch" data-hw-switch="hud" aria-pressed="true" title="Toggle HUD framing and drafting lines">
         <span class="hw-led" aria-hidden="true"></span>
@@ -123,7 +107,7 @@
 
     <div class="console-divider" aria-hidden="true"></div>
 
-    <!-- 5. Calibrated Audio VU Meter & Soundtrack Trigger -->
+    <!-- 4. Calibrated Audio VU Meter & Soundtrack Trigger -->
     <button
       type="button"
       class="console-block console-vu-btn"

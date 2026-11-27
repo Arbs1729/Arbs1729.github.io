@@ -1,0 +1,64 @@
+---
+import { person } from '../data/portfolio';
+
+const chatEndpoint = import.meta.env.PUBLIC_CHAT_ENDPOINT || '';
+const bookingBase = (
+  import.meta.env.PUBLIC_BOOKING_ENDPOINT ||
+  (chatEndpoint ? chatEndpoint.replace(/\/chat\/?$/, '') : '')
+).replace(/\/+$/, '');
+---
+<section
+  id="book-time"
+  class="inline-booking"
+  aria-labelledby="inline-booking-title"
+  data-inline-booking
+  data-api-base={bookingBase}
+  data-booking-url={person.calendly}
+>
+  <div class="inline-booking-head">
+    <h3 id="inline-booking-title">Book time to speak</h3>
+    <a class="inline-booking-direct mono" href={person.calendly} target="_blank" rel="noopener noreferrer">
+      <span>Calendly</span><span aria-hidden="true">↗</span>
+    </a>
+  </div>
+
+  <div class="inline-booking-card">
+    <!-- Left column: Clean Mon-Sun Month Grid (eeshita.com layout) -->
+    <div class="ib-calendar">
+      <div class="ib-month-bar">
+        <button type="button" class="ib-month-btn" data-ib-prev aria-label="Previous month">←</button>
+        <strong class="ib-month-label" data-ib-month-label>November 2026</strong>
+        <button type="button" class="ib-month-btn" data-ib-next aria-label="Next month">→</button>
+      </div>
+      <div class="ib-weekdays" aria-hidden="true">
+        <span>Mo</span><span>Tu</span><span>We</span><span>Th</span><span>Fr</span><span>Sa</span><span>Su</span>
+      </div>
+      <div class="ib-days" data-ib-days role="grid" aria-label="Select a date"></div>
+    </div>
+
+    <!-- Right column: Selected Date, Time Slot Chips, Timezone & Inline Confirm Form -->
+    <div class="ib-slots-pane">
+      <p class="ib-date-heading" data-ib-date-heading>Select a date</p>
+      <div class="ib-slots" data-ib-slots role="listbox" aria-label="Available times"></div>
+      <p class="ib-tz" data-ib-tz></p>
+
+      <form class="ib-confirm-form" data-ib-form hidden novalidate>
+        <div class="ib-confirm-fields">
+          <input type="text" name="name" required maxlength="120" autocomplete="name" placeholder="Your name" aria-label="Your name" />
+          <input type="email" name="email" required maxlength="254" autocomplete="email" placeholder="you@example.com" aria-label="Your email" />
+        </div>
+        <input type="text" name="note" maxlength="300" placeholder="What would you like to chat about? (optional)" aria-label="Topic (optional)" class="ib-confirm-note" />
+        <p class="ib-error" data-ib-error role="alert" hidden></p>
+        <div class="ib-confirm-actions">
+          <button type="button" class="ib-btn-ghost" data-ib-cancel>Cancel</button>
+          <button type="submit" class="ib-btn-primary" data-ib-submit>Confirm time</button>
+        </div>
+      </form>
+
+      <div class="ib-confirmed" data-ib-confirmed hidden>
+        <p class="mono ib-confirmed-badge">CONFIRMED</p>
+        <p class="ib-confirmed-text" data-ib-confirmed-text></p>
+      </div>
+    </div>
+  </div>
+</section>

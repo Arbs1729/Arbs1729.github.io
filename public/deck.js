@@ -399,6 +399,76 @@
     next.addEventListener('click', () => skip(1));
     close.addEventListener('click', closeShelf);
 
+    // Draggable YouTube PiP player (desktop & pointer devices)
+    const dragHandle = $('[data-dock-drag-handle]', root);
+    const DOCK_POS_KEY = 'aryan-music-dock-pos-v1';
+    let dragState = null;
+
+    const applyDockPos = (left, top) => {
+      const rect = root.getBoundingClientRect();
+      const w = rect.width || 372;
+      const h = rect.height || 310;
+      const clampedX = Math.max(8, Math.min(window.innerWidth - w - 8, left));
+      const clampedY = Math.max(8, Math.min(window.innerHeight - h - 8, top));
+      root.style.left = `${Math.round(clampedX)}px`;
+      root.style.top = `${Math.round(clampedY)}px`;
+      root.style.bottom = 'auto';
+      root.style.right = 'auto';
+      root.classList.add('is-dragged');
+      return { left: Math.round(clampedX), top: Math.round(clampedY) };
+    };
+
+    try {
+      const savedPos = JSON.parse(sessionStorage.getItem(DOCK_POS_KEY) || 'null');
+      if (savedPos && Number.isFinite(savedPos.left) && Number.isFinite(savedPos.top) && window.innerWidth > 760) {
+        applyDockPos(savedPos.left, savedPos.top);
+      }
+    } catch {}
+
+    dragHandle?.addEventListener('pointerdown', e => {
+      if (window.innerWidth <= 760) return;
+      if (e.target instanceof Element && e.target.closest('button, a')) return;
+      const rect = root.getBoundingClientRect();
+      dragState = {
+        pointerId: e.pointerId,
+        offsetX: e.clientX - rect.left,
+        offsetY: e.clientY - rect.top,
+      };
+      root.classList.add('is-dragging');
+      try { dragHandle.setPointerCapture(e.pointerId); } catch {}
+      e.preventDefault();
+    });
+
+    window.addEventListener('pointermove', e => {
+      if (!dragState || e.pointerId !== dragState.pointerId) return;
+      applyDockPos(e.clientX - dragState.offsetX, e.clientY - dragState.offsetY);
+    });
+
+    const endDrag = e => {
+      if (!dragState || e.pointerId !== dragState.pointerId) return;
+      const rect = root.getBoundingClientRect();
+      const saved = applyDockPos(rect.left, rect.top);
+      try { sessionStorage.setItem(DOCK_POS_KEY, JSON.stringify(saved)); } catch {}
+      root.classList.remove('is-dragging');
+      try { dragHandle?.releasePointerCapture(e.pointerId); } catch {}
+      dragState = null;
+    };
+    window.addEventListener('pointerup', endDrag);
+    window.addEventListener('pointercancel', endDrag);
+
+    window.addEventListener('resize', () => {
+      if (window.innerWidth <= 760) {
+        root.style.left = '';
+        root.style.top = '';
+        root.style.bottom = '';
+        root.style.right = '';
+        root.classList.remove('is-dragged');
+      } else if (root.classList.contains('is-dragged') && !root.hidden) {
+        const rect = root.getBoundingClientRect();
+        applyDockPos(rect.left, rect.top);
+      }
+    }, { passive: true });
+
     progress.addEventListener('input', () => {
       const total = getDuration();
       if (!total) return;
