@@ -31,6 +31,10 @@ jobs:
         continue-on-error: true
         run: node scripts/sync-anilist.mjs
 
+      - name: Sync Calendly public availability snapshot
+        continue-on-error: true
+        run: node scripts/sync-calendly.mjs
+
       - name: Sync Formula 1 standings & next GP (Mon/Fri or manual trigger)
         continue-on-error: true
         run: |
@@ -44,7 +48,7 @@ jobs:
 
       - name: Commit snapshots only when data changed
         run: |
-          CHANGED=$(git status --porcelain src/data/anilist-snapshot.json src/data/f1-snapshot.json)
+          CHANGED=$(git status --porcelain src/data/anilist-snapshot.json src/data/calendly-snapshot.json src/data/f1-snapshot.json)
           if [ -z "$CHANGED" ]; then
             echo "No live data changes detected."
             exit 0
@@ -52,6 +56,7 @@ jobs:
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           [ -f src/data/anilist-snapshot.json ] && git add src/data/anilist-snapshot.json
+          [ -f src/data/calendly-snapshot.json ] && git add src/data/calendly-snapshot.json
           [ -f src/data/f1-snapshot.json ] && git add src/data/f1-snapshot.json
-          git commit -m "chore(sync): refresh live AniList & F1 snapshots"
+          git commit -m "chore(sync): refresh live AniList, Calendly & F1 snapshots"
           git push

@@ -1,5 +1,6 @@
 ---
 import { person } from '../data/portfolio';
+import calendlySnapshot from '../data/calendly-snapshot.json';
 
 const chatEndpoint = import.meta.env.PUBLIC_CHAT_ENDPOINT || '';
 const bookingBase = (
@@ -14,20 +15,21 @@ const bookingBase = (
   data-inline-booking
   data-api-base={bookingBase}
   data-booking-url={person.calendly}
+  data-snapshot={JSON.stringify(calendlySnapshot)}
 >
   <div class="inline-booking-head">
-    <h3 id="inline-booking-title">Book time to speak</h3>
+    <h3 id="inline-booking-title">Book time to chat</h3>
     <a class="inline-booking-direct mono" href={person.calendly} target="_blank" rel="noopener noreferrer">
-      <span>Calendly</span><span aria-hidden="true">↗</span>
+      <span>Open Calendly</span><span aria-hidden="true">↗</span>
     </a>
   </div>
 
   <div class="inline-booking-card">
-    <!-- Left column: Clean Mon-Sun Month Grid (eeshita.com layout) -->
+    <!-- Left column: Clean Mon-Sun Month Grid -->
     <div class="ib-calendar">
       <div class="ib-month-bar">
         <button type="button" class="ib-month-btn" data-ib-prev aria-label="Previous month">←</button>
-        <strong class="ib-month-label" data-ib-month-label>November 2026</strong>
+        <strong class="ib-month-label" data-ib-month-label>Loading…</strong>
         <button type="button" class="ib-month-btn" data-ib-next aria-label="Next month">→</button>
       </div>
       <div class="ib-weekdays" aria-hidden="true">
@@ -36,11 +38,12 @@ const bookingBase = (
       <div class="ib-days" data-ib-days role="grid" aria-label="Select a date"></div>
     </div>
 
-    <!-- Right column: Selected Date, Time Slot Chips, Timezone & Inline Confirm Form -->
+    <!-- Right column: Selected Date, Available Time Slots, Timezone & Inline Confirm -->
     <div class="ib-slots-pane">
-      <p class="ib-date-heading" data-ib-date-heading>Select a date</p>
+      <p class="ib-date-heading" data-ib-date-heading>Checking available times…</p>
       <div class="ib-slots" data-ib-slots role="listbox" aria-label="Available times"></div>
       <p class="ib-tz" data-ib-tz></p>
+      <p class="ib-source-note mono" data-ib-source hidden></p>
 
       <form class="ib-confirm-form" data-ib-form hidden novalidate>
         <div class="ib-confirm-fields">
