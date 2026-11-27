@@ -23,8 +23,25 @@ const first = tracks[0];
   <div class="music-dock-card">
     <div class="music-dock-mobile-progress" aria-hidden="true"><i></i></div>
 
+    <div class="music-dock-topbar" data-dock-drag-handle title="Drag to move player">
+      <div class="music-dock-grip" aria-hidden="true">
+        <svg viewBox="0 0 16 10" width="14" height="9" fill="currentColor">
+          <circle cx="3" cy="2.5" r="1.2" /><circle cx="8" cy="2.5" r="1.2" /><circle cx="13" cy="2.5" r="1.2" />
+          <circle cx="3" cy="7.5" r="1.2" /><circle cx="8" cy="7.5" r="1.2" /><circle cx="13" cy="7.5" r="1.2" />
+        </svg>
+        <span class="mono">DRAG</span>
+      </div>
+      <div class="music-dock-win">
+        <a class="dock-mini-btn" data-shelf-youtube href={`https://music.youtube.com/watch?v=${first.youtubeId}`} target="_blank" rel="noreferrer" aria-label="Open in YouTube Music" title="Open in YouTube Music">
+          <span class="yt-mark" aria-hidden="true">▶</span>
+        </a>
+        <button class="dock-mini-btn dock-close-btn" type="button" data-shelf-close aria-label="Close music player" title="Close">×</button>
+      </div>
+    </div>
+
     <div class="music-dock-stage" data-video-frame>
       <div id="global-youtube-player" data-youtube-mount></div>
+      <div class="music-dock-drag-shield" aria-hidden="true"></div>
       <div class="video-fallback" data-video-fallback hidden>
         <span class="music-dock-disc" aria-hidden="true"><i></i></span>
         <strong>Local audio</strong>
@@ -48,12 +65,6 @@ const first = tracks[0];
             <strong data-shelf-title>{first.title}</strong>
             <small data-shelf-meta>{first.artist} · {first.album}</small>
           </div>
-        </div>
-        <div class="music-dock-win">
-          <a class="dock-mini-btn" data-shelf-youtube href={`https://music.youtube.com/watch?v=${first.youtubeId}`} target="_blank" rel="noreferrer" aria-label="Open in YouTube Music" title="Open in YouTube Music">
-            <span class="yt-mark" aria-hidden="true">▶</span>
-          </a>
-          <button class="dock-mini-btn dock-close-btn" type="button" data-shelf-close aria-label="Close music player" title="Close">×</button>
         </div>
       </div>
 

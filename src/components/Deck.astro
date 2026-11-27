@@ -10,6 +10,7 @@ import Atmosphere from './Atmosphere.astro';
 import BrandMark from './BrandMark.astro';
 import GlobalMusicPlayer from './GlobalMusicPlayer.astro';
 import BookingSheet from './BookingSheet.astro';
+import InlineBooking from './InlineBooking.astro';
 import StationConsole from './StationConsole.astro';
 import { ClientRouter } from 'astro:transitions';
 const {title='Product, technology & finance',description=person.description,immersive=false,noindex=false}=Astro.props;
@@ -94,13 +95,14 @@ const room = path.startsWith('/work') ? 'work' : path.startsWith('/interests') ?
             <span>Resume</span>
             <svg class="footer-arrow" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4.5 11.5 11.5 4.5M6 4.5h5.5V10"/></svg>
           </a>
-          <a class="footer-pill-btn footer-cta-btn" href={person.calendly} target="_blank" rel="noopener noreferrer" data-open-booking aria-label="Let's chat — schedule a conversation">
+          <a class="footer-pill-btn footer-cta-btn" href="#book-time" aria-label="Let's chat — jump to booking calendar">
             <svg class="btn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="5" width="18" height="16" rx="3"/><path d="M16 3v4M8 3v4M3 11h18M8 15h2M14 15h2"/></svg>
             <span>Let’s chat</span>
             <svg class="footer-arrow" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4.5 11.5 11.5 4.5M6 4.5h5.5V10"/></svg>
           </a>
         </div>
       </div>
+      <InlineBooking/>
       <div class="footer-bottom">
         <span>ARYAN BASANTANI · INDIA 2026</span>
         <span aria-label="Made with love">Made with <b class="footer-heart" aria-hidden="true">♥</b></span>
@@ -108,10 +110,23 @@ const room = path.startsWith('/work') ? 'work' : path.startsWith('/interests') ?
       </div>
     </footer>
   </div>
-  <div class="brass-vernier" aria-hidden="true" transition:persist="brass-vernier">
-    <span class="vernier-screw"></span>
-    <div class="vernier-scale"><span class="vernier-cursor"></span></div>
-    <span class="vernier-screw"></span>
+  <div
+    class="brass-vernier"
+    data-brass-vernier
+    role="slider"
+    tabindex="0"
+    aria-label="Scroll page"
+    aria-orientation="vertical"
+    aria-valuemin="0"
+    aria-valuemax="100"
+    aria-valuenow="0"
+    title="Drag or click to scroll page"
+    transition:persist="brass-vernier"
+  >
+    <span class="vernier-screw" aria-hidden="true"></span>
+    <div class="vernier-scale" data-vernier-scale><span class="vernier-cursor"></span></div>
+    <span class="vernier-screw" aria-hidden="true"></span>
+    <span class="vernier-pct mono" data-vernier-pct aria-hidden="true">00%</span>
   </div>
   <StationConsole/>
   <GlobalMusicPlayer/>
@@ -124,6 +139,7 @@ const room = path.startsWith('/work') ? 'work' : path.startsWith('/interests') ?
   <script is:inline src="/anilist.js" defer></script>
   <script is:inline src="/f1.js" defer></script>
   <script is:inline src="/booking.js" defer></script>
+  <script is:inline src="/inline-booking.js" defer></script>
   {immersive && <script is:inline src="/arrival.js" defer data-astro-rerun></script>}
 </body>
 </html>
