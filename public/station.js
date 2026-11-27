@@ -6,7 +6,32 @@
   const REDUCED_MOTION = () => window.matchMedia?.('(prefers-reduced-motion: reduce)').matches;
 
   let audioCtx = null;
-  let prefs = { hud: true, stars: true, click: false, warmth: null };
+  let glideRaf = 0;
+
+  function computeClockSolarValue(date = new Date()) {
+    const hour = date.getHours() + date.getMinutes() / 60;
+    // Smooth cosine curve: 12:00 noon -> 5 (brightest day), 06:00 / 18:00 -> 50 (terminator), 00:00 -> 95 (deep night)
+    const raw = Math.round(50 - Math.cos(((hour - 12) / 12) * Math.PI) * 45);
+    return Math.min(96, Math.max(4, raw));
+  }
+
+  function formatClockHHMM(date = new Date()) {
+    return `${String(date.getHours()).padStart(2, '0')}:${String(date.getMinutes()).padStart(2, '0')}`;
+  }
+
+  function getSkyZone(val) {
+    if (val < 36) return 'day';
+    if (val <= 64) return 'terminator';
+    return 'night';
+  }
+
+  let prefs = {
+    hud: true,
+    stars: true,
+    click: false,
+    skyMode: 'auto',
+    warmth: computeClockSolarValue(),
+  };
 
   try {
     const saved = JSON.parse(localStorage.getItem(PREFS_KEY) || 'null');
@@ -14,7 +39,13 @@
       if (typeof saved.hud === 'boolean') prefs.hud = saved.hud;
       if (typeof saved.stars === 'boolean') prefs.stars = saved.stars;
       if (typeof saved.click === 'boolean') prefs.click = saved.click;
-      if (typeof saved.warmth === 'number') prefs.warmth = saved.warmth;
+      if (saved.skyMode === 'manual' && typeof saved.warmth === 'number') {
+        prefs.skyMode = 'manual';
+        prefs.warmth = Math.min(100, Math.max(0, saved.warmth));
+      } else {
+        prefs.skyMode = 'auto';
+        prefs.warmth = computeClockSolarValue();
+      }
     }
   } catch {}
 
@@ -67,32 +98,53 @@
     return window.matchMedia?.('(prefers-color-scheme: dark)').matches ?? true;
   }
 
+  function applySkyVars(val, root = document.documentElement) {
+    if (!root) return;
+    const n = Math.min(100, Math.max(0, Number(val) || 0));
+    const phase = n / 100;
+    const terminator = Math.max(0, 1 - Math.abs(phase - 0.5) * 3.6);
+    const zone = getSkyZone(n);
+    root.dataset.skyZone = zone;
+    root.style.setProperty('--station-night', phase.toFixed(3));
+    root.style.setProperty('--sky-phase', phase.toFixed(3));
+    root.style.setProperty('--terminator-glow', terminator.toFixed(3));
+    if (root === document.documentElement) {
+      document.dispatchEvent(new CustomEvent('aryan:skyphase', {
+        detail: { phase, value: n, terminator, zone },
+      }));
+    }
+  }
+
   function applyHtmlFlags(root = document.documentElement) {
     if (!root) return;
     root.dataset.hud = prefs.hud ? 'on' : 'off';
     root.dataset.stars = prefs.stars ? 'on' : 'off';
-    const level = typeof prefs.warmth === 'number' ? prefs.warmth : (currentThemeIsDark() ? 88 : 12);
-    root.style.setProperty('--station-night', String(level / 100));
+    const level = prefs.skyMode === 'auto' ? computeClockSolarValue() : prefs.warmth;
+    prefs.warmth = level;
+    applySkyVars(level, root);
   }
 
-  function syncThemeFromSlider(val) {
-    const n = Math.min(100, Math.max(0, Number(val) || 0));
+  function setSkyValue(val, { manual = true, persistTheme = true, silent = false } = {}) {
+    const n = Math.min(100, Math.max(0, Math.round(Number(val) || 0)));
     const prevDark = currentThemeIsDark();
     const nextDark = n >= 50;
     prefs.warmth = n;
-    document.documentElement.style.setProperty('--station-night', String(n / 100));
+    prefs.skyMode = manual ? 'manual' : 'auto';
+    applySkyVars(n);
 
     if (nextDark !== prevDark) {
       const nextTheme = nextDark ? 'dark' : 'light';
       if (window.AryanTheme?.set) {
-        window.AryanTheme.set(nextTheme);
+        window.AryanTheme.set(nextTheme, { persist: persistTheme });
       } else {
         document.documentElement.dataset.theme = nextTheme;
-        try { localStorage.setItem('aryan-theme', nextTheme); } catch {}
+        if (persistTheme) {
+          try { localStorage.setItem('aryan-theme', nextTheme); } catch {}
+        }
         const label = document.getElementById('theme-label');
         if (label) label.textContent = nextDark ? 'Dark' : 'Light';
       }
-      pulse('mode');
+      if (!silent) pulse('mode');
     }
     savePrefs();
   }
@@ -129,7 +181,19 @@
   }
 
   function bindConsole() {
-    applyHtmlFlags();
+    // On first visit in auto mode, honor saved manual aryan-theme only if user explicitly clicked header toggle
+    try {
+      const explicitTheme = localStorage.getItem('aryan-theme');
+      if (prefs.skyMode === 'auto' && !explicitTheme) {
+        const clockVal = computeClockSolarValue();
+        setSkyValue(clockVal, { manual: false, persistTheme: false, silent: true });
+      } else {
+        applyHtmlFlags();
+      }
+    } catch {
+      applyHtmlFlags();
+    }
+
     const consoleEl = document.querySelector('[data-station-console]');
     if (!consoleEl) return;
 
@@ -138,6 +202,10 @@
     const dialLabel = consoleEl.querySelector('[data-dial-label]');
     const slider = consoleEl.querySelector('[data-light-slider]');
     const lightLabel = consoleEl.querySelector('[data-light-label]');
+    const dayBtn = consoleEl.querySelector('[data-set-day]');
+    const nightBtn = consoleEl.querySelector('[data-set-night]');
+    const syncTimeBtn = consoleEl.querySelector('[data-sync-time]');
+    const faderShell = consoleEl.querySelector('.fader-shell-sky');
     const depthPct = consoleEl.querySelector('[data-depth-pct]');
     const depthFill = consoleEl.querySelector('[data-depth-fill]');
     const vuBox = consoleEl.querySelector('[data-console-vu]');
@@ -161,17 +229,54 @@
 
     function reflectLight() {
       const dark = currentThemeIsDark();
-      const val = typeof prefs.warmth === 'number'
-        ? ((dark && prefs.warmth < 50) ? 88 : (!dark && prefs.warmth >= 50) ? 12 : prefs.warmth)
-        : (dark ? 88 : 12);
+      let val = prefs.skyMode === 'auto' ? computeClockSolarValue() : prefs.warmth;
+      // Keep slider coherent if user toggled Dark/Light via header button
+      if (dark && val < 50) val = 88;
+      else if (!dark && val >= 50) val = 12;
       prefs.warmth = val;
+
       if (slider && Number(slider.value) !== val) slider.value = String(val);
+
+      const zone = getSkyZone(val);
+      if (dayBtn) dayBtn.setAttribute('aria-pressed', String(!dark));
+      if (nightBtn) nightBtn.setAttribute('aria-pressed', String(dark));
+      if (syncTimeBtn) syncTimeBtn.classList.toggle('is-auto', prefs.skyMode === 'auto');
+
       if (lightLabel) {
-        lightLabel.textContent = val < 50
-          ? `DAY · ${Math.round((50 - val) * 2)}%`
-          : `NIGHT · ${Math.round((val - 50) * 2)}%`;
+        if (prefs.skyMode === 'auto') {
+          const hhmm = formatClockHHMM();
+          const tag = zone === 'day' ? 'DAY' : zone === 'terminator' ? 'DUSK' : 'NIGHT';
+          lightLabel.textContent = `${hhmm} · ${tag}`;
+        } else if (zone === 'terminator') {
+          lightLabel.textContent = val < 50 ? 'DAWN / SUNSET' : 'TWILIGHT';
+        } else if (!dark) {
+          lightLabel.textContent = `DAY · ${Math.round((50 - val) * 2)}%`;
+        } else {
+          lightLabel.textContent = `NIGHT · ${Math.round((val - 50) * 2)}%`;
+        }
       }
-      document.documentElement.style.setProperty('--station-night', String(val / 100));
+      applySkyVars(val);
+    }
+
+    function glideSliderTo(targetVal, { manual = true, persistTheme = true } = {}) {
+      cancelAnimationFrame(glideRaf);
+      const startVal = Number(slider?.value ?? prefs.warmth);
+      if (REDUCED_MOTION() || Math.abs(targetVal - startVal) < 2) {
+        setSkyValue(targetVal, { manual, persistTheme });
+        reflectLight();
+        return;
+      }
+      const startTs = performance.now();
+      const duration = 340;
+      const step = now => {
+        const p = Math.min(1, (now - startTs) / duration);
+        const eased = 1 - Math.pow(1 - p, 3);
+        const cur = Math.round(startVal + (targetVal - startVal) * eased);
+        setSkyValue(cur, { manual, persistTheme, silent: p < 1 });
+        reflectLight();
+        if (p < 1) glideRaf = requestAnimationFrame(step);
+      };
+      glideRaf = requestAnimationFrame(step);
     }
 
     function reflectSwitches() {
@@ -227,11 +332,39 @@
         stepDial(e.deltaY > 0 ? 1 : -1);
       }, { passive: false });
 
+      slider?.addEventListener('pointerdown', () => faderShell?.classList.add('is-dragging'));
+      window.addEventListener('pointerup', () => faderShell?.classList.remove('is-dragging'));
       slider?.addEventListener('input', () => {
-        syncThemeFromSlider(slider.value);
+        cancelAnimationFrame(glideRaf);
+        setSkyValue(slider.value, { manual: true, persistTheme: true });
         reflectLight();
       });
       slider?.addEventListener('change', () => pulse('detent'));
+
+      dayBtn?.addEventListener('click', () => {
+        pulse('detent');
+        glideSliderTo(10, { manual: true, persistTheme: true });
+      });
+
+      nightBtn?.addEventListener('click', () => {
+        pulse('detent');
+        glideSliderTo(92, { manual: true, persistTheme: true });
+      });
+
+      syncTimeBtn?.addEventListener('click', () => {
+        pulse('detent');
+        try { localStorage.removeItem('aryan-theme'); } catch {}
+        const clockVal = computeClockSolarValue();
+        glideSliderTo(clockVal, { manual: false, persistTheme: false });
+      });
+
+      // Keep local system time gently updated every minute when in auto mode
+      setInterval(() => {
+        if (prefs.skyMode !== 'auto') return;
+        const clockVal = computeClockSolarValue();
+        setSkyValue(clockVal, { manual: false, persistTheme: false, silent: true });
+        reflectLight();
+      }, 60_000);
 
       switches.forEach(btn => btn.addEventListener('click', () => {
         const key = btn.dataset.hwSwitch;
@@ -260,7 +393,7 @@
       window.addEventListener('scroll', updateScroll, { passive: true });
       document.addEventListener('aryan:musicstate', reflectMusic);
 
-      // Sync when header theme button toggles
+      // Sync when header theme button toggles manually
       const themeObserver = new MutationObserver(() => reflectLight());
       themeObserver.observe(document.documentElement, { attributes: true, attributeFilter: ['data-theme'] });
 
@@ -289,7 +422,7 @@
     updateScroll();
   }
 
-  window.AryanStation = { pulse, vibrate };
+  window.AryanStation = { pulse, vibrate, computeClockSolarValue };
   document.addEventListener('astro:before-swap', event => {
     if (event.newDocument?.documentElement) applyHtmlFlags(event.newDocument.documentElement);
   });

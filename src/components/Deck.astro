@@ -15,6 +15,7 @@ import { ClientRouter } from 'astro:transitions';
 const {title='Product, technology & finance',description=person.description,immersive=false,noindex=false}=Astro.props;
 const path = Astro.url.pathname;
 const canonical = new URL(path, Astro.site || 'https://aryanbasantani.me');
+const room = path.startsWith('/work') ? 'work' : path.startsWith('/interests') ? 'interests' : path.startsWith('/about') ? 'about' : 'overview';
 ---
 <!doctype html>
 <html lang="en">
@@ -35,9 +36,9 @@ const canonical = new URL(path, Astro.site || 'https://aryanbasantani.me');
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,SOFT,wght@0,9..144,50,400..600;1,9..144,50,400..500&family=JetBrains+Mono:wght@400;500;600&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap"/>
   <ClientRouter />
-  <script is:inline>try{const saved=localStorage.getItem('aryan-theme');const theme=saved==='system'||saved==='light'||saved==='dark'?saved:'dark';if(theme==='system')delete document.documentElement.dataset.theme;else document.documentElement.dataset.theme=theme;const sp=JSON.parse(localStorage.getItem('aryan-station-prefs-v1')||'null');document.documentElement.dataset.hud=sp&&sp.hud===false?'off':'on';document.documentElement.dataset.stars=sp&&sp.stars===false?'off':'on';}catch{document.documentElement.dataset.theme='dark';document.documentElement.dataset.hud='on';document.documentElement.dataset.stars='on';}</script>
+  <script is:inline>try{const now=new Date();const h=now.getHours()+now.getMinutes()/60;const clockVal=Math.min(96,Math.max(4,Math.round(50-Math.cos(((h-12)/12)*Math.PI)*45)));const saved=localStorage.getItem('aryan-theme');const theme=saved==='system'||saved==='light'||saved==='dark'?saved:(clockVal<50?'light':'dark');if(theme==='system')delete document.documentElement.dataset.theme;else document.documentElement.dataset.theme=theme;const sp=JSON.parse(localStorage.getItem('aryan-station-prefs-v1')||'null');document.documentElement.dataset.hud=sp&&sp.hud===false?'off':'on';document.documentElement.dataset.stars=sp&&sp.stars===false?'off':'on';const phase=(sp&&sp.skyMode==='manual'&&typeof sp.warmth==='number'?sp.warmth:clockVal)/100;document.documentElement.style.setProperty('--sky-phase',phase.toFixed(3));document.documentElement.style.setProperty('--station-night',phase.toFixed(3));document.documentElement.style.setProperty('--terminator-glow',Math.max(0,1-Math.abs(phase-0.5)*3.6).toFixed(3));}catch{document.documentElement.dataset.theme='dark';document.documentElement.dataset.hud='on';document.documentElement.dataset.stars='on';}</script>
 </head>
-<body class:list={{"immersive-home":immersive}}>
+<body class:list={{"immersive-home":immersive}} data-room={room}>
   <a class="skip" href="#main">Skip to content</a>
   <Atmosphere/>
   <slot name="arrival"/>

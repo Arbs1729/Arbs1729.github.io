@@ -2,13 +2,23 @@
 import Base from '../layouts/Base.astro';
 import MusicPlayer from '../components/MusicPlayer.astro';
 import F1Card from '../components/F1Card.astro';
+import StationBlueprint from '../components/StationBlueprint.astro';
 import { screenPicks } from '../data/culture';
 ---
 <Base title="Interests" description="Music, anime, Formula 1, technology, markets and other interests that shape how Aryan Basantani sees the world.">
-  <header class="page-head interests-head">
-    <p class="eyebrow">Away from the work log</p>
-    <h1>The things I keep returning to.</h1>
-    <p>Soundtracks, strange futures, fast cars, chips, markets, and questions with more than one good answer.</p>
+  <header class="page-head interests-head station-room-head">
+    <span class="hud-corner hud-tl" aria-hidden="true"></span>
+    <span class="hud-corner hud-tr" aria-hidden="true"></span>
+    <span class="hud-corner hud-bl" aria-hidden="true"></span>
+    <span class="hud-corner hud-br" aria-hidden="true"></span>
+    <div class="room-head-copy">
+      <p class="eyebrow">Away from the work log</p>
+      <h1>The things I keep returning to.</h1>
+      <p>Soundtracks, strange futures, fast cars, chips, markets, and questions with more than one good answer.</p>
+    </div>
+    <div class="room-head-plate">
+      <StationBlueprint variant="lounge" />
+    </div>
   </header>
 
   <nav class="section-nav" aria-label="Interest sections">

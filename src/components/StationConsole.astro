@@ -47,14 +47,28 @@
 
     <div class="console-divider" aria-hidden="true"></div>
 
-    <!-- 2. Calibrated Daylight <-> Night Fader -->
+    <!-- 2. System-Time Adaptive Orbital Sky Fader (Clickable DAY / NIGHT + Draggable Sky Scrubber) -->
     <div class="console-block console-fader-block">
       <div class="console-fader-head mono">
-        <span>DAY</span>
-        <span class="console-val" data-light-label>NIGHT · 88%</span>
-        <span>NIGHT</span>
+        <button type="button" class="sky-mode-btn sky-mode-day" data-set-day aria-pressed="false" title="Switch to sunlit orbital day">
+          <svg class="sky-glyph" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" aria-hidden="true">
+            <circle cx="8" cy="8" r="3.1" fill="currentColor" stroke="none" />
+            <path d="M8 1.8v1.7M8 12.5v1.7M1.8 8h1.7M12.5 8h1.7M3.6 3.6l1.2 1.2M11.2 11.2l1.2 1.2M12.4 3.6l-1.2 1.2M4.8 11.2l-1.2 1.2" />
+          </svg>
+          <span>DAY</span>
+        </button>
+        <button type="button" class="console-val sky-phase-readout" data-sync-time title="Drag slider to scrub orbital sky — click to sync with your local clock">
+          <span data-light-label>LOCAL · DAY</span>
+        </button>
+        <button type="button" class="sky-mode-btn sky-mode-night" data-set-night aria-pressed="true" title="Switch to orbital night">
+          <svg class="sky-glyph" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true">
+            <path d="M11.8 10.4A5.1 5.1 0 0 1 5.6 4.2a5.2 5.2 0 1 0 6.2 6.2Z" />
+          </svg>
+          <span>NIGHT</span>
+        </button>
       </div>
-      <div class="fader-shell">
+      <div class="fader-shell fader-shell-sky" title="Drag to shift Earth’s orbital day, sunset terminator, and night">
+        <span class="sky-terminator-notch" aria-hidden="true"></span>
         <input
           type="range"
           min="0"
@@ -62,10 +76,10 @@
           value="88"
           class="console-slider"
           data-light-slider
-          aria-label="Lighting slider from Daylight drafting mode to Night mode"
+          aria-label="Drag to adjust orbital sky from sunlit Day through Sunset to Night"
         />
         <div class="fader-ruler mono" aria-hidden="true">
-          <i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i>
+          <i></i><i></i><i></i><i></i><i class="is-mid"></i><i></i><i></i><i></i><i></i>
         </div>
       </div>
     </div>
@@ -90,12 +104,12 @@
 
     <!-- 4. Physical Toggle Switches with Glowing LEDs -->
     <div class="console-block console-switches" role="group" aria-label="Atmosphere switches">
-      <button type="button" class="hw-switch" data-hw-switch="hud" aria-pressed="true" title="Toggle HUD framing and scanlines">
+      <button type="button" class="hw-switch" data-hw-switch="hud" aria-pressed="true" title="Toggle HUD framing and drafting lines">
         <span class="hw-led" aria-hidden="true"></span>
         <span class="hw-track" aria-hidden="true"><i></i></span>
         <span class="mono">HUD</span>
       </button>
-      <button type="button" class="hw-switch" data-hw-switch="stars" aria-pressed="true" title="Toggle starfield and horizon glow">
+      <button type="button" class="hw-switch" data-hw-switch="stars" aria-pressed="true" title="Toggle Earth horizon and starfield">
         <span class="hw-led" aria-hidden="true"></span>
         <span class="hw-track" aria-hidden="true"><i></i></span>
         <span class="mono">STARS</span>

@@ -1,12 +1,22 @@
 ---
 import Base from '../layouts/Base.astro';
 import Icon from '../components/Icon.astro';
+import StationBlueprint from '../components/StationBlueprint.astro';
 import { experience } from '../data/portfolio';
 ---
 <Base title="About" description="How Aryan Basantani connects computer science, finance, product work and the interests outside it.">
-  <header class="page-head about-head">
-    <p class="eyebrow">About</p>
-    <h1>A little more about me.</h1>
+  <header class="page-head about-head station-room-head">
+    <span class="hud-corner hud-tl" aria-hidden="true"></span>
+    <span class="hud-corner hud-tr" aria-hidden="true"></span>
+    <span class="hud-corner hud-bl" aria-hidden="true"></span>
+    <span class="hud-corner hud-br" aria-hidden="true"></span>
+    <div class="room-head-copy">
+      <p class="eyebrow">About</p>
+      <h1>A little more about me.</h1>
+    </div>
+    <div class="room-head-plate">
+      <StationBlueprint variant="study" />
+    </div>
   </header>
 
   <div class="about-prose">

@@ -134,7 +134,13 @@ body::before {
   background-size: 9px 9px;
 }
 :root[data-theme='light'] .space-atmosphere {
-  opacity: .22;
+  opacity: .86;
+}
+
+/* Continuous Golden-Hour Sunset Terminator Wash when scrubbing near 50% */
+:root[data-sky-zone='terminator'] .station-horizon {
+  border-top-color: rgba(244, 134, 62, 0.92);
+  box-shadow: 0 -18px 64px rgba(242, 128, 56, 0.52);
 }
 
 /* ----------------------------------------------------------------------------
@@ -145,14 +151,15 @@ body::before {
   box-shadow:
     0 24px 64px rgba(0, 0, 0, .34),
     inset 0 1px 0 rgba(246, 212, 146, .18);
+  transition: background .3s ease, border-color .3s ease, box-shadow .3s ease;
 }
 
 :root[data-theme='light'] .home-intro.station-deck {
   background:
     linear-gradient(rgba(126, 100, 62, 0.065) 1px, transparent 1px),
     linear-gradient(90deg, rgba(126, 100, 62, 0.065) 1px, transparent 1px),
-    radial-gradient(ellipse 92% 50% at 68% 106%, var(--horizon-warm), var(--horizon-cool) 44%, transparent 72%),
-    linear-gradient(180deg, rgba(253, 249, 238, 0.9), rgba(244, 234, 211, 0.92));
+    radial-gradient(ellipse 96% 52% at 64% 108%, rgba(236, 132, 60, calc(0.18 + var(--terminator-glow, 0) * 0.34)), rgba(76, 152, 206, 0.18) 44%, transparent 72%),
+    linear-gradient(180deg, rgba(253, 249, 238, 0.88), rgba(244, 234, 211, 0.88));
   background-size: 32px 32px, 32px 32px, 100% 100%, 100% 100%;
   border: 1px solid rgba(142, 110, 62, 0.42);
   box-shadow:
@@ -330,6 +337,24 @@ body::before {
 .console-inner {
   padding-inline: 1.35rem;
 }
+@media (min-width: 1220px) {
+  .station-console {
+    width: min(848px, calc(100vw - 404px));
+  }
+  .console-inner {
+    grid-template-columns: auto 1px minmax(208px, 1.45fr) 1px minmax(106px, .76fr) 1px auto 1px auto;
+  }
+}
+@media (max-width: 1219px) and (min-width: 1061px) {
+  .console-inner {
+    grid-template-columns: auto 1px minmax(194px, 1.35fr) 1px minmax(96px, .72fr) 1px auto 1px auto;
+  }
+}
+@media (max-width: 1060px) and (min-width: 960px) {
+  .console-inner {
+    grid-template-columns: auto 1px minmax(194px, 1.35fr) 1px auto 1px auto;
+  }
+}
 
 /* Machined Brass Rotary Dial Cap */
 .dial-cap {
@@ -342,41 +367,161 @@ body::before {
   stroke: #9b7a3d;
 }
 
-/* Machined Brass Slide-Rule Fader (DAY <-> NIGHT) */
+/* Clickable Distinct-Color DAY & NIGHT Buttons + System-Clock Sync Readout */
+.console-fader-block .console-fader-head {
+  gap: .28rem;
+  margin-bottom: .32rem;
+}
+
+.sky-mode-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: .22rem;
+  height: 19px;
+  padding: 0 .38rem;
+  border-radius: 5px;
+  border: 1px solid transparent;
+  background: transparent;
+  font: 600 .54rem/1 var(--mono);
+  letter-spacing: .08em;
+  cursor: pointer;
+  transition: background .18s, border-color .18s, color .18s, box-shadow .18s, transform .14s;
+}
+.sky-mode-btn:hover {
+  transform: translateY(-1px);
+}
+.sky-glyph {
+  width: 10px;
+  height: 10px;
+  display: block;
+  flex: none;
+}
+
+/* Distinct DAY color: sunlit warm amber-gold / daylight sky */
+.sky-mode-day {
+  color: #e4a948;
+  border-color: rgba(228, 169, 72, 0.32);
+  background: rgba(228, 169, 72, 0.1);
+}
+.sky-mode-day:hover,
+.sky-mode-day[aria-pressed='true'] {
+  color: #3a2308;
+  border-color: #d48e2a;
+  background: linear-gradient(180deg, #fce29f, #e5a946);
+  box-shadow: 0 0 10px rgba(235, 174, 72, 0.42);
+}
+
+/* Distinct NIGHT color: deep orbital indigo / starlight blue */
+.sky-mode-night {
+  color: #8cb2f0;
+  border-color: rgba(112, 152, 224, 0.34);
+  background: rgba(52, 82, 140, 0.16);
+}
+:root[data-theme='light'] .sky-mode-night {
+  color: #2f4b7c;
+  border-color: rgba(47, 75, 124, 0.35);
+  background: rgba(47, 75, 124, 0.1);
+}
+.sky-mode-night:hover,
+.sky-mode-night[aria-pressed='true'] {
+  color: #edf4ff;
+  border-color: #6b93d9;
+  background: linear-gradient(180deg, #2b4474, #182745);
+  box-shadow: 0 0 10px rgba(102, 148, 226, 0.42);
+}
+
+.sky-phase-readout {
+  border: 0;
+  padding: 0 .2rem;
+  background: transparent;
+  font: 600 .54rem/1 var(--mono);
+  letter-spacing: .06em;
+  color: var(--accent);
+  cursor: pointer;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.sky-phase-readout:hover {
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
+/* Machined Brass Sky Scrubber Fader (Clearly signals dragging shifts background sky) */
 .fader-shell {
-  padding: 5px 8px 4px;
+  position: relative;
+  padding: 6px 9px 4px;
   border-radius: 7px;
   border: 1px solid var(--brass-edge);
   background: linear-gradient(180deg, color-mix(in srgb, var(--brass-hi) 22%, var(--console-bg-top)), color-mix(in srgb, var(--brass-mid) 18%, var(--console-bg-bot)));
   box-shadow: inset 0 1px 2px rgba(0, 0, 0, .24);
+  transition: border-color .2s, box-shadow .2s;
+}
+.fader-shell-sky:hover,
+.fader-shell-sky.is-dragging {
+  border-color: var(--accent);
+  box-shadow: inset 0 1px 2px rgba(0, 0, 0, .24), 0 0 0 2px color-mix(in srgb, var(--accent) 22%, transparent);
 }
 
+/* Central Sunset / Sunrise Terminator Diamond Notch at 50% */
+.sky-terminator-notch {
+  position: absolute;
+  left: 50%;
+  top: 2px;
+  width: 5px;
+  height: 5px;
+  transform: translateX(-50%) rotate(45deg);
+  background: #f0823c;
+  box-shadow: 0 0 5px rgba(240, 130, 60, 0.65);
+  pointer-events: none;
+  z-index: 1;
+}
+
+/* Sky-to-Orbit Atmospheric Gradient Track: Cerulean Day -> Gold -> Sunset Orange -> Indigo Twilight -> Deep Space */
 .console-slider {
-  height: 8px;
-  background: linear-gradient(90deg, #f1dbb0 0%, #d4944c 48%, #2a3444 100%);
+  position: relative;
+  z-index: 2;
+  height: 9px;
+  background: linear-gradient(90deg, #74bce8 0%, #f1cf78 28%, #e37638 50%, #304978 74%, #0f1829 100%);
   border: 1px solid var(--brass-edge);
+  box-shadow: inset 0 1px 3px rgba(0, 0, 0, .35);
 }
 
 .console-slider::-webkit-slider-thumb {
-  width: 18px;
+  width: 22px;
   height: 22px;
-  border-radius: 4px;
+  border-radius: 5px;
   background:
-    linear-gradient(90deg, transparent 44%, rgba(36, 26, 12, 0.72) 45%, rgba(36, 26, 12, 0.72) 55%, transparent 56%),
-    linear-gradient(180deg, #f3dfa6 0%, #c8a258 55%, #8f6d30 100%);
+    repeating-linear-gradient(90deg, transparent 0 4px, rgba(44, 30, 12, 0.58) 4px 5.5px, transparent 5.5px 7px),
+    linear-gradient(180deg, #f7e6b2 0%, #cca458 52%, #8e6c2e 100%);
   border: 1px solid #4e3917;
-  box-shadow: 0 2px 6px rgba(0, 0, 0, .42), inset 0 1px 0 rgba(255, 250, 232, .85);
+  box-shadow: 0 2px 7px rgba(0, 0, 0, .46), inset 0 1px 0 rgba(255, 250, 232, .9);
+  cursor: grab;
+  transition: transform .14s ease, box-shadow .14s ease;
+}
+.console-slider:hover::-webkit-slider-thumb {
+  transform: scale(1.06);
+  box-shadow: 0 3px 10px rgba(0, 0, 0, .5), 0 0 0 2px color-mix(in srgb, var(--accent) 45%, transparent);
+}
+.console-slider:active::-webkit-slider-thumb {
+  cursor: grabbing;
+  transform: scale(1.09);
 }
 
 .console-slider::-moz-range-thumb {
-  width: 18px;
+  width: 22px;
   height: 22px;
-  border-radius: 4px;
+  border-radius: 5px;
   background:
-    linear-gradient(90deg, transparent 44%, rgba(36, 26, 12, 0.72) 45%, rgba(36, 26, 12, 0.72) 55%, transparent 56%),
-    linear-gradient(180deg, #f3dfa6 0%, #c8a258 55%, #8f6d30 100%);
+    repeating-linear-gradient(90deg, transparent 0 4px, rgba(44, 30, 12, 0.58) 4px 5.5px, transparent 5.5px 7px),
+    linear-gradient(180deg, #f7e6b2 0%, #cca458 52%, #8e6c2e 100%);
   border: 1px solid #4e3917;
-  box-shadow: 0 2px 6px rgba(0, 0, 0, .42);
+  box-shadow: 0 2px 7px rgba(0, 0, 0, .46);
+  cursor: grab;
+}
+.fader-ruler i.is-mid {
+  background: #e37638;
+  height: 7px;
 }
 
 /* Brushed brass toggle knobs */
@@ -606,6 +751,121 @@ body.music-is-playing .cassette-reel {
 
 .cal-gauge > i {
   background: linear-gradient(90deg, var(--bp-vector), var(--accent));
+}
+
+/* ----------------------------------------------------------------------------
+   9. Spatial-First Station Rooms & Abode Ambiance (Work · Interests · About)
+   Text-first reading clarity framed inside distinct rooms of an orbital abode
+   ---------------------------------------------------------------------------- */
+.station-room-head {
+  position: relative;
+  max-width: none;
+  margin: 1.35rem 0 1.65rem;
+  padding: clamp(1.5rem, 3.2vw, 2.35rem) clamp(1.3rem, 3vw, 2.2rem);
+  border-radius: 18px;
+  border: 1px solid var(--bp-border);
+  display: grid;
+  grid-template-columns: minmax(0, 1.35fr) minmax(240px, 0.65fr);
+  align-items: center;
+  gap: 1.6rem clamp(1.6rem, 4vw, 3.2rem);
+  background:
+    radial-gradient(ellipse 80% 70% at 88% 100%, var(--room-ambient, var(--horizon-warm)), transparent 70%),
+    linear-gradient(180deg, color-mix(in srgb, var(--panel) 84%, transparent), color-mix(in srgb, var(--paper) 82%, transparent));
+  box-shadow:
+    0 18px 46px rgba(0, 0, 0, .18),
+    inset 0 1px 0 rgba(255, 250, 232, .18);
+  overflow: hidden;
+}
+
+:root[data-theme='light'] .station-room-head {
+  background:
+    linear-gradient(rgba(126, 100, 62, 0.055) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(126, 100, 62, 0.055) 1px, transparent 1px),
+    radial-gradient(ellipse 82% 70% at 88% 100%, var(--room-ambient, var(--horizon-warm)), transparent 72%),
+    linear-gradient(180deg, rgba(253, 249, 238, 0.9), rgba(244, 234, 211, 0.88));
+  background-size: 28px 28px, 28px 28px, 100% 100%, 100% 100%;
+  box-shadow:
+    0 16px 40px rgba(102, 78, 42, .1),
+    inset 0 1px 0 rgba(255, 255, 255, .92);
+}
+
+.room-head-copy {
+  position: relative;
+  z-index: 1;
+  min-width: 0;
+}
+.room-head-copy h1 {
+  margin: .65rem 0 .7rem;
+  max-width: 16ch;
+}
+.room-head-copy p:not(.eyebrow) {
+  color: var(--muted);
+  max-width: 54ch;
+  font-size: clamp(.98rem, 1.3vw, 1.08rem);
+}
+.room-head-plate {
+  position: relative;
+  z-index: 1;
+}
+.blueprint-plate-room .bp-svg {
+  max-height: 152px;
+}
+
+/* Subtle Per-Room Ambient Light Signatures */
+body[data-room='work'] {
+  --room-ambient: rgba(74, 146, 198, 0.2);
+}
+body[data-room='interests'] {
+  --room-ambient: rgba(235, 144, 68, 0.24);
+}
+body[data-room='about'] {
+  --room-ambient: rgba(154, 178, 126, 0.2);
+}
+
+/* Room 01 · Work (Drafting Bay) — recessed vellum / HUD folio sheets */
+body[data-room='work'] .experience-ledger,
+body[data-room='work'] .case-ledger {
+  padding: .25rem clamp(.85rem, 2.2vw, 1.5rem);
+  border-radius: 14px;
+  border: 1px solid color-mix(in srgb, var(--bp-border) 78%, transparent);
+  background: color-mix(in srgb, var(--panel) 72%, transparent);
+}
+body[data-room='work'] .experience-ledger > article:first-child,
+body[data-room='work'] .case-ledger > a:first-child {
+  border-top: 0;
+}
+
+/* Room 03 · About (Personal Study) — calm framed desk logbook + brass credentials plaque */
+body[data-room='about'] .about-prose {
+  max-width: 780px;
+  padding: clamp(1.4rem, 3vw, 2.2rem) clamp(1.2rem, 3vw, 2.2rem);
+  border-radius: 16px;
+  border: 1px solid color-mix(in srgb, var(--bp-border) 74%, transparent);
+  background: color-mix(in srgb, var(--panel) 78%, transparent);
+  box-shadow: 0 12px 32px rgba(0, 0, 0, .08), inset 0 1px 0 rgba(255, 255, 255, .14);
+}
+body[data-room='about'] .about-prose p:last-child {
+  margin-bottom: 0;
+}
+body[data-room='about'] .about-credentials {
+  padding: clamp(1.4rem, 3vw, 2rem) clamp(1.2rem, 3vw, 2rem);
+  border-radius: 14px;
+  border: 1px solid var(--bp-border);
+  border-left: 3px solid var(--accent);
+  background: color-mix(in srgb, var(--panel) 84%, transparent);
+}
+
+@media (max-width: 820px) {
+  .station-room-head {
+    grid-template-columns: 1fr;
+    gap: 1.15rem;
+    margin-top: .75rem;
+    padding: 1.3rem 1.05rem;
+    border-radius: 14px;
+  }
+  .blueprint-plate-room .bp-svg {
+    max-height: 126px;
+  }
 }
 
 /* Mobile drawer hides outer decorative console screws so corners stay clean */

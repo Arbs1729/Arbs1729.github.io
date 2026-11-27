@@ -1,15 +1,25 @@
 ---
 import Base from '../../layouts/Base.astro';
 import Icon from '../../components/Icon.astro';
+import StationBlueprint from '../../components/StationBlueprint.astro';
 import { experience, groups, stories } from '../../data/portfolio';
 
 const employerWork = groups.find(group => group.id === 'employer');
 const projectGroups = groups.filter(group => group.id !== 'employer');
 ---
 <Base title="Work" description="Professional experience, selected case studies, a project library, client work and community initiatives by Aryan Basantani.">
-  <header class="page-head work-page-head">
-    <p class="eyebrow">Work, projects and evidence</p>
-    <h1>What I worked on, and where it happened.</h1>
+  <header class="page-head work-page-head station-room-head">
+    <span class="hud-corner hud-tl" aria-hidden="true"></span>
+    <span class="hud-corner hud-tr" aria-hidden="true"></span>
+    <span class="hud-corner hud-bl" aria-hidden="true"></span>
+    <span class="hud-corner hud-br" aria-hidden="true"></span>
+    <div class="room-head-copy">
+      <p class="eyebrow">Work, projects and evidence</p>
+      <h1>What I worked on, and where it happened.</h1>
+    </div>
+    <div class="room-head-plate">
+      <StationBlueprint variant="workshop" />
+    </div>
   </header>
 
   <nav class="section-nav" aria-label="Work page sections">
